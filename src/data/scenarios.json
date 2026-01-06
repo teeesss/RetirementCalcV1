@@ -1,0 +1,53 @@
+{
+  "scenarios": [
+    {
+      "id": "base",
+      "name": "Base Plan",
+      "description": "Default retirement plan with standard assumptions",
+      "profile": {}
+    },
+    {
+      "id": "early_retire_55",
+      "name": "Early Retire 55",
+      "description": "Early retirement scenario starting at age 55",
+      "profile": {
+        "retirementAge": 55,
+        "socialSecurity": {
+          "startAge": 62
+        }
+      }
+    },
+    {
+      "id": "max_roth_conversions",
+      "name": "Max Roth Conversions",
+      "description": "Aggressive Roth conversion strategy to fill 22% bracket",
+      "profile": {
+        "taxOptimization": {
+          "rothStrategy": "22",
+          "withdrawalOrder": "save_trad"
+        }
+      }
+    },
+    {
+      "id": "higher_inflation",
+      "name": "Higher Inflation Stress",
+      "description": "Stress test with 4.5% inflation",
+      "profile": {
+        "assumptions": {
+          "inflation": 4.5
+        }
+      }
+    },
+    {
+      "id": "bear_market_start",
+      "name": "Bear Market Start",
+      "description": "Conservative returns: 6% equity, 8% crypto",
+      "profile": {
+        "assumptions": {
+          "equityReturn": 6.0,
+          "cryptoReturn": 8.0
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for accessibility and dark mode */
+:root {
+  --color-trad: #2563eb;
+  --color-roth: #7c3aed;
+  --color-brok: #0891b2;
+  --color-hsa: #db2777;
+  --color-crypto: #f59e0b;
+}
+
+/* Ensure minimum contrast ratios for WCAG AA */
+body {
+  @apply antialiased bg-gray-50 dark:bg-gray-900;
+}
+
+html {
+  @apply bg-gray-50 dark:bg-gray-900;
+}
+
+/* Focus styles for keyboard navigation */
+*:focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-600;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+}

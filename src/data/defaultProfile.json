@@ -1,0 +1,221 @@
+{
+  "people": [
+    {
+      "id": "client",
+      "name": "Me",
+      "birthDate": "1976-07-03",
+      "retirementAge": 53,
+      "lifeExpectancy": 95
+    }
+  ],
+  "profile": {
+    "filingStatus": "head",
+    "stateOfResidence": "FL",
+    "stateTaxModel": {
+      "enabled": true,
+      "useMarginal": true,
+      "overrideRate": null
+    },
+    "isCommunityProperty": false
+  },
+  "strategy": {
+    "bucket": {
+      "enabled": false,
+      "yearsOfCash": 2,
+      "refillCondition": "market_up"
+    },
+    "daf": {
+      "enabled": false,
+      "yearsToBunch": 5,
+      "startYear": 2025
+    }
+  },
+  "mortgage": {
+    "balance": 245000,
+    "rate": 3.125,
+    "paymentPI": 2505
+  },
+  "salary": 145000,
+  "contributions": {
+    "traditional": 0,
+    "roth": 0,
+    "hsa": 0,
+    "afterTax401k": 0
+  },
+  "stateTaxRate": 0,
+  "credit": {
+    "brokerageLOC": {
+      "ltv": 0.5,
+      "rate": 0.065,
+      "currentBalance": 0
+    },
+    "cryptoLOC": {
+      "ltv": 0.4,
+      "rate": 0.10,
+      "currentBalance": 0
+    },
+    "reverseMortgage": {
+      "enabled": false,
+      "ageStart": 62,
+      "homeValue": 600000,
+      "initialDraw": 0,
+      "growthRate": 0.05,
+      "upfrontMIP": 0.02,
+      "annualMIP": 0.0125
+    }
+  },
+  "assets": {
+    "traditional": {
+      "client": 2250000,
+      "spouse": 0
+    },
+    "roth": {
+      "client": 200000,
+      "spouse": 0
+    },
+    "hsa": {
+      "client": 250000,
+      "spouse": 0
+    },
+    "brokerage": {
+      "joint": 60000
+    },
+    "brokerageBasis": {
+      "joint": 80000
+    },
+    "cash": {
+      "total": 50000
+    },
+    "crypto": {
+      "btc": {
+        "quantity": 4.5,
+        "price": 87000,
+        "owner": "client"
+      },
+      "eth": {
+        "quantity": 4.0,
+        "price": 3000,
+        "owner": "client"
+      },
+      "sol": {
+        "quantity": 13.0,
+        "price": 130,
+        "owner": "client"
+      }
+    }
+  },
+  "realEstate": [
+    {
+      "id": "1",
+      "name": "Primary Residence",
+      "address": "105 Country Club Rd, Shalimar, FL 32579",
+      "currentValue": 633000,
+      "appreciationRate": 2.5,
+      "mortgage": {
+        "balance": 245000,
+        "rate": 3.125,
+        "paymentPI": 2505,
+        "targetAge": null
+      },
+      "propertyTax": 5500,
+      "insurance": 2400,
+      "maintenance": 4800
+    }
+  ],
+  "socialSecurity": {
+    "primary": {
+      "annualAmount": 32556,
+      "startAge": 62
+    },
+    "spouse": {
+      "annualAmount": 0,
+      "startAge": 67
+    }
+  },
+  "expenses": {
+    "essential": 0,
+    "discretionary": 0,
+    "essentialMonthly": 4500,
+    "discretionaryMonthly": 1500,
+    "charity": 0,
+    "growthRate": 3.0,
+    "spendingPhases": {
+      "startAge": 65,
+      "slowGoAge": 75,
+      "slowGoReduction": 0.85,
+      "noGoAge": 85,
+      "noGoReduction": 0.75
+    },
+    "flexibility": {
+      "enabled": true,
+      "portfolioDropThreshold": 0.1,
+      "discretionaryCut": 0.3
+    },
+    "recurring": [
+      {
+        "startAge": 53,
+        "endAge": 65,
+        "name": "Travel",
+        "amount": 40000
+      }
+    ],
+    "oneTime": [
+      {
+        "age": 58,
+        "name": "New Car",
+        "amount": 60000
+      }
+    ]
+  },
+  "assumptions": {
+    "growthRate": 7,
+    "dividendYield": 2,
+    "qualifiedRatio": 85,
+    "equityReturn": 8,
+    "equityVolatility": 15,
+    "cryptoReturn": 10,
+    "cryptoVolatility": 40,
+    "correlation": 0.1,
+    "inflation": 3,
+    "stateGenius": {
+      "enabled": true,
+      "residenceState": "FL"
+    },
+    "withdrawalStrategy": "needs",
+    "withdrawalRate": 4,
+    "withdrawalAmount": 60000,
+    "withdrawalGrowth": 3,
+    "withdrawalFloor": true,
+    "aca": {
+      "benchmarkPremium": 600,
+      "householdSize": 1,
+      "povertyLine": 15060
+    },
+    "enableTCJASunset": false,
+    "enableCAPE": false
+  },
+  "taxOptimization": {
+    "taxLossHarvesting": {
+      "crypto": 50000,
+      "brokerage": 5000,
+      "startAge": 49
+    },
+    "rothStrategy": "12",
+    "withdrawalOrder": "optimal",
+    "taxSource": "external",
+    "enableGainHarvesting": false,
+    "enableAssetLocation": false,
+    "futureTaxRateOverride": null,
+    "rothConversions": []
+  },
+  "settings": {
+    "apiKeys": {
+      "rentcast": ""
+    }
+  },
+  "goals": [],
+  "monteCarlo": {
+    "iterations": 10000,
+    "enabled": true
+  }
+}

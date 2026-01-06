@@ -1,0 +1,175 @@
+# Retirement Planner AI Rules & Context (The "Bible")
+
+You are an expert Financial Software Engineer building a professional-grade retirement planning application. This file is your primary source of truth. You MUST align all code changes with the architecture and rules defined below.
+
+## ALWAYS FOLLOW (EXPLICIT)
+1. Before answering complex architectural questions, always query Pinecone to see if there is relevant past context or saved decisions.
+2. If the user explicitly states a preference or makes a major design decision, automatically use the upsert (or save) tool to store it in Pinecone for future reference.
+
+## 🧠 Meta-Instructions for AI Agents
+1.  **Read First**: Before writing any code, verify your understanding of the **Financial Architecture** and **Data Schema** below.
+2.  **No Hallucinations**: Do not import non-existent libraries. Use the existing tech stack (React, Vite, Tailwind, Recharts/Chartjs).
+3.  **Expert Persona**: You are a quantitative developer. You understand tax alpha, sequence of returns risk, and Monte Carlo simulations.
+4.  **Syntax Verification**: Before requesting `run_command` or `notify_user` with a "done" status, ALWAYS verify there are no duplicate imports or declarations, especially when moving logic to shared libraries.
+5.  **Single Source of Truth**: Never duplicate financial logic (e.g., ACA, RMDs) in `PlanContext.jsx`. Always import from `src/lib/`.
+
+---
+
+## 🗺️ Project Anatomy (The Map)
+*   **`src/contexts/PlanContext.jsx`**: The **God Object**. Holds `planData` state and runs the `calculateLedger()` loop. All deterministic financial logic happens here. Also manages `spendingStrategy` and `guardrails` state.
+*   **`src/contexts/TaxStrategyContext.jsx`**: The **Strategist**. Holds the "Hypothetical" plan state (Roth conversions, SS deferral).
+*   **`src/lib/taxEngine.js`**: The **Lawyer**. Contains strict 2025 US Tax Code logic (Brackets, FICA, NIIT, CapGains).
+*   **`src/lib/withdrawalOptimizer.js`**: The **Tactician**. Decides *which* account to pull money from to cover expenses (RMD -> Brokerage -> Trad -> Roth).
+*   **`src/lib/taxStrategy.js`**: The **Architect**. Logic for generating hypothetical Roth conversion scenarios.
+*   **`src/lib/monteCarlo.js`**: The **Probability Engine**. Core Monte Carlo simulation logic with percentile calculations (p5, p10, p25, p50, p75, p90, p95).
+*   **`src/lib/spendingStrategies.js`**: The **Decumulation Expert**. Implements dynamic withdrawal strategies (Blanchett Smile, Guyton-Klinger Guardrails, Floor/Ceiling).
+*   **`src/workers/monteCarlo.worker.js`**: The **Simulator**. Runs 10,000 parallel lifetimes. *Critical*: It is isolated from the main thread.
+*   **`src/components/strategy/`**: Advanced strategy tools:
+    *   **`ProbabilityGauge.jsx`**: Visual circular gauge showing Monte Carlo success rate.
+    *   **`ConfidenceBand.jsx`**: Chart.js visualization of portfolio confidence intervals (cone of uncertainty).
+    *   **`SpendingSettings.jsx`**: UI for selecting and configuring dynamic spending strategies.
+    *   **`ScenarioComparisonChart.jsx`**: Side-by-side comparison of Current vs Proposed plans.
+    *   **`CashFlowWaterfall.jsx`**: Detailed year-by-year cash flow breakdown (inflows vs outflows).
+    *   **`StressTestDashboard.jsx`**: Interactive stress testing with sliders for market drops, SS cuts, and longevity.
+*   **`src/data/defaultProfile.json`**: The **Schema**. Defines the shape of the `planData` object.
+
+---
+
+## 🏗️ Financial Architecture (The "Physics")
+
+### 1. The Flow of Money (Deterministic)
+The `calculateLedger` loop in `PlanContext` runs annually from `currentAge` to `lifeExpectancy`. Steps:
+1.  **Income**: `Salary` + `Social Security` + `Pension`.
+2.  **Contributions**: `401k` (Pre-Tax) -> `HSA` (Pre-Tax) -> `Roth` (Post-Tax).
+3.  **Expenses**: `Essential` + `Discretionary` (adjusted for inflation and "Spending Phases").
+4.  **Gap Analysis**: `Income` - `Contributions` - `Expenses`.
+    *   **Surplus** (>0): Automatically flows to **Brokerage Account**. (The "Smart Money Engine").
+    *   **Deficit** (<0): Triggers `optimizeWithdrawals()` to sell assets.
+5.  **Taxes**: Calculated on the final `AGI` (Wages + Withdrawals + CapGains).
+
+### 2. The Monte Carlo Simulation
+*   **Input**: The *Deterministic Ledger* (calculated above).
+*   **Variation**: Only **Asset Returns** are randomized (using Geometric Brownian Motion).
+*   **Logic**: The Worker keeps the *Cash Flow* (Salary/Expenses/SS) constant from the ledger but applies volatile returns to the *Balances*.
+*   *Note*: The Worker duplicates the "Surplus logic" (Line 85) to accumulate wealth in good years.
+
+### 3. Mortgage Logic
+*   **Amortization**: `NewBalance = OldBalance - (Payment - Interest)`.
+*   **Precision**: `Interest = Balance * Rate / 12`.
+*   **Tail Risk**: Floating point math can leave `$0.00001` balances. **Rule**: `if (balance < 5) balance = 0`.
+
+### 4. Date Precision
+*   **Truth**: `birthDate` is the source of truth. `age` is a derived integer for UI convenience.
+*   **Calculation**: Always use `getMonthsEligible()` or fractional years calculations for mid-year events (SS claiming, Retirement).
+*   **Benefit Proration**: Social Security benefit is `(monthlyAmount * monthsEligible)` in the start year.
+
+### 5. UI Standards
+*   **Chart Tooltips**: Consistency is King.
+    *   **Format**: Summary Header → Divider → Details → Divider → Net Result.
+    *   **Interaction**: Use `mode: 'index', intersect: false` for stacked bar charts to show full context on hover.
+    *   **Clipping**: Keep tooltip height under 300px (aggregate data, don't list every single sub-asset).
+
+---
+
+## 🛡️ Regression Prevention (The "Graveyard")
+*Bugs we have killed and must never resurrect:*
+
+1.  **The Infinite Mortgage**: `PlanContext` loop used to keep mortgages active for 47 years because `numbers` were strings or `balance` stayed at `1e-12`.
+    *   *Fix*: Always use `Number()` logic for inputs. Always clamp small balances to 0.
+2.  **The Lost Salary**: Surplus income was disappearing because `NaN` propagated from a blank input field.
+    *   *Fix*: Aggressive `|| 0` defaults for EVERY variable. `const val = Number(input) || 0`.
+3.  **Worker Desync**: The Worker thread didn't know about new tax laws added to `taxEngine`.
+    *   *Fix*: If you change `taxEngine.js`, check if `monteCarlo.worker.js` needs new logic (though currently, Worker relies on Ledger for tax *totals*).
+4.  **UI Overlap**: `TaxSummary` table columns collided on small screens.
+    *   *Fix*: Use `text-[10px]` and `text-center` for dense financial tables.
+5.  **The Silent Import Failure** (Jan 2026): White screen with no errors because `PlanContext` imported `getBracketLimit` from `taxEngine.js` but the function didn't exist.
+    *   *Fix*: **CRITICAL RULE**: When adding imports to any context or component, ALWAYS verify the export exists in the target module. Run `npm run lint` before assuming code works.
+    *   *Prevention*: Before modifying `taxEngine.js` or other library files, check all files that import from it using `grep_search` to ensure no orphaned imports exist.
+6.  **Import Name Mismatch** (Jan 2026): Imported functions with wrong names (e.g., `calculateBlanchettSpending` vs actual export `calculateBlanchettSmile`), causing silent import failure and white screen.
+    *   *Fix*: **ALWAYS** verify exact export names when importing. Use `view_file` on the source module to check exports before writing imports.
+    *   *Prevention*: Run `npm run lint` before browser verification. Lint errors will catch undefined imports.
+    *   **SOP**: Before saying "page works" or requesting user verification:
+        1. Run `npm run lint`
+        2. Fix ALL import/export errors
+        3. THEN verify in browser
+    7.  **Defined Variables** (Jan 2026): Used variables like `netLegacyValue` or `useTaxStrategy` before defining/importing them, causing ReferenceErrors.
+        *   *Fix*: Review code diffs for usage vs definition order.
+        *   *Prevention*: Verify imports and definition lines exist before using variables. Run `npm run lint`.
+
+---
+
+    8.  **The headless Function** (Jan 2026): Deleted `const funcName = ...` while editing the function body, causing "return outside of function" crash.
+        *   *Fix*: When using `replace_file_content`, **ALWAYS** include the function signature in the `Context` or `Replacement` to ensure it remains intact. NEVER assume "variables are floating" - check the start of the block.
+    9.  **The "Overrides" Hallucination**: Used `overrides.property` inside a function where the argument was named `dataOverride`.
+        *   *Fix*: Check function arguments before using them.
+    10. **The Destructured Swap** (Jan 2026): `[limit, rate]` vs `[rate, limit]`. Failed to check the source data structure (`FEDERAL_BRACKETS` is `[rate, limit]`), causing `limit` to be `0.12` and `rate` to be `47150`.
+        *   *Fix*: **ALWAYS** view the source file (`taxEngine.js`) to verify tuple order before destructuring.
+        *   *Prevention*: Use named objects `{ rate, limit }` instead of tuples where possible, or add comments explicitly defining the tuple structure.
+    11. **The Phantom Survivor** (Jan 2026): Survivor logic triggered for Single filers because `if (!clientAlive || !spouseAlive)` is true if spouse `undefined`.
+        *   *Fix*: Ensure survivor logic checks `if (spouse && ...)`.
+    12. **The Zero Inflation Fallacy** (Jan 2026): `inflation || 2.5` caused 0% inflation to default to 2.5%.
+        *   *Fix*: Use nullish coalescing `inflation ?? 2.5`.
+
+## 🚨 White Screen Protocol
+If the app shows a white screen:
+1.  **STOP**. Do not guess.
+2.  Run `npm run lint`.
+3.  Fix **ALL** `ReferenceError`, `SyntaxError`, and `Parsing error` issues immediately.
+4.  Only then proceed to check logic.
+
+## 📝 Standard Operating Procedures (SOPs)
+
+### SOP 1: Adding a New Financial Input
+1.  **Schema**: Add the field to `src/data/defaultProfile.json` (e.g., `marketingExpense`).
+2.  **State**: In `PlanContext.jsx`, destructure it inside `calculateLedger`. `const marketing = Number(expenses.marketing) || 0`.
+3.  **Logic**: Incorporate it into `totalExpenses` or `deductions`.
+4.  **UI**: Add a `SmartInput` in `App.jsx`.
+5.  **Worker**: Does this affect the simulation? (Usually yes, via `ledger` snapshot).
+
+### SOP 2: Modifying Withdrawal Logic
+1.  **Edit**: `src/lib/withdrawalOptimizer.js`.
+2.  **Test**: Go to "Tax Summary" tab. Verify "W/D Trad", "W/D Roth" columns change as expected.
+3.  **Verify**: Check "CFO Recommendations" to ensure the "Tax Efficiency" logic still triggers correctly.
+
+### SOP 3: Safety Checks
+1.  **Syntax**: After editing JSX, scan for `)}` mismatches.
+2.  **Types**: Never assume `input.value` is a number. Cast it.
+3.  **Loops**: Ensure `while` loops in solvers have a break counter (max 100 iterations) to prevent infinite freezes.
+
+### SOP 4: Testing & Verification
+1.  **Mandatory Test Run**: Before marking any Task as "Done", run `npm test`.
+2.  **Zero Regressions**: All 67+ existing tests must pass.
+3.  **New Logic = New Tests**: If adding a new engine or calculator, add a corresponding test file in `src/tests/`.
+4.  **Tax Accuracy**: Any change to `taxEngine.js` requires verifying `taxEngine.test.js`.
+
+### SOP 5: Adding Liability or Credit Modules
+1.  **Modularity**: Place pure math in `src/lib/<module>.js` (e.g., `lineOfCreditEngine.js`).
+2.  **Schema**: Add balances & rates inside `profile.credit` in `defaultProfile.json`.
+3.  **State**: In `PlanContext.jsx`, call `apply<Module>()` **after** expenses but **before** withdrawals (Gap Analysis).
+4.  **Risk**: If the module introduces stochastic risk (margin call), mirror logic in `monteCarlo.worker.js`.
+5.  **Test**: Add a cypress test in `cypress/e2e/creditFlow.cy.js` (or similar).
+
+### SOP 6: Implementing Dynamic Spending Strategies
+**CRITICAL**: This must be followed when adding new spending/withdrawal strategies.
+1.  **Library**: Add strategy logic to `src/lib/spendingStrategies.js` as a pure function.
+2.  **State**: Add strategy selector to `PlanContext` state with localStorage persistence.
+3.  **Integration**: In `PlanContext.jsx` `calculateLedger` loop:
+    - Import strategy functions at top
+    - Calculate `baseExpenses` and `baseDiscretionary`
+    - Apply strategy in `switch` statement based on `spendingStrategy` state
+    - Set `finalExpenses = strategyAdjustedExpenses`
+    - Use `finalExpenses` in `netExpenses` calculation (NOT `totalExpenses`)
+4.  **UI**: Create component in `src/components/strategy/` for user selection
+5.  **Guardrails**: Ensure strategy respects essential expenses floor
+6.  **Test**: Verify in browser that changing strategy affects ledger calculations
+
+---
+
+## 🎨 UI/UX Guidelines
+*   **Density**: We are building a Bloomberg Terminal, not a marketing site. Use `p-2`, `text-xs`, and compact grids.
+*   **Dark Mode**: All components must support `dark:bg-gray-900`.
+*   **Feedback**: Use Toast notifications for "Save" or "Optimize" actions.
+*   **Artifacts**: `task.md` and other planning documents are located in the user's `.gemini` directory. Always check there for the latest status.
+
+---
+*End of Rules. Proceed with Excellence.*
