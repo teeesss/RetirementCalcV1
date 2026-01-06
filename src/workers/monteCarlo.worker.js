@@ -34,9 +34,18 @@ self.onmessage = (e) => {
         }
 
         // Initialize with START-OF-YEAR 0 balances (before any flows)
-        // This is critical: initialBalances captures state BEFORE Year 0 flows.
-        // ledger[0].balances is AFTER Year 0 flows. Using the former avoids double-counting.
-        let currentBalances = { ...(initialBalances || ledger[0]?.balances?.details || ledger[0]?.balances || {}) };
+        // Ledger balances include: traditionalClient, traditionalSpouse, rothClient, rothSpouse, hsaClient, hsaSpouse, brokerage, crypto, cash
+        let currentBalances = {
+            traditionalClient: initialBalances?.traditionalClient || ledger[0]?.balances?.traditionalClient || 0,
+            traditionalSpouse: initialBalances?.traditionalSpouse || ledger[0]?.balances?.traditionalSpouse || 0,
+            rothClient: initialBalances?.rothClient || ledger[0]?.balances?.rothClient || 0,
+            rothSpouse: initialBalances?.rothSpouse || ledger[0]?.balances?.rothSpouse || 0,
+            hsaClient: initialBalances?.hsaClient || ledger[0]?.balances?.hsaClient || 0,
+            hsaSpouse: initialBalances?.hsaSpouse || ledger[0]?.balances?.hsaSpouse || 0,
+            brokerage: initialBalances?.brokerage || ledger[0]?.balances?.brokerage || 0,
+            crypto: initialBalances?.crypto || ledger[0]?.balances?.crypto || 0,
+            cash: initialBalances?.cash || ledger[0]?.balances?.cash || 0
+        };
 
         let trialSuccess = true;
         let ruinAgeRecorded = false;

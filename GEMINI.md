@@ -33,7 +33,9 @@
 *   **Testing**: Add more unit tests for the new `ExpenseManagement` mortgage logic.
 
 ## 6. Git
-1. Add all files: git add .
-2. Prepare a git commit -m "Commit Message... based on updates"
-3. Prepare a git push (ask user to confirm prior to running)
-4. If pre-commit hooks fail, run `pre-commit run --all-files` and commit the changes or simply do a git add . and then repeat the git commit -m "Commit Message... based on updates" and git push
+** Follow this formatting:
+wsl -d Ubuntu-22.04 git commit -m "feat: UI compaction + fix income surplus logic in withdrawal optimizer"
+1. Add all files: wsl -d Ubuntu-22.04 git add .
+2. Prepare a wsl -d Ubuntu-22.04 git commit -m "Commit Message... based on updates"
+3. Prepare a wsl -d Ubuntu-22.04 git push (ask user to confirm prior to running)
+4. If pre-commit hooks fail, run `pre-commit run --all-files` and commit the changes or simply do a wsl -d Ubuntu-22.04 git add . and then repeat the wsl -d Ubuntu-22.04 git commit -m "Commit Message... based on updates" and wsl -d Ubuntu-22.04 git push
