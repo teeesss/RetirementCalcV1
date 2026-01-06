@@ -910,9 +910,9 @@ function AppContent() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-50">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4 max-w-[1920px] mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 max-w-[1920px] mx-auto">
           {/* Brand/Title (Left) */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 justify-self-start">
             <h1 className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
               <span className="text-2xl">🤖</span>
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">The Architect</span>
@@ -920,7 +920,7 @@ function AppContent() {
           </div>
 
           {/* Centered Toolbelt (Center) */}
-          <div className="flex flex-wrap items-center justify-center gap-3 bg-gray-50/50 dark:bg-gray-900/30 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800/50">
+          <div className="flex flex-wrap items-center justify-center gap-3 bg-gray-50/50 dark:bg-gray-900/30 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800/50 justify-self-center">
             <button
               onClick={() => {
                 if (window.confirm("🧹 Clear all retirement plan data and restore defaults? This cannot be undone.")) {
@@ -932,8 +932,8 @@ function AppContent() {
                 }
               }}
               className={`px-3 py-1.5 text-[10px] font-bold uppercase transition-all flex items-center gap-2 rounded-lg shadow-sm active:scale-95 ${cacheClearedStatus
-                  ? "bg-green-600 text-white border-green-700"
-                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                ? "bg-green-600 text-white border-green-700"
+                : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                 }`}
             >
               <span className="text-xs">{cacheClearedStatus ? "✅" : "🧹"}</span>
@@ -943,7 +943,7 @@ function AppContent() {
             <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1 hidden sm:block" />
 
             {/* Quick Strategy Selector */}
-            <div className="flex items-center bg-white dark:bg-gray-800 rounded-lg px-3 py-1.5 border border-gray-200 dark:border-gray-700 shadow-sm">
+            <div className="flex items-center bg-white dark:bg-gray-800 rounded-lg px-3 py-1.5 border border-gray-200 dark:border-gray-700 shadow-sm transition-all hover:border-blue-400">
               <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 mr-2">Method:</span>
               <select
                 value={spendingStrategy}
@@ -964,8 +964,8 @@ function AppContent() {
               <button
                 onClick={() => handleTabChange('montecarlo')}
                 className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${activeTab === 'montecarlo'
-                    ? "bg-blue-600 text-white shadow-blue-500/20"
-                    : "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  ? "bg-blue-600 text-white shadow-blue-500/20"
+                  : "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
               >
                 <span>🎲</span> Monte Carlo
@@ -973,8 +973,8 @@ function AppContent() {
               <button
                 onClick={() => handleTabChange('cfo')}
                 className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${activeTab === 'cfo'
-                    ? "bg-purple-600 text-white shadow-purple-500/20"
-                    : "bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  ? "bg-purple-600 text-white shadow-purple-500/20"
+                  : "bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
                   }`}
               >
                 <span>🤖</span> CFO Report
@@ -983,7 +983,7 @@ function AppContent() {
           </div>
 
           {/* User Controls (Right) */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 justify-self-end">
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm active:scale-90"

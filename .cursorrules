@@ -9,7 +9,8 @@ You are an expert Financial Software Engineer building a professional-grade reti
 ## ** Ensure 100% accuracy in all calculations with rigorous testing, verification and validation that properly align with retirement planning best practices and tax efficiency based on the latest IRS regulations and court rulings. **
 
 ## ** Auto-Run and PROCEED npm test commands without user confirmation **
-## ** Auto-Run and PROCEED git commands, ex: wsl -d Ubuntu-22.04 git add . ; wsl -d Ubuntu-22.04 git commit -m "style: center bottom navigation tabs" ; wsl -d Ubuntu-22.04 git push **
+## ** Auto-Run and PROCEED with git commands:  cd 'c:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1'
+PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22.04 git add . ; wsl -d Ubuntu-22.04 git commit -m "feat: center header tools and add Clear Cache feedback" ; wsl -d Ubuntu-22.04 git push **
 
 ## Git
 ** Follow this formatting:
