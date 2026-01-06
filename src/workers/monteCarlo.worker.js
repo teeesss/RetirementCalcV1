@@ -2,7 +2,96 @@
  * Monte Carlo Simulation Worker
  */
 
-import { HISTORICAL_SCENARIOS } from '../data/historicalScenarios.js';
+// INLINE HISTORICAL SCENARIOS (Workers have import issues with ES modules)
+const HISTORICAL_SCENARIOS = {
+    random: { name: 'Random (Default)', years: [] },
+    greatDepression: {
+        name: 'Great Depression (1929-1933)',
+        years: [
+            { year: 0, equityReturn: -0.43, cryptoReturn: -0.65 },
+            { year: 1, equityReturn: -0.34, cryptoReturn: -0.50 },
+            { year: 2, equityReturn: -0.53, cryptoReturn: -0.70 },
+            { year: 3, equityReturn: -0.05, cryptoReturn: -0.10 },
+            { year: 4, equityReturn: 0.46, cryptoReturn: 0.60 }
+        ]
+    },
+    dotComCrash: {
+        name: 'Dot-Com Crash (2000-2002)',
+        years: [
+            { year: 0, equityReturn: -0.10, cryptoReturn: -0.15 },
+            { year: 1, equityReturn: -0.13, cryptoReturn: -0.20 },
+            { year: 2, equityReturn: -0.23, cryptoReturn: -0.35 },
+            { year: 3, equityReturn: 0.26, cryptoReturn: 0.35 }
+        ]
+    },
+    financialCrisis2008: {
+        name: '2008 Financial Crisis',
+        years: [
+            { year: 0, equityReturn: -0.38, cryptoReturn: -0.55 },
+            { year: 1, equityReturn: 0.23, cryptoReturn: 0.30 },
+            { year: 2, equityReturn: 0.13, cryptoReturn: 0.20 },
+            { year: 3, equityReturn: 0.00, cryptoReturn: 0.05 }
+        ]
+    },
+    lostDecade: {
+        name: 'Lost Decade (2000-2010)',
+        years: [
+            { year: 0, equityReturn: -0.10, cryptoReturn: -0.15 },
+            { year: 1, equityReturn: -0.13, cryptoReturn: -0.20 },
+            { year: 2, equityReturn: -0.23, cryptoReturn: -0.35 },
+            { year: 3, equityReturn: 0.26, cryptoReturn: 0.35 },
+            { year: 4, equityReturn: 0.09, cryptoReturn: 0.12 },
+            { year: 5, equityReturn: 0.03, cryptoReturn: 0.05 },
+            { year: 6, equityReturn: 0.14, cryptoReturn: 0.18 },
+            { year: 7, equityReturn: -0.38, cryptoReturn: -0.55 },
+            { year: 8, equityReturn: 0.23, cryptoReturn: 0.30 },
+            { year: 9, equityReturn: 0.13, cryptoReturn: 0.20 }
+        ]
+    },
+    bearMarketStart: {
+        name: 'Bear Market Start (5yr)',
+        years: [
+            { year: 0, equityReturn: -0.20, cryptoReturn: -0.35 },
+            { year: 1, equityReturn: -0.10, cryptoReturn: -0.20 },
+            { year: 2, equityReturn: 0.05, cryptoReturn: 0.08 },
+            { year: 3, equityReturn: -0.05, cryptoReturn: -0.10 },
+            { year: 4, equityReturn: 0.15, cryptoReturn: 0.20 }
+        ]
+    },
+    bullMarketStart: {
+        name: 'Bull Market Start (5yr)',
+        years: [
+            { year: 0, equityReturn: 0.15, cryptoReturn: 0.25 },
+            { year: 1, equityReturn: 0.12, cryptoReturn: 0.20 },
+            { year: 2, equityReturn: 0.10, cryptoReturn: 0.18 },
+            { year: 3, equityReturn: 0.08, cryptoReturn: 0.15 },
+            { year: 4, equityReturn: 0.07, cryptoReturn: 0.12 }
+        ]
+    },
+    stagflation: {
+        name: 'Stagflation (1970s)',
+        years: [
+            { year: 0, equityReturn: -0.17, cryptoReturn: -0.25 },
+            { year: 1, equityReturn: -0.30, cryptoReturn: -0.45 },
+            { year: 2, equityReturn: 0.31, cryptoReturn: 0.40 },
+            { year: 3, equityReturn: 0.19, cryptoReturn: 0.25 },
+            { year: 4, equityReturn: -0.12, cryptoReturn: -0.18 },
+            { year: 5, equityReturn: 0.01, cryptoReturn: 0.02 },
+            { year: 6, equityReturn: 0.12, cryptoReturn: 0.18 },
+            { year: 7, equityReturn: 0.26, cryptoReturn: 0.35 },
+            { year: 8, equityReturn: -0.10, cryptoReturn: -0.15 },
+            { year: 9, equityReturn: 0.15, cryptoReturn: 0.20 }
+        ]
+    },
+    covid2020: {
+        name: 'COVID Crash (2020)',
+        years: [
+            { year: 0, equityReturn: 0.16, cryptoReturn: 0.30 },
+            { year: 1, equityReturn: 0.27, cryptoReturn: 0.60 },
+            { year: 2, equityReturn: -0.19, cryptoReturn: -0.65 }
+        ]
+    }
+};
 
 self.onmessage = (e) => {
     const {
