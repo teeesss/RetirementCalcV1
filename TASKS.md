@@ -111,8 +111,10 @@
 - [x] **Task 7.5: Mega-Backdoor Roth**
 - [x] **Task 7.6: CAPE-Adjusted Growth**
 - [x] **Task 7.7: Community Property Step-up**
-
-See artifact `c:\Users\rayjo\.gemini\antigravity\brain\68553c37-43f9-41b7-a214-ae3ab10053e2\task.md` for detailed breakdown.
+- [x] **Task 10: Monte Carlo Hardening & Historical Scenarios** (✅ COMPLETE)
+    - [x] Fixed "Zero Spending" bug in worker
+    - [x] Added Historical Scenario dropdown (Depression, 2008, etc.)
+    - [x] Fixed spending scaling for monthly expense fields
 
 ## 🗺️ Phase 8: State Tax & UI Polish (In Progress)
 - [x] **State Tax Logic**: Create data tables for CA, NY, AR, TX, FL.

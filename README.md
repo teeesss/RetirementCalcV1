@@ -101,8 +101,10 @@ npm test
 ## 📊 Core Features
 
 ### Financial Projections
-- Monte Carlo simulations with correlated asset returns
-- Tax-optimized withdrawal strategies
+- **Monte Carlo Simulation**: 10,000-iteration probability analysis with correlated asset returns.
+- **Historical Scenario Stress Test**: See how your plan survives the Great Depression, the Dot-Com crash, or the 2008 Financial Crisis.
+- **Spending Sensitivity**: Real-time "Spend More/Less" simulation to optimize lifestyle against success rates.
+- **Tax-optimized** withdrawal strategies
 - RMD calculations
 - Social Security optimization
 

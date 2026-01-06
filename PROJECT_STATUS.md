@@ -11,6 +11,10 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 - **CFO Automation**: Implemented "Optimal" withdrawal ordering (Brokerage -> HSA -> Trad -> Roth) and "Fill 12% Bracket" logic correctly.
 - **Crypto Rebalancing**: Automated rebalancing logic to prevent "Age 95 Anomaly" (crypto growing to 100% of portfolio). Now sells down to 20% cap.
 - **Survivor Logic Verified**: Fixed critical Filing Status regression. Widows correctly transition to Single status the year AFTER death.
+- **Monte Carlo Hardening (v2.1)**:
+  - **Historical Scenario Stress Test**: Added 8 scenarios (Great Depression, 2008, etc.) to test plan robustness.
+  - **Spending Fix**: Resolved critical bug where worker ignored spending (incorrect field name).
+  - **Scaling Fix**: Fixed "Spend More/Less" logic to correctly scale monthly expense fields.
 - **Regressions Fixed**:
   - **Sanity Growth**: Fixed crypto growth calculations to respect rebalancing caps.
   - **Waterfall Validation**: Fixed withdrawal order expectations to account for HSA prioritization.
