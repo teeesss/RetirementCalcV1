@@ -2,6 +2,8 @@
  * Monte Carlo Simulation Worker
  */
 
+import { HISTORICAL_SCENARIOS } from '../data/historicalScenarios.js';
+
 self.onmessage = (e) => {
     const {
         startAge,
@@ -17,7 +19,8 @@ self.onmessage = (e) => {
         spendingStrategy,
         spendingParams,
         enableCAPE = false,
-        requestId
+        requestId,
+        scenarioId = 'random'
     } = e.data;
 
     const years = endAge - startAge + 1;
@@ -78,6 +81,18 @@ self.onmessage = (e) => {
                 eqRet = -(e.data.stressTest.marketDrop / 100);
                 // Assume crypto drops 1.5x of equity in a crash scenario
                 crRet = -(e.data.stressTest.marketDrop / 100) * 1.5;
+            }
+
+            // HISTORICAL SCENARIO: Override returns for specified years
+            if (scenarioId && scenarioId !== 'random') {
+                const scenario = HISTORICAL_SCENARIOS[scenarioId];
+                if (scenario?.years) {
+                    const yearOverride = scenario.years.find(yd => yd.year === y);
+                    if (yearOverride) {
+                        eqRet = yearOverride.equityReturn;
+                        crRet = yearOverride.cryptoReturn;
+                    }
+                }
             }
 
             if (iter === 0 && y === 0) {

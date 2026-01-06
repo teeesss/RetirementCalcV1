@@ -6,15 +6,55 @@
  * @module MonteCarloStats
  */
 
+import { getScenarioOptions } from '../data/historicalScenarios';
+
 export default function MonteCarloStats({ results, darkMode = false }) {
   if (!results) {
     return null;
   }
 
   const { iterations, successRate, finalBalances } = results;
+  const scenarios = getScenarioOptions();
 
   return (
     <div className="space-y-6">
+      {/* Historical Scenario Selector */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 p-4 rounded-lg border border-indigo-200 dark:border-indigo-800">
+        <h3 className="text-sm font-bold text-indigo-800 dark:text-indigo-300 mb-2 flex items-center gap-2">
+          📜 Historical Scenario Stress Test
+        </h3>
+        <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+          Test your plan against real market history. What if you retired into these conditions?
+        </p>
+        <div className="flex items-center gap-3">
+          <select
+            id="historical-scenario"
+            defaultValue="random"
+            className="flex-1 text-xs px-3 py-2 border border-indigo-300 dark:border-indigo-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+          >
+            {scenarios.map(s => (
+              <option key={s.id} value={s.id}>
+                {s.icon} {s.name}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={() => {
+              const scenarioId = document.getElementById('historical-scenario')?.value || 'random';
+              window.dispatchEvent(new CustomEvent('runScenarioSimulation', { detail: { scenarioId } }));
+            }}
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded transition-colors"
+          >
+            Run Scenario
+          </button>
+        </div>
+        {results.scenarioId && results.scenarioId !== 'random' && (
+          <div className="mt-2 text-xs text-indigo-700 dark:text-indigo-400">
+            ⚠️ Showing results for: <strong>{scenarios.find(s => s.id === results.scenarioId)?.name || results.scenarioId}</strong>
+          </div>
+        )}
+      </div>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Number of Runs</div>

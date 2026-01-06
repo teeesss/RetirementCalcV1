@@ -717,7 +717,70 @@ function AppContent() {
 
     window.addEventListener('runSpendingSimulation', handleSpendingSimulation);
     return () => window.removeEventListener('runSpendingSimulation', handleSpendingSimulation);
-  }, [planData, calculateLedger, setMonteCarloResults]);
+  }, [planData, calculateLedger, setMonteCarloResults, ledger]);
+
+  // Listen for Historical Scenario simulation trigger
+  useEffect(() => {
+    const handleScenarioSimulation = async (e) => {
+      const scenarioId = e.detail?.scenarioId || 'random';
+
+      console.log(`📜 Running historical scenario: ${scenarioId}`);
+
+      setIsCalculatingMC(true);
+      setMcProgress(0);
+
+      try {
+        const client = planData.people?.[0] || { age: 50, lifeExpectancy: 90 };
+        const spouse = planData.people?.[1];
+
+        const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), { type: 'module' });
+
+        worker.onmessage = (msg) => {
+          const { type, progress, results } = msg.data;
+          if (type === 'progress') {
+            setMcProgress(progress);
+          } else if (type === 'result') {
+            setMonteCarloResults({
+              ...results,
+              scenarioId
+            });
+            setIsCalculatingMC(false);
+            setMcProgress(0);
+            worker.terminate();
+            console.log(`✅ Scenario "${scenarioId}" Complete - Success Rate: ${(results.successRate * 100).toFixed(1)}%`);
+          }
+        };
+
+        worker.onerror = (err) => {
+          console.error('Worker error:', err);
+          setIsCalculatingMC(false);
+          setMcProgress(0);
+          worker.terminate();
+        };
+
+        worker.postMessage({
+          startAge: client.age,
+          endAge: Math.max(client.lifeExpectancy || 90, spouse?.lifeExpectancy || 0),
+          iterations: planData.monteCarlo?.iterations || 10000,
+          equityReturn: planData.assumptions.equityReturn / 100,
+          equityVolatility: planData.assumptions.equityVolatility / 100,
+          cryptoReturn: planData.assumptions.cryptoReturn / 100,
+          cryptoVolatility: planData.assumptions.cryptoVolatility / 100,
+          correlation: planData.assumptions.correlation || 0.1,
+          enableCAPE: planData.assumptions.enableCAPE,
+          spendingStrategy: planData.assumptions.withdrawalStrategy || 'fixed',
+          ledger,
+          scenarioId // Pass scenario to worker
+        });
+      } catch (err) {
+        console.error('Scenario simulation error:', err);
+        setIsCalculatingMC(false);
+      }
+    };
+
+    window.addEventListener('runScenarioSimulation', handleScenarioSimulation);
+    return () => window.removeEventListener('runScenarioSimulation', handleScenarioSimulation);
+  }, [planData, ledger, setMonteCarloResults]);
 
 
   const applyOptimization = () => {
