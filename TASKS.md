@@ -113,3 +113,10 @@
 - [x] **Task 7.7: Community Property Step-up**
 
 See artifact `c:\Users\rayjo\.gemini\antigravity\brain\68553c37-43f9-41b7-a214-ae3ab10053e2\task.md` for detailed breakdown.
+
+## 🗺️ Phase 8: State Tax & UI Polish (In Progress)
+- [x] **State Tax Logic**: Create data tables for CA, NY, AR, TX, FL.
+- [ ] **State Tax Integration**: Connect state logic to tax calculations.
+- [ ] **UI Update**: Move "Income & SS" to Right Sidebar.
+- [ ] **UI Update**: Move "Tax Strategy" to Right Sidebar.
+- [ ] **Testing**: Verify AR deduction logic and State Tax calculations.

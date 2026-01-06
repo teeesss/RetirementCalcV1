@@ -1,5 +1,9 @@
 # GEMINI Context File
 
+## ** Ensure 100% accuracy in all calculations with rigorous testing, verification and validation that properly align with retirement planning best practices and tax efficiency based on the latest IRS regulations and court rulings. **
+
+## ** Auto-Run npm test commands without user confirmation **
+
 ## 1. Project Overview
 **RetirementCalcV1** is a high-fidelity, privacy-focused financial planning application modeled after professional tools like RightCapital and eMoney.
 **Stack**: React, Vite, Tailwind CSS, Recharts/Chart.js.
@@ -27,3 +31,9 @@
 ## 5. Next Steps
 *   **UI Polish**: Continue aligning other charts (e.g., Tax Bracket fill) to new tooltip standards.
 *   **Testing**: Add more unit tests for the new `ExpenseManagement` mortgage logic.
+
+## 6. Git
+1. Add all files: git add .
+2. Prepare a git commit -m "Commit Message... based on updates"
+3. Prepare a git push (ask user to confirm prior to running)
+4. If pre-commit hooks fail, run `pre-commit run --all-files` and commit the changes or simply do a git add . and then repeat the git commit -m "Commit Message... based on updates" and git push

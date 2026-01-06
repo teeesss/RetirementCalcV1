@@ -502,6 +502,14 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
 
         // Expenses
         const annualExpenses = calculateExpenses(i, people, expenses, computedInflation, goals);
+        if (i === 0) {
+            console.log("DEBUG Y0: Annual Exp:", annualExpenses);
+            console.log("DEBUG Y0: Salary:", salary);
+            console.log("DEBUG Y0: SS:", ss);
+            console.log("DEBUG Y0: Income:", income);
+            console.log("DEBUG Y0: Portfolio Start:", currentPortfolio);
+            console.log("DEBUG Y0: Brokerage Start:", balances.brokerage);
+        }
 
         // Calculate Minimum Need (Floor) = Total - Discretionary
         let discretionaryBase = (expenses.discretionaryMonthly || 0) * 12 + (expenses.discretionary || 0);
@@ -777,6 +785,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
         const iterTotalNeed = effectiveAnnualExpenses + totalMortPayment + grossHealthcare + totalLocInterest - estACACredit;
 
         const rawDeficit = Math.max(0, iterTotalNeed - incomeWithMandatory);
+        const rawSurplus = Math.max(0, incomeWithMandatory - iterTotalNeed); // NEW: Track surplus to pay taxes
 
         // Borrowing Logic
         let borrowAmount = 0;
@@ -845,12 +854,15 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
                 qualifiedDividends: qualDividends, ordinaryDividends: ordDividends, ssBenefits: ss,
                 filingStatus: currentFilingStatus, age: clientAge, capitalLosses: lossBank,
                 stateRate: currentData.stateTaxRate || 0, isRetired, itemizedItems, year: currentYear, enableTCJASunset,
-                earnedIncome: salary
+                earnedIncome: salary,
+                stateOfResidence: currentData.profile?.stateOfResidence || 'FL',
+                stateTaxModel: currentData.profile?.stateTaxModel
             });
             result = { withdrawals, taxes };
         } else {
             result = optimizeWithdrawals({
                 age: clientAge, gap: gapPostBucket,
+                incomeSurplus: rawSurplus, // NEW: Pass surplus
                 balances: {
                     traditional: balances.traditionalClient + balances.traditionalSpouse - totalRMD,
                     roth: balances.rothClient + balances.rothSpouse,
@@ -869,7 +881,9 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
                     rothConversionBracket: taxOptimization.rothStrategy === '12' ? 0.12 : (taxOptimization.rothStrategy === '24' ? 0.24 : 0.22),
                     order: taxOptimization.withdrawalOrder || 'standard',
                     shouldPayTaxes: false,
-                    itemizedItems
+                    itemizedItems,
+                    stateOfResidence: currentData.profile?.stateOfResidence || 'FL',
+                    stateTaxModel: currentData.profile?.stateTaxModel
                 },
                 year: currentYear, enableTCJASunset, enableDynamicMAGI: taxOptimization?.enableDynamicMAGI
             });
@@ -885,6 +899,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
         brokerageBasis += totalDividends;
 
         const { withdrawals, taxes: taxBill } = iterationResult;
+
         let realizedGains = iterationResult.realizedGains || 0;
 
         // Initialize Cash Flow Tracker for this Year

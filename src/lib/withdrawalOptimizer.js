@@ -36,6 +36,7 @@ export function optimizeWithdrawals({
   strategy = {},
   year = 2025,
   enableTCJASunset = false,
+  incomeSurplus = 0 // NEW: Pass surplus to offset tax liability
 }) {
   // Destructure mutable balances (we will work with copies inside solver)
   const initialBalances = { ...balances };
@@ -65,7 +66,8 @@ export function optimizeWithdrawals({
 
   for (let i = 0; i < iterationLimit; i++) {
     // 1. Determine Total Needed Cash
-    const totalNeeded = gap + currentTax;
+    // NEW: We can use the income surplus (Income - Expenses) to pay taxes before withdrawing
+    const totalNeeded = Math.max(0, gap + currentTax - incomeSurplus);
 
     // 2. Run Withdrawal Waterfall
     // We pass a fresh copy of balances because each iteration simulates from the start state
@@ -98,7 +100,9 @@ export function optimizeWithdrawals({
       filingStatus,
       age,
       capitalLosses: taxLossHarvesting,
-      stateRate: 0,
+      stateRate: 0, // Fallback if model logic fails, but model takes precedence
+      stateOfResidence: strategy.stateOfResidence || 'FL',
+      stateTaxModel: strategy.stateTaxModel,
       isRetired: age >= 60,
       itemizedItems: strategy.itemizedItems,
       year,

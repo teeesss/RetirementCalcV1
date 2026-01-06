@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchRentCastValue, validateRentCastKey } from './lib/realEstateAPI';
+import { STATE_BRACKETS } from './data/stateTaxBrackets';
 import { PlanProvider, usePlan } from './contexts/PlanContext';
 import { TaxStrategyProvider } from './contexts/TaxStrategyContext';
 import Dashboard from './components/Dashboard';
@@ -800,17 +801,32 @@ function AppContent() {
             <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <h2 className="text-[10px] font-bold mb-1 uppercase text-gray-500">1. Profile</h2>
               <div className="space-y-1">
-                <div>
-                  <label className="block text-xs text-gray-700 dark:text-gray-300 mb-1">Filing Status</label>
-                  <select
-                    value={planData.profile?.filingStatus || 'head'}
-                    onChange={(e) => updatePlan({ profile: { ...planData.profile, filingStatus: e.target.value } })}
-                    className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                  >
-                    <option value="head">Head of Household</option>
-                    <option value="single">Single</option>
-                    <option value="married">Married (Joint)</option>
-                  </select>
+                {/* Compact Row 1: Filing & State */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[9px] text-gray-400 block uppercase">Filing Status</label>
+                    <select
+                      value={planData.profile?.filingStatus || 'head'}
+                      onChange={(e) => updatePlan({ profile: { ...planData.profile, filingStatus: e.target.value } })}
+                      className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                    >
+                      <option value="head">Head of Household</option>
+                      <option value="single">Single</option>
+                      <option value="married">Married (Joint)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[9px] text-gray-400 block uppercase">State of Res</label>
+                    <select
+                      value={planData.profile?.stateOfResidence || 'FL'}
+                      onChange={(e) => updatePlan({ profile: { ...planData.profile, stateOfResidence: e.target.value } })}
+                      className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                    >
+                      {Object.keys(STATE_BRACKETS).sort().map(state => (
+                        <option key={state} value={state}>{state}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 {planData.people?.map((person, idx) => (
@@ -818,30 +834,28 @@ function AppContent() {
                     <div className="text-[9px] font-bold text-blue-600 uppercase mb-0.5">{person.name || person.id}</div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <div>
-                          {/* DOB Logic: If birthDate exists, use it. Else fallback to age */}
-                          <label className="text-[9px] text-gray-400 block uppercase">Date of Birth</label>
-                          <input
-                            type="date"
-                            value={person.birthDate || ''}
-                            onChange={(e) => {
-                              const newPeople = [...planData.people];
-                              newPeople[idx].birthDate = e.target.value;
+                        {/* DOB Logic: If birthDate exists, use it. Else fallback to age */}
+                        <label className="text-[9px] text-gray-400 block uppercase">Date of Birth</label>
+                        <input
+                          type="date"
+                          value={person.birthDate || ''}
+                          onChange={(e) => {
+                            const newPeople = [...planData.people];
+                            newPeople[idx].birthDate = e.target.value;
 
-                              // Auto-calc age for legacy compatibility
-                              if (e.target.value) {
-                                const dob = new Date(e.target.value);
-                                const diff = Date.now() - dob.getTime();
-                                const ageDate = new Date(diff);
-                                newPeople[idx].age = Math.abs(ageDate.getUTCFullYear() - 1970);
-                              }
-                              updatePlan({ people: newPeople });
-                            }}
-                            className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                          />
-                          <div className="text-[9px] text-gray-500 mt-0.5">
-                            Age: {person.age}
-                          </div>
+                            // Auto-calc age for legacy compatibility
+                            if (e.target.value) {
+                              const dob = new Date(e.target.value);
+                              const diff = Date.now() - dob.getTime();
+                              const ageDate = new Date(diff);
+                              newPeople[idx].age = Math.abs(ageDate.getUTCFullYear() - 1970);
+                            }
+                            updatePlan({ people: newPeople });
+                          }}
+                          className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                        />
+                        <div className="text-[9px] text-gray-500 mt-0.5">
+                          Age: {person.age}
                         </div>
                       </div>
                       <div>
@@ -858,31 +872,36 @@ function AppContent() {
                         />
                       </div>
                     </div>
-                    <div>
-                      <label className="text-[9px] text-gray-400 block uppercase">Life Expectancy</label>
-                      <input
-                        type="number"
-                        value={person.lifeExpectancy}
-                        onChange={(e) => {
-                          const newPeople = [...planData.people];
-                          newPeople[idx].lifeExpectancy = parseInt(e.target.value);
-                          updatePlan({ people: newPeople });
-                        }}
-                        className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                      />
+
+                    {/* Compact Row: Life Exp & Salary */}
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[9px] text-gray-400 block uppercase">Life Expectancy</label>
+                        <input
+                          type="number"
+                          value={person.lifeExpectancy}
+                          onChange={(e) => {
+                            const newPeople = [...planData.people];
+                            newPeople[idx].lifeExpectancy = parseInt(e.target.value);
+                            updatePlan({ people: newPeople });
+                          }}
+                          className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                        />
+                      </div>
+                      {idx === 0 && (
+                        <div>
+                          <label className="text-[9px] text-gray-400 block uppercase">Annual Salary</label>
+                          <SmartInput
+                            value={planData.salary || 0}
+                            onChange={(val) => updatePlan({ salary: val })}
+                            className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            step="1000"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
-
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5 uppercase">Annual Salary</label>
-                  <SmartInput
-                    value={planData.salary || 0}
-                    onChange={(val) => updatePlan({ salary: val })}
-                    className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                    step="1000"
-                  />
-                </div>
               </div>
             </div>
 
@@ -895,23 +914,25 @@ function AppContent() {
             <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-teal-500 dark:border-teal-600 shadow-sm">
               <h2 className="text-[10px] font-bold mb-1 text-teal-600 dark:text-teal-400 uppercase">3. Contributions (Working Years)</h2>
               <div className="space-y-1">
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase">Trad 401k (% of Salary)</label>
-                  <SmartInput
-                    value={planData.contributions?.traditional || 0}
-                    onChange={(val) => updatePlan({ contributions: { ...planData.contributions, traditional: val } })}
-                    className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                    step="1"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase">Employer Match %</label>
-                  <SmartInput
-                    value={planData.contributions?.match || 0}
-                    onChange={(val) => updatePlan({ contributions: { ...planData.contributions, match: val } })}
-                    className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                    step="0.5"
-                  />
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Trad 401k (% of Salary)</label>
+                    <SmartInput
+                      value={planData.contributions?.traditional || 0}
+                      onChange={(val) => updatePlan({ contributions: { ...planData.contributions, traditional: val } })}
+                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                      step="1"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Employer Match %</label>
+                    <SmartInput
+                      value={planData.contributions?.match || 0}
+                      onChange={(val) => updatePlan({ contributions: { ...planData.contributions, match: val } })}
+                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                      step="0.5"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
@@ -936,55 +957,16 @@ function AppContent() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-indigo-500 dark:border-indigo-600 shadow-sm">
-              <h2 className="text-[10px] font-bold mb-1 text-indigo-600 dark:text-indigo-400 uppercase">4. Income & SS</h2>
-              <div className="space-y-1">
-                {/* Primary SS */}
-                <div>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    <div>
-                      <span className="text-[9px] text-gray-400 block uppercase">Annual SS</span>
-                      <input
-                        type="number"
-                        value={planData.socialSecurity?.primary?.annualAmount || 0}
-                        onChange={(e) => updatePlan({
-                          socialSecurity: {
-                            ...planData.socialSecurity,
-                            primary: { ...planData.socialSecurity?.primary, annualAmount: parseFloat(e.target.value) }
-                          }
-                        })}
-                        className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                        step="1000"
-                      />
-                    </div>
-                    <div>
-                      <span className="text-[9px] text-gray-400 block uppercase">Start Age</span>
-                      <input
-                        type="number"
-                        value={planData.socialSecurity?.primary?.startAge || 62}
-                        onChange={(e) => updatePlan({
-                          socialSecurity: {
-                            ...planData.socialSecurity,
-                            primary: { ...planData.socialSecurity?.primary, startAge: parseInt(e.target.value) }
-                          }
-                        })}
-                        className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                      />
-                    </div>
-                  </div>
-                </div>
 
-              </div>
-            </div>
 
 
             <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <h2 className="text-[10px] font-bold mb-1 uppercase text-gray-500">5. Assumptions</h2>
               <div className="space-y-1">
-                <div>
-                  <div className="p-2 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase font-bold flex justify-between">
-                      Spending Strategy
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="p-1.5 bg-yellow-50 dark:bg-yellow-900/20 rounded border border-yellow-200 dark:border-yellow-800">
+                    <label className="block text-[9px] text-gray-500 mb-0.5 uppercase font-bold flex justify-between">
+                      Strategy
                       <button
                         onClick={() => {
                           handleTabChange('strategy');
@@ -992,34 +974,38 @@ function AppContent() {
                         }}
                         className="text-blue-600 dark:text-blue-400 hover:text-blue-800 underline font-normal"
                       >
-                        Customize →
+                        Customize
                       </button>
                     </label>
                     <select
                       value={spendingStrategy}
                       onChange={(e) => setSpendingStrategy(e.target.value)}
-                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                      className="w-full px-1 py-1 text-[10px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                     >
-                      <option value="fixed">Fixed Dollar</option>
-                      <option value="percentage">Fixed Percentage</option>
-                      <option value="blanchett">Blanchett Smile</option>
-                      <option value="guardrails">Guyton-Klinger</option>
-                      <option value="floor-ceiling">Floor & Ceiling</option>
-                      <option value="max-spend">Max Spending</option>
-                      <option value="dynamic">Actuarial (ARVA)</option>
+                      <option value="fixed">Fixed $</option>
+                      <option value="percentage">Fixed %</option>
+                      <option value="blanchett">Smile</option>
+                      <option value="guardrails">Guardrails</option>
+                      <option value="floor-ceiling">Floor/Ceil</option>
+                      <option value="max-spend">Max Spend</option>
+                      <option value="dynamic">Actuarial</option>
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Inflation %</label>
+                    <SmartInput
+                      value={planData.assumptions?.inflation || 3}
+                      onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, inflation: val } })}
+                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                      step="0.1"
+                    />
                   </div>
                 </div>
 
-
-
-
-
-
-
                 <div className="grid grid-cols-2 gap-2 pt-1 border-t border-gray-100 dark:border-gray-700">
                   <div>
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">Stocks Ret %</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Stocks Ret %</label>
                     <SmartInput
                       value={planData.assumptions.equityReturn}
                       onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, equityReturn: val } })}
@@ -1028,19 +1014,10 @@ function AppContent() {
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">Crypto Ret %</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Crypto Ret %</label>
                     <SmartInput
                       value={planData.assumptions?.cryptoReturn || 10}
                       onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, cryptoReturn: val } })}
-                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                      step="0.1"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">Inflation %</label>
-                    <SmartInput
-                      value={planData.assumptions?.inflation || 3}
-                      onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, inflation: val } })}
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="0.1"
                     />
@@ -1075,39 +1052,7 @@ function AppContent() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-purple-500 dark:border-purple-600 shadow-sm">
-              <h2 className="text-[10px] font-bold mb-1 text-purple-600 dark:text-purple-400 uppercase">6. Optimization</h2>
-              <div className="space-y-1">
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase">Roth Strategy</label>
-                  <select
-                    value={planData.taxOptimization?.rothStrategy || 'manual'}
-                    onChange={(e) => updatePlan({ taxOptimization: { ...planData.taxOptimization, rothStrategy: e.target.value } })}
-                    className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                  >
-                    <option value="manual">Manual Only</option>
-                    <option value="12">Fill 12% Bracket</option>
-                    <option value="22">Fill 22% Bracket</option>
-                    <option value="24">Fill 24% Bracket</option>
-                  </select>
-                </div>
 
-                <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase">TLH (Brokerage/Yr)</label>
-                  <SmartInput
-                    value={planData.taxOptimization?.taxLossHarvesting?.brokerage || 0}
-                    onChange={(val) => updatePlan({
-                      taxOptimization: {
-                        ...planData.taxOptimization,
-                        taxLossHarvesting: { ...planData.taxOptimization?.taxLossHarvesting, brokerage: val }
-                      }
-                    })}
-                    className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                    step="1000"
-                  />
-                </div>
-              </div>
-            </div>
 
 
           </div>
@@ -1795,6 +1740,82 @@ function AppContent() {
                 >
                   + Add Goal
                 </button>
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-indigo-500 dark:border-indigo-600 shadow-sm">
+              <h2 className="text-[10px] font-bold mb-1 text-indigo-600 dark:text-indigo-400 uppercase">4. Income & SS</h2>
+              <div className="space-y-1">
+                {/* Primary SS */}
+                <div>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    <div>
+                      <span className="text-[9px] text-gray-400 block uppercase">Annual SS</span>
+                      <input
+                        type="number"
+                        value={planData.socialSecurity?.primary?.annualAmount || 0}
+                        onChange={(e) => updatePlan({
+                          socialSecurity: {
+                            ...planData.socialSecurity,
+                            primary: { ...planData.socialSecurity?.primary, annualAmount: parseFloat(e.target.value) }
+                          }
+                        })}
+                        className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                        step="1000"
+                      />
+                    </div>
+                    <div>
+                      <span className="text-[9px] text-gray-400 block uppercase">Start Age</span>
+                      <input
+                        type="number"
+                        value={planData.socialSecurity?.primary?.startAge || 62}
+                        onChange={(e) => updatePlan({
+                          socialSecurity: {
+                            ...planData.socialSecurity,
+                            primary: { ...planData.socialSecurity?.primary, startAge: parseInt(e.target.value) }
+                          }
+                        })}
+                        className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-purple-500 dark:border-purple-600 shadow-sm">
+              <h2 className="text-[10px] font-bold mb-1 text-purple-600 dark:text-purple-400 uppercase">6. Optimization</h2>
+              <div className="space-y-1">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Roth Strategy</label>
+                    <select
+                      value={planData.taxOptimization?.rothStrategy || 'manual'}
+                      onChange={(e) => updatePlan({ taxOptimization: { ...planData.taxOptimization, rothStrategy: e.target.value } })}
+                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                    >
+                      <option value="manual">Manual Only</option>
+                      <option value="12">Fill 12% Bracket</option>
+                      <option value="22">Fill 22% Bracket</option>
+                      <option value="24">Fill 24% Bracket</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">TLH (Brokerage/Yr)</label>
+                    <SmartInput
+                      value={planData.taxOptimization?.taxLossHarvesting?.brokerage || 0}
+                      onChange={(val) => updatePlan({
+                        taxOptimization: {
+                          ...planData.taxOptimization,
+                          taxLossHarvesting: { ...planData.taxOptimization?.taxLossHarvesting, brokerage: val }
+                        }
+                      })}
+                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
+                      step="1000"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 

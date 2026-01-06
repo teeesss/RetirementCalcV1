@@ -1,70 +1,59 @@
-/**
- * State Tax Engine
- * Handles specific state tax logic for supported states (AR, FL).
- * Returns flat rate or progressive calculation based on taxable income.
- */
-
-/*
- * Arkansas 2024/2025 Tax Brackets (Simplified Progressive Model)
- * Source: DFA Arkansas (Low/Mid/High Income Tables approximated)
- *
- * Logic:
- * - Income <= $5,299: ~2%
- * - Income <= $10,599: ~4%
- * - Income > $10,599 (High Earner Schedule):
- *   - First $5,299 @ 2%
- *   - Next $5,299 @ 4%
- *   - Over $10,599 @ 4.4% (Top Marginal Rate for 2024 is 4.4%, was 4.7%)
- */
-const calculateArkansasTax = (taxableIncome) => {
-    if (taxableIncome <= 0) return 0;
-
-    // 2024 Brackets for "High Income" Table (Taxable Income >= $10,000ish)
-    // We assume most users of this planner are in this bucket.
-    const brackets = [
-        { rate: 0.020, limit: 5299 },
-        { rate: 0.040, limit: 10599 },
-        { rate: 0.044, limit: Infinity }
-    ];
-
-    let tax = 0;
-    let prevLimit = 0;
-
-    for (const { rate, limit } of brackets) {
-        if (taxableIncome > prevLimit) {
-            const incomeInBracket = Math.min(taxableIncome, limit) - prevLimit;
-            tax += incomeInBracket * rate;
-            prevLimit = limit;
-        }
-    }
-
-    return tax;
-};
+import { STATE_BRACKETS, STATE_DEDUCTIONS } from '../data/stateTaxBrackets';
 
 /**
  * Calculate State Income Tax
+ * Uses data from stateTaxBrackets.js for progressive calculations.
+ *
  * @param {Object} params
- * @param {string} params.state - State Code (e.g. 'FL', 'AR')
- * @param {number} params.taxableIncome - Federal Taxable Income (approx proxy)
+ * @param {string} params.state - State Code (e.g. 'FL', 'AR', 'CA')
+ * @param {number} params.taxableIncome - Federal AGI (Used as proxy for State Taxable Income base)
  * @param {string} params.filingStatus - 'single', 'married', 'head'
  * @returns {number} Estimated state tax liability
  */
 export const calculateStateTaxModel = ({ state, taxableIncome, filingStatus }) => {
     if (!state) return 0;
+    const code = state.toUpperCase();
+    const stateData = STATE_BRACKETS[code];
 
-    const stateCode = state.toUpperCase();
+    // Unknown state: Return 0 (Caller 'taxEngine.js' falls back to flat rate override if this returns 0?
+    // Actually, taxEngine uses this result if enabled. If 0, it is 0.)
+    if (!stateData) return 0;
 
-    // Florida: 0%
-    if (stateCode === 'FL') return 0;
-
-    // Arkansas: Progressive
-    if (stateCode === 'AR') {
-        return calculateArkansasTax(taxableIncome);
+    // 1. Flat Tax Logic (TX, FL, WA, etc.)
+    if (Object.prototype.hasOwnProperty.call(stateData, 'flat')) {
+        return Math.max(0, taxableIncome * stateData.flat);
     }
 
-    // Default / Unknown State
-    // If the user has explicitly provided a "State Tax Rate" override elsewhere,
-    // that should be used by the caller as a fallback.
-    // This engine only returns calculated values for known states.
-    return 0;
+    // 2. Progressive Tax Logic
+    // Step A: Apply State Standard Deduction
+    const deductions = STATE_DEDUCTIONS[code];
+    // Simple mapping: 'married'/'joint' -> married, else single. Head of Household usually follows Single or Married depending on state, mapping to Single for MVP safety.
+    const isMarried = filingStatus === 'married' || filingStatus === 'joint';
+    const stdDeduction = deductions ? (isMarried ? deductions.married : deductions.single) : 0;
+
+    const stateTaxable = Math.max(0, taxableIncome - stdDeduction);
+
+    // Step B: Apply Brackets
+    const brackets = isMarried ? stateData.married : stateData.single;
+
+    if (!brackets) return 0;
+
+    let tax = 0;
+    let prevLimit = 0;
+
+    for (const [rate, limit] of brackets) {
+        if (stateTaxable > prevLimit) {
+            const inBracket = Math.min(stateTaxable, limit) - prevLimit;
+            tax += inBracket * rate;
+            prevLimit = limit;
+        }
+    }
+
+    // 3. Specific State Surcharges
+    // California Mental Health Services Act: 1% on income > $1M
+    if (code === 'CA' && stateTaxable > 1000000) {
+        tax += (stateTaxable - 1000000) * 0.01;
+    }
+
+    return tax;
 };

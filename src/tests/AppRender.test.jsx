@@ -31,6 +31,17 @@ Object.defineProperty(window, 'matchMedia', {
     })),
 });
 
+// Mock localStorage
+Object.defineProperty(window, 'localStorage', {
+    value: {
+        getItem: vi.fn(() => null),
+        setItem: vi.fn(),
+        removeItem: vi.fn(),
+        clear: vi.fn(),
+    },
+    writable: true
+});
+
 afterEach(() => {
     vi.restoreAllMocks();
 });
