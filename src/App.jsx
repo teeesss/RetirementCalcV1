@@ -625,6 +625,100 @@ function AppContent() {
     return () => window.removeEventListener('runSuccessOptimizer', handleOptimizerEvent);
   }, [handleAutoOptimize]);
 
+  // Listen for Spend More/Less simulation trigger from MonteCarloStats component
+  useEffect(() => {
+    const handleSpendingSimulation = async (e) => {
+      const multiplier = e.detail?.spendingMultiplier || 1.0;
+
+      // Get original spending from current ledger (most accurate source)
+      const currentLedgerSpending = ledger[0]?.expenses?.total || 0;
+      const originalSpending = currentLedgerSpending ||
+        planData.spending?.fixedAmount ||
+        ((planData.expenses?.essential || 0) + (planData.expenses?.discretionary || 0)) ||
+        100000; // Fallback to $100k if nothing found
+
+      // Create a temporary modified plan with adjusted spending
+      const modifiedPlan = JSON.parse(JSON.stringify(planData));
+      const adjustedSpending = Math.round(originalSpending * multiplier);
+
+      // Update spending amount in modifiedPlan
+      if (!modifiedPlan.spending) modifiedPlan.spending = {};
+      modifiedPlan.spending.fixedAmount = adjustedSpending;
+
+      if (!modifiedPlan.expenses) modifiedPlan.expenses = {};
+      // Scale essential/discretionary proportionally
+      const originalEssential = ledger[0]?.expenses?.essential || modifiedPlan.expenses.essential || 72000;
+      const originalDisc = ledger[0]?.expenses?.discretionary || modifiedPlan.expenses.discretionary || 28000;
+      modifiedPlan.expenses.essential = Math.round(originalEssential * multiplier);
+      modifiedPlan.expenses.discretionary = Math.round(originalDisc * multiplier);
+
+      // Show feedback
+      const pctText = (multiplier * 100).toFixed(0);
+      console.log(`📊 Simulating ${pctText}% spending: $${adjustedSpending.toLocaleString()}/year (original: $${originalSpending.toLocaleString()})`);
+
+      // Run Monte Carlo with modified plan
+      setIsCalculatingMC(true);
+      setMcProgress(0);
+
+      try {
+        // Generate modified ledger
+        const modifiedLedger = calculateLedger(modifiedPlan);
+
+        const client = modifiedPlan.people?.[0] || { age: 50, lifeExpectancy: 90 };
+        const spouse = modifiedPlan.people?.[1];
+
+        const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), { type: 'module' });
+
+        worker.onmessage = (msg) => {
+          const { type, progress, results } = msg.data;
+          if (type === 'progress') {
+            setMcProgress(progress);
+          } else if (type === 'result') {
+            setMonteCarloResults({
+              ...results,
+              spendingMultiplier: multiplier,
+              adjustedSpending
+            });
+            setIsCalculatingMC(false);
+            setMcProgress(0);
+            worker.terminate();
+
+            // Results now show in page via MonteCarloStats component
+            console.log(`✅ ${pctText}% Spending Simulation Complete - Success Rate: ${(results.successRate * 100).toFixed(1)}%`);
+          }
+        };
+
+        worker.onerror = (err) => {
+          console.error('Worker error:', err);
+          setIsCalculatingMC(false);
+          setMcProgress(0);
+          worker.terminate();
+        };
+
+        worker.postMessage({
+          startAge: client.age,
+          endAge: Math.max(client.lifeExpectancy || 90, spouse?.lifeExpectancy || 0),
+          iterations: modifiedPlan.monteCarlo?.iterations || 10000,
+          equityReturn: modifiedPlan.assumptions.equityReturn / 100,
+          equityVolatility: modifiedPlan.assumptions.equityVolatility / 100,
+          cryptoReturn: modifiedPlan.assumptions.cryptoReturn / 100,
+          cryptoVolatility: modifiedPlan.assumptions.cryptoVolatility / 100,
+          correlation: modifiedPlan.assumptions.correlation || 0.1,
+          enableCAPE: modifiedPlan.assumptions.enableCAPE,
+          spendingStrategy: modifiedPlan.assumptions.withdrawalStrategy || 'fixed',
+          ledger: modifiedLedger
+        });
+      } catch (err) {
+        console.error('Spending simulation error:', err);
+        setIsCalculatingMC(false);
+        alert('Simulation failed. Check console for details.');
+      }
+    };
+
+    window.addEventListener('runSpendingSimulation', handleSpendingSimulation);
+    return () => window.removeEventListener('runSpendingSimulation', handleSpendingSimulation);
+  }, [planData, calculateLedger, setMonteCarloResults]);
+
 
   const applyOptimization = () => {
     if (!optimizationResult) return;

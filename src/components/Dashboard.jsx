@@ -51,35 +51,35 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Outcome</div>
           <div className={`text-lg font-bold ${success.success ? 'text-green-600' : 'text-red-600'}`}>
             {success.success ? 'Solvent (95+)' : `Depleted (Age ${success.depletionAge || '??'})`}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Final Balance</div>
           <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
             {formatCurrency(success.finalBalance || 0)}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Net Worth</div>
           <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
             {formatCurrency(finalYear?.netWorth || 0)}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Lifetime Tax</div>
           <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
             {formatCurrency(lifetimeTax || 0)}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Lifetime SS</div>
           <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
             {formatCurrency(ledger.reduce((sum, year) => sum + (year.income?.ss || 0), 0))}
@@ -87,21 +87,21 @@ export default function Dashboard() {
         </div>
 
         {/* Heritage Value */}
-        <div className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800">
+        <div className="bg-emerald-50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-800 text-center">
           <div className="text-xs text-emerald-700 dark:text-emerald-400 mb-1 font-semibold">Net to Heirs</div>
           <div className="text-lg font-bold text-emerald-800 dark:text-emerald-300">
             {formatCurrency(netToHeirs)}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">🏰 Estate Value</div>
           <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
             {formatCurrency(grossEstate)}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 text-center">
           <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Estate Tax</div>
           <div className="text-lg font-bold text-red-600 dark:text-red-400">
             -{formatCurrency(estateTax)}
