@@ -174,12 +174,10 @@ Uses **Geometric Brownian Motion (GBM)** with Cholesky Decomposition for correla
 ## 6. Known Limitations & Roadmap
 
 ### Missing / TODO
-1.  **Estate Planning**: No calculation of inheritance taxes or "Step-up in Basis" at death.
-2.  **Roth Conversion Optimizer**: Currently we have a simple "Fill Bracket" toggle. A true optimizer would solve for the "Wait vs Pay Now" equilibrium over 30 years.
-3.  **Local Storage**: Scenarios are persisted, but main planData is not persisted between reloads.
-4.  **Specific State Tax**: Only detailed Federal logic exists. State tax is a flat rate input.
-5.  **Annuities**: No specific module for SPIA/DIA products.
-6.  **Spending Strategy Integration**: Dynamic spending strategies (Blanchett, Guardrails) have UI and logic but are not yet integrated into the ledger calculation loop.
+1.  **Roth Conversion Optimizer**: Currently we have a simple "Fill Bracket" toggle. A true optimizer would solve for the "Wait vs Pay Now" equilibrium over 30 years.
+2.  **Local Storage**: Scenarios are persisted, but main planData is not persisted between reloads.
+3.  **Specific State Tax**: Only detailed Federal logic exists. State tax is a flat rate input.
+4.  **Annuities**: No specific module for SPIA/DIA products.
 
 ### Performance
 - **Monte Carlo**: High iteration counts (>10k) are handled by Web Worker to prevent UI freezing.

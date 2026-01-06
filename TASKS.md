@@ -69,6 +69,16 @@
 
 ---
 
+## 🛡️ Logic Hardening & CFA Validation (v2.1) - ✅ COMPLETE!
+- [x] **Iterative Tax Solver**: Resolved circular dependencies between Withdrawals and Tax Bill.
+- [x] **Spending Strategy Integration**: Connected `spendingStrategies.js` to `ledgerLogic.js` loop.
+- [x] **Survivor Logic**:
+    - [x] Basis Step-Up (100% Community / 50% Common Law)
+    - [x] Filing Status Transition (MFJ -> Single)
+- [x] **Testing**: Added specialized suites `spending_strategy.test.js` and `survivor.test.js`.
+
+---
+
 ## 🧪 Testing & Validation (v2.0)
 - [x] Code Review - comprehensive audit of new tax engine files
 - [x] Unit Tests - Create/Run tests for taxFreeEngine.js

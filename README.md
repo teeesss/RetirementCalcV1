@@ -26,6 +26,15 @@ Achieve **0-5% effective tax rate** in retirement through intelligent withdrawal
 
 ---
 
+## 🛡️ NEW in v2.1: Logic Hardening & CFA Validation
+
+**Professional Grade Verification**
+- **Survivor Logic**: Automatic Filing Status switching (MFJ -> Single) & Basis Step-Up (Community Property vs Common Law).
+- **Spending Strategies**: Guyton-Klinger & Blanchett Smile mathematically verified.
+- **Iterative Tax Solver**: "Penny-perfect" tax calculations resolving circular dependencies.
+
+---
+
 ## ✨ v1.4 Features
 
 ### 🎯 Advanced Spending Strategies

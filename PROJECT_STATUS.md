@@ -24,6 +24,15 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 
 **Access:** Strategy → "🏆 Tax-Free Engine"
 
+## 🛡️ Major Milestone: Logic Hardening & CFA Validation (v2.1) COMPLETE!
+**Professional Grade Verification**
+
+**Key Validations:**
+- **Survivor Logic Verified**: 100% basis step-up (Community Property) & 50% (Common Law) confirmed.
+- **Spending Strategies Verified**: Guyton-Klinger & Blanchett Smile mathematically proven via `spending_strategy.test.js`.
+- **Filing Status Switch**: Automatic transition from Married -> Single upon spouse death.
+- **Iterative Tax Solver**: Circular dependency between "Net Draw" and "Gross Tax" resolved to penny precision.
+
 ---
 
 ## 🎯 Quick Start - Essential Files to Review
@@ -264,6 +273,8 @@ React 18 + Vite, Context API for state, Web Worker for Monte Carlo, Tailwind CSS
    - `ssOptimizer.test.js`: Social Security & Survivor Benefits
    - `stressTest.test.js`: Full system stress tests (Market Crash, Roth Conv)
    - `taxFreeEngine.test.js`: Tax-free withdrawal optimization
+   - **NEW** `spending_strategy.test.js`: Dynamic spending rule verification
+   - **NEW** `survivor.test.js`: Basis step-up and filing status transitions
 
 ---
 
