@@ -646,11 +646,23 @@ function AppContent() {
       modifiedPlan.spending.fixedAmount = adjustedSpending;
 
       if (!modifiedPlan.expenses) modifiedPlan.expenses = {};
-      // Scale essential/discretionary proportionally
-      const originalEssential = ledger[0]?.expenses?.essential || modifiedPlan.expenses.essential || 72000;
-      const originalDisc = ledger[0]?.expenses?.discretionary || modifiedPlan.expenses.discretionary || 28000;
-      modifiedPlan.expenses.essential = Math.round(originalEssential * multiplier);
-      modifiedPlan.expenses.discretionary = Math.round(originalDisc * multiplier);
+
+      // SCALE ALL EXPENSE FIELDS: calculateExpenses prioritzes Monthly if present
+      if (modifiedPlan.expenses.essentialMonthly !== undefined) {
+        modifiedPlan.expenses.essentialMonthly = Math.round(modifiedPlan.expenses.essentialMonthly * multiplier);
+      }
+      if (modifiedPlan.expenses.discretionaryMonthly !== undefined) {
+        modifiedPlan.expenses.discretionaryMonthly = Math.round(modifiedPlan.expenses.discretionaryMonthly * multiplier);
+      }
+      if (modifiedPlan.expenses.essential !== undefined) {
+        modifiedPlan.expenses.essential = Math.round(modifiedPlan.expenses.essential * multiplier);
+      }
+      if (modifiedPlan.expenses.discretionary !== undefined) {
+        modifiedPlan.expenses.discretionary = Math.round(modifiedPlan.expenses.discretionary * multiplier);
+      }
+      if (modifiedPlan.expenses.baseMonthly !== undefined) {
+        modifiedPlan.expenses.baseMonthly = Math.round(modifiedPlan.expenses.baseMonthly * multiplier);
+      }
 
       // Show feedback
       const pctText = (multiplier * 100).toFixed(0);
@@ -663,6 +675,9 @@ function AppContent() {
       try {
         // Generate modified ledger
         const modifiedLedger = calculateLedger(modifiedPlan);
+
+        // DIAGNOSTIC: Verify first year of modified ledger
+        console.log(`📊 Modified Ledger Y0: Total Expenses: $${modifiedLedger[0]?.expenses?.total?.toLocaleString()}, Net Worth: $${modifiedLedger[0]?.netWorth?.toLocaleString()}`);
 
         const client = modifiedPlan.people?.[0] || { age: 50, lifeExpectancy: 90 };
         const spouse = modifiedPlan.people?.[1];
@@ -730,6 +745,9 @@ function AppContent() {
       setMcProgress(0);
 
       try {
+        // DIAGNOSTIC: Verify first year of current ledger before passing to worker
+        console.log(`📊 Scenario Ledger Y0: Total Expenses: $${ledger[0]?.expenses?.total?.toLocaleString()}, Net Worth: $${ledger[0]?.netWorth?.toLocaleString()}`);
+
         const client = planData.people?.[0] || { age: 50, lifeExpectancy: 90 };
         const spouse = planData.people?.[1];
 

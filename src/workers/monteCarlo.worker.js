@@ -191,8 +191,12 @@ self.onmessage = (e) => {
             // 2. Get reference data from ledger but DON'T re-apply flows
             // CRITICAL FIX: ledger[y].balances already HAS flows applied
             // We only use ledger for spending amounts and metadata
-            const annualSpending = baseYearData.annualExpenses || 0;
+            const annualSpending = baseYearData.expenses?.total || baseYearData.annualExpenses || 0;
             const withdrawals = baseYearData.withdrawals || {};
+
+            if (iter === 0 && y === 0) {
+                console.log(`DIAGNOSTIC MC Year 0: Spending Identified: ${annualSpending}`);
+            }
 
             // --- Dynamic Spending Adjustment ---
             const totalAssetsAtStart = Object.values(currentBalances).reduce((a, b) => a + b, 0);
