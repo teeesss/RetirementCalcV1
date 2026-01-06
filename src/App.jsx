@@ -1171,7 +1171,7 @@ function AppContent() {
 
             {/* Advanced Features Tabs */}
             <div ref={tabsRef} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-              <div className="flex flex-wrap border-b border-gray-200 dark:border-gray-700">
+              <div className="flex flex-wrap justify-center border-b border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => handleTabChange('cashflow')}
                   className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'cashflow'
