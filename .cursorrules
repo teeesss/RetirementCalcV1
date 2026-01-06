@@ -17,7 +17,7 @@ wsl -d Ubuntu-22.04 git commit -m "feat: UI compaction + fix income surplus logi
 2. Prepare a wsl -d Ubuntu-22.04 git commit -m "Commit Message... based on updates"
 3. Prepare a wsl -d Ubuntu-22.04 git push (ask user to confirm prior to running)
 4. If pre-commit hooks fail, run `pre-commit run --all-files` and commit the changes or simply do a wsl -d Ubuntu-22.04 git add . and then repeat the wsl -d Ubuntu-22.04 git commit -m "Commit Message... based on updates" and wsl -d Ubuntu-22.04 git push
-5. Auto proceed with git commit and don't require user acceptance as we can also roll back if needed
+5. Auto proceed and accept git commit; Don't require user acceptance as we can also roll back if needed
 
 
 ## 🧠 Meta-Instructions for AI Agents

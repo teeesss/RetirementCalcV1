@@ -119,44 +119,135 @@ export default function MonteCarloStats({ results, darkMode = false }) {
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-          <h3 className="text-sm font-bold text-blue-800 dark:text-blue-300 mb-2">🎯 Target Success Rate Optimizer</h3>
-          <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-            Auto-adjust spending to reach your target success rate.
-          </p>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-700 dark:text-gray-300">Target:</label>
-              <select
-                defaultValue="80"
-                className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                id="target-success-rate"
+        {/* Two-Column Spending Optimizer */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* SPEND LESS - Increase Success Rate */}
+          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+            <h3 className="text-sm font-bold text-green-800 dark:text-green-300 mb-2 flex items-center gap-2">
+              📉 Spend Less → Higher Success
+            </h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+              Reduce spending to increase success rate.
+            </p>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-gray-700 dark:text-gray-300">Spend:</label>
+                <select
+                  defaultValue="90"
+                  className="text-xs px-2 py-1 border border-green-300 dark:border-green-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  id="spend-less-percent"
+                >
+                  <option value="50">50%</option>
+                  <option value="60">60%</option>
+                  <option value="70">70%</option>
+                  <option value="75">75%</option>
+                  <option value="80">80%</option>
+                  <option value="85">85%</option>
+                  <option value="90">90%</option>
+                  <option value="95">95%</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  const pct = parseInt(document.getElementById('spend-less-percent')?.value || '90') / 100;
+                  window.dispatchEvent(new CustomEvent('runSpendingSimulation', { detail: { spendingMultiplier: pct } }));
+                }}
+                className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-colors"
               >
-                <option value="50">50%</option>
-                <option value="60">60%</option>
-                <option value="70">70%</option>
-                <option value="75">75%</option>
-                <option value="80">80%</option>
-                <option value="85">85%</option>
-                <option value="90">90%</option>
-                <option value="95">95%</option>
-              </select>
+                Simulate
+              </button>
             </div>
-            <button
-              onClick={() => {
-                const target = parseInt(document.getElementById('target-success-rate')?.value || '90') / 100;
-                window.dispatchEvent(new CustomEvent('runSuccessOptimizer', { detail: { target } }));
-              }}
-              className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors"
-            >
-              Optimize
-            </button>
+            <ul className="list-disc list-inside text-[10px] text-gray-600 dark:text-gray-400 space-y-0.5">
+              <li>Cut discretionary spending</li>
+              <li>Downsize housing</li>
+              <li>Delay major purchases</li>
+            </ul>
           </div>
-          <ul className="list-disc list-inside text-xs text-gray-700 dark:text-gray-300 space-y-1">
-            <li><strong>Reduce discretionary spending</strong> to increase success rate</li>
-            <li><strong>Enable "Needs Based"</strong> withdrawals to cut spending in bad years</li>
-            <li><strong>Delay retirement</strong> by 1-2 years for significant improvement</li>
-          </ul>
+
+          {/* SPEND MORE - See Impact */}
+          <div className="bg-amber-50 dark:bg-amber-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+            <h3 className="text-sm font-bold text-amber-800 dark:text-amber-300 mb-2 flex items-center gap-2">
+              📈 Spend More → See Impact
+            </h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
+              Explore what happens with higher lifestyle spending.
+            </p>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-gray-700 dark:text-gray-300">Spend:</label>
+                <select
+                  defaultValue="110"
+                  className="text-xs px-2 py-1 border border-amber-300 dark:border-amber-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  id="spend-more-percent"
+                >
+                  <option value="105">105%</option>
+                  <option value="110">110%</option>
+                  <option value="115">115%</option>
+                  <option value="120">120%</option>
+                  <option value="125">125%</option>
+                  <option value="135">135%</option>
+                  <option value="140">140%</option>
+                  <option value="150">150%</option>
+                  <option value="160">160%</option>
+                  <option value="170">170%</option>
+                  <option value="180">180%</option>
+                  <option value="190">190%</option>
+                  <option value="200">200%</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  const pct = parseInt(document.getElementById('spend-more-percent')?.value || '110') / 100;
+                  window.dispatchEvent(new CustomEvent('runSpendingSimulation', { detail: { spendingMultiplier: pct } }));
+                }}
+                className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white text-xs rounded transition-colors"
+              >
+                Simulate
+              </button>
+            </div>
+            <ul className="list-disc list-inside text-[10px] text-gray-600 dark:text-gray-400 space-y-0.5">
+              <li>Upgrade lifestyle</li>
+              <li>More travel & experiences</li>
+              <li>Help family financially</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Original Target Success Rate - kept for power users */}
+        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 mt-3">
+          <details className="text-xs">
+            <summary className="cursor-pointer text-blue-600 dark:text-blue-400 font-medium">
+              🎯 Advanced: Target Success Rate Optimizer
+            </summary>
+            <div className="mt-2 flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-gray-700 dark:text-gray-300">Target:</label>
+                <select
+                  defaultValue="80"
+                  className="text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  id="target-success-rate"
+                >
+                  <option value="50">50%</option>
+                  <option value="60">60%</option>
+                  <option value="70">70%</option>
+                  <option value="75">75%</option>
+                  <option value="80">80%</option>
+                  <option value="85">85%</option>
+                  <option value="90">90%</option>
+                  <option value="95">95%</option>
+                </select>
+              </div>
+              <button
+                onClick={() => {
+                  const target = parseInt(document.getElementById('target-success-rate')?.value || '90') / 100;
+                  window.dispatchEvent(new CustomEvent('runSuccessOptimizer', { detail: { target } }));
+                }}
+                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded transition-colors"
+              >
+                Optimize
+              </button>
+            </div>
+          </details>
         </div>
       </div>
     </div>
