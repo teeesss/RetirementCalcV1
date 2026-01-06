@@ -55,7 +55,7 @@
 
 ## 🐛 Bug Fixes & UI Improvements (v2.0.1)
 - [x] **Withdrawal Rule Drag-and-Drop**: Fix reorder functionality in Create Withdrawal Rule UI
-- [ ] **Withdrawal Rule Dollar Limits**: Add per-bucket dollar amount limits (e.g., max $50k from Brokerage per year)
+- [x] **Withdrawal Rule Dollar Limits**: Add per-bucket dollar amount limits (e.g., max $50k from Brokerage per year)
 - [ ] **Target Success Rate Optimizer**: Auto-dial withdrawals to reach a user-specified success rate (e.g., 90%)
 
 ---

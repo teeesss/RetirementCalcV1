@@ -241,6 +241,8 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
     }
 
     let brokerageBasis = (assets.brokerageBasis?.joint || assets.brokerageBasis?.client || assets.brokerageBasis?.spouse || 0);
+    // Initialize Crypto Basis - If not explicitly tracked, assume current value (fresh start)
+    let cryptoBasis = calculateCryptoBalance(assets.crypto);
 
     const ledger = [];
     let lossBank = 0;
@@ -863,7 +865,9 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
                 brokerageBasis, taxLossHarvesting: lossBank,
                 strategy: {
                     ...taxOptimization,
-                    allowRothConversion: taxOptimization.enableRothConversion,
+                    allowRothConversion: taxOptimization.enableRothConversion || (taxOptimization.rothStrategy === '12' || taxOptimization.rothStrategy === '22' || taxOptimization.rothStrategy === '24'),
+                    rothConversionBracket: taxOptimization.rothStrategy === '12' ? 0.12 : (taxOptimization.rothStrategy === '24' ? 0.24 : 0.22),
+                    order: taxOptimization.withdrawalOrder || 'standard',
                     shouldPayTaxes: false,
                     itemizedItems
                 },
@@ -880,7 +884,8 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
 
         brokerageBasis += totalDividends;
 
-        const { withdrawals, taxes: taxBill, realizedGains = 0 } = iterationResult;
+        const { withdrawals, taxes: taxBill } = iterationResult;
+        let realizedGains = iterationResult.realizedGains || 0;
 
         // Initialize Cash Flow Tracker for this Year
         const trackedCashFlow = {
@@ -998,6 +1003,68 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
         // Cash has its own return rate
         balances.cash *= (1 + (assumptions.cashReturn || 2) / 100);
 
+        // --- RIGOROUS VALIDATION: TLH Cost (Basis Reduction) ---
+        // You cannot harvest losses forever without reducing basis.
+        // We assume the "Annual TLH" claimed reduces the cost basis of the asset.
+        const cryptoTLH = taxOptimization?.taxLossHarvesting?.crypto || 0;
+        const brokerageTLH = taxOptimization?.taxLossHarvesting?.brokerage || 0;
+
+        // Crypto TLH
+        if (cryptoTLH > 0 && balances.crypto > 0) {
+            // Can only reduce basis to 0
+            const reduction = Math.min(cryptoTLH, cryptoBasis);
+            cryptoBasis = Math.max(0, cryptoBasis - reduction);
+            // If we successfully reduced basis, we credit the loss bank
+            if (reduction > 0) {
+                // Note: logic line 662 already adds total `annualTLH` to lossBank.
+                // We should ideally coupled them. For now, this basis reduction is the "Side Effect".
+            }
+        }
+
+        // Brokerage TLH
+        if (brokerageTLH > 0 && balances.brokerage > 0) {
+            const reduction = Math.min(brokerageTLH, brokerageBasis);
+            brokerageBasis = Math.max(0, brokerageBasis - reduction);
+        }
+
+        // --- RIGOROUS VALIDATION: Crypto Rebalancing (The "Age 95 Anomaly" Fix) ---
+        // If Crypto exceeds X% of portfolio, sell down to target and move to Brokerage.
+        // Triggers Taxable Event (LTCG).
+        const totalPort = balances.brokerage + balances.crypto + balances.traditional + balances.roth + balances.hsa + balances.cash;
+        const cryptoAlloc = balances.crypto / totalPort;
+        const maxCrypto = assumptions.maxCryptoAllocation || 0.20; // Default 20% cap to prevent runaway
+
+        if (balances.crypto > 0 && cryptoAlloc > maxCrypto) {
+            const targetAmt = totalPort * maxCrypto;
+            const sellAmt = balances.crypto - targetAmt;
+
+            if (sellAmt > 1000) { // Threshold to avoid noise
+                // Sell Crypto
+                balances.crypto -= sellAmt;
+
+                // Calculate Basis portion sold
+                // Basis Ratio
+                const basisRatio = (balances.crypto + sellAmt) > 0 ? (cryptoBasis / (balances.crypto + sellAmt)) : 0;
+                const costSold = sellAmt * basisRatio;
+                const gain = Math.max(0, sellAmt - costSold);
+
+                // Reduce Basis
+                cryptoBasis = Math.max(0, cryptoBasis - costSold);
+
+                // Add to Realized Gains for this year (Tax Hit!)
+                realizedGains += gain;
+
+                // Move Proceeds to Brokerage (Net of Tax? No, Tax is calc'd at end of year globally)
+                // We move Gross Proceeds to Brokerage, Tax bill will increase
+                balances.brokerage += sellAmt;
+                // Add to Brokerage Basis (since we just bought it)
+                brokerageBasis += sellAmt;
+
+                // console.log(`[Rebalance ${currentYear}] Sold ${Math.round(sellAmt)} Crypto. Gain: ${Math.round(gain)}. New Balance: ${Math.round(balances.crypto)}`);
+            }
+        }
+
+
         // Recalculate aggregate fields from granular (DO NOT apply growth to them directly)
         balances.traditional = balances.traditionalClient + balances.traditionalSpouse;
         balances.roth = balances.rothClient + balances.rothSpouse;
@@ -1031,7 +1098,11 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             grossIncome: totalGrossIncome,
             filingStatus: currentFilingStatus, // Use dynamic status
             stateRate: assumptions.stateTaxRate || 0,
-            capitalGains: { short: 0, long: realizedGains }, // Only LTCG tracked for now
+            capitalGains: {
+                short: i < 1 ? realizedGains : 0,
+                long: i < 1 ? 0 : realizedGains
+            }, // Year 1 Rebal = STCG (Conservative), Year 2+ = LTCG
+            capitalLosses: lossBank,
             deductionMode: 'standard',
             itemizedDeduction: 0,
             age: clientAge,
@@ -1040,6 +1111,12 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             stateOfResidence: currentData.profile?.stateOfResidence || 'FL',
             stateTaxModel: currentData.profile?.stateTaxModel || { enabled: false }
         });
+
+        // Update Carryover (The Carrot - Persistence)
+        // Reduce the loss bank by the amount actually used this year (either against gains or ordinary income)
+        if (taxResult.capitalLossesUsed > 0) {
+            lossBank = Math.max(0, lossBank - taxResult.capitalLossesUsed);
+        }
 
         // We just need discretionaryExpenses.
         const discretionaryExpenses = (expenses.discretionary || 0) * ((i === 0) ? 1 : Math.pow(1 + (assumptions.inflationRate / 100), i));
@@ -1089,7 +1166,9 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
                 traditionalSpouse: balances.traditionalSpouse,
                 rothClient: balances.rothClient,
                 rothSpouse: balances.rothSpouse,
-                brokerageBasis: brokerageBasis // Expose for testing/verification
+                brokerageBasis: brokerageBasis,
+                cryptoBasis: cryptoBasis,
+                lossBank: lossBank // Expose for audit/testing
             },
             cashFlow: {
                 byAccount: trackedCashFlow

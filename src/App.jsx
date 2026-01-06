@@ -1109,64 +1109,7 @@ function AppContent() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-red-500 dark:border-red-600 shadow-sm">
-              <h2 className="text-[10px] font-bold mb-1 text-red-600 dark:text-red-400 uppercase">7. Debt & Liab</h2>
-              <div className="space-y-1">
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-1 uppercase">Mortgage Balance</label>
-                  <SmartInput
-                    value={planData.realEstate?.[0]?.mortgage?.balance || planData.mortgage?.balance || 0}
-                    onChange={(val) => {
-                      const updates = { mortgage: { ...(planData.mortgage || {}), balance: val } };
-                      const newRE = [...(planData.realEstate || [])];
-                      if (newRE[0]) {
-                        newRE[0].mortgage = { ...newRE[0].mortgage, balance: val };
-                        updates.realEstate = newRE;
-                      }
-                      updatePlan(updates);
-                    }}
-                    className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 font-bold"
-                    step="1000"
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div>
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">Rate %</label>
-                    <SmartInput
-                      value={planData.realEstate?.[0]?.mortgage?.rate || planData.mortgage?.rate || 0}
-                      onChange={(val) => {
-                        const updates = { mortgage: { ...(planData.mortgage || {}), rate: val } };
-                        const newRE = [...(planData.realEstate || [])];
-                        if (newRE[0]) {
-                          newRE[0].mortgage = { ...newRE[0].mortgage, rate: val };
-                          updates.realEstate = newRE;
-                        }
-                        updatePlan(updates);
-                      }}
-                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                      step="0.001"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">P&I Pmt</label>
-                    <SmartInput
-                      value={planData.realEstate?.[0]?.mortgage?.paymentPI || planData.mortgage?.paymentPI || 0}
-                      onChange={(val) => {
-                        const updates = { mortgage: { ...(planData.mortgage || {}), paymentPI: val } };
-                        const newRE = [...(planData.realEstate || [])];
-                        if (newRE[0]) {
-                          newRE[0].mortgage = { ...newRE[0].mortgage, paymentPI: val };
-                          updates.realEstate = newRE;
-                        }
-                        updatePlan(updates);
-                      }}
-                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
-                      step="100"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+
           </div>
 
           {/* Main Content */}

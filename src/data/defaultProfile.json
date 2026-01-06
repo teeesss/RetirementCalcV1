@@ -89,17 +89,17 @@
     "crypto": {
       "btc": {
         "quantity": 4.5,
-        "price": 87000,
+        "price": 93000,
         "owner": "client"
       },
       "eth": {
         "quantity": 4.0,
-        "price": 3000,
+        "price": 3200,
         "owner": "client"
       },
       "sol": {
-        "quantity": 13.0,
-        "price": 130,
+        "quantity": 14.2,
+        "price": 140,
         "owner": "client"
       }
     }

@@ -312,17 +312,34 @@ export default function CustomWithdrawalRules() {
                                                     )}
                                                     {limit.type === 'percent' && (
                                                         <div className="flex items-center gap-1">
-                                                            <input
-                                                                type="number"
-                                                                value={limit.maxPercent || ''}
-                                                                onChange={(e) => {
-                                                                    const newAmounts = { ...editingRule.amounts, [accId]: { ...limit, maxPercent: Number(e.target.value) } };
-                                                                    setEditingRule({ ...editingRule, amounts: newAmounts });
-                                                                }}
-                                                                placeholder="10"
-                                                                className="w-14 text-xs px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                                                            />
-                                                            <span className="text-xs text-gray-500">%</span>
+                                                            <div className="flex items-center">
+                                                                <input
+                                                                    type="number"
+                                                                    value={limit.maxPercent || ''}
+                                                                    onChange={(e) => {
+                                                                        const newAmounts = { ...editingRule.amounts, [accId]: { ...limit, maxPercent: Number(e.target.value) } };
+                                                                        setEditingRule({ ...editingRule, amounts: newAmounts });
+                                                                    }}
+                                                                    placeholder="50"
+                                                                    className="w-10 text-xs px-1 py-1 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                                />
+                                                                <span className="text-xs px-1 py-1 bg-gray-100 dark:bg-gray-600 border-y border-r border-gray-300 dark:border-gray-600 rounded-r text-gray-500 dark:text-gray-300">%</span>
+                                                            </div>
+                                                            <span className="text-xs text-gray-400">up to</span>
+                                                            <div className="relative">
+                                                                <span className="absolute left-1 top-1 text-xs text-gray-500">$</span>
+                                                                <input
+                                                                    type="number"
+                                                                    value={limit.maxDollarCap || ''}
+                                                                    onChange={(e) => {
+                                                                        const newAmounts = { ...editingRule.amounts, [accId]: { ...limit, maxDollarCap: Number(e.target.value) } };
+                                                                        setEditingRule({ ...editingRule, amounts: newAmounts });
+                                                                    }}
+                                                                    placeholder="Cap"
+                                                                    className="w-16 text-xs pl-3 pr-1 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                                                                    title="Optional max dollar amount"
+                                                                />
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </div>

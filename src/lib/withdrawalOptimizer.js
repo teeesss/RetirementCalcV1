@@ -173,7 +173,8 @@ function executeWaterfall({
   filingStatus,
   targetBracket,
   allowRothConversion,
-  rothConversionBracket
+  rothConversionBracket,
+  order
 }) {
   let remainingNeed = Math.max(0, needed);
 
@@ -211,8 +212,10 @@ function executeWaterfall({
     remainingNeed -= amount;
   }
 
-  // 1. Standard Deduction Gap (Traditional IRA)
-  // Strategy: Fill up to Standard Deduction with Traditional IRA (0% Effective Tax).
+  // --- DYNAMIC WATERFALL ORDERING ---
+  const isOptimal = (order === 'optimal');
+
+  // 1. Standard Deduction Gap (Traditional IRA) - Always smart to use 0% space
   if (remainingNeed > 0 && balances.traditional > 0) {
     const stdDed = getStandardDeduction(filingStatus, age);
     const headroom = Math.max(0, stdDed - currentOrdinary);
@@ -226,18 +229,23 @@ function executeWaterfall({
     }
   }
 
-  // 2. 0% LTCG Bucket (Brokerage)
-  // Strategy: Fill the 0% Capital Gains bucket.
-  // Limit: Taxable Income (Ordinary + LTCG) < Limit.
-  // Note: Ordinary Income "pushes" LTCG up the brackets.
-  if (remainingNeed > 0 && balances.brokerage > 0) {
-    const ltcgCap = getLTCGLimit(filingStatus, 0.0); // Limit for 0%
+  // 2. Brokerage (Taxable) - Prioritize in Optimal to let tax-advantaged grow
+  if (isOptimal && remainingNeed > 0 && balances.brokerage > 0) {
+    const amount = Math.min(remainingNeed, balances.brokerage);
+    balances.brokerage -= amount;
+    w.brokerage += amount;
+    remainingNeed -= amount;
+    // Gain calc logic duplicated for safety
+    const totalBrok = balances.brokerage + amount;
+    const ratio = (totalBrok > 0) ? Math.max(0, (totalBrok - brokerageBasis) / totalBrok) : 0;
+    currentLTCG += (amount * ratio);
+  }
+
+  // 2b. Standard Order: 0% LTCG Bucket (Brokerage)
+  if (!isOptimal && remainingNeed > 0 && balances.brokerage > 0) {
+    const ltcgCap = getLTCGLimit(filingStatus, 0.0);
     const stdDed = getStandardDeduction(filingStatus, age);
-
-    // Taxable Ordinary (AGI - Deduction)
     const taxableOrdinary = Math.max(0, currentOrdinary - stdDed);
-
-    // Room in 0% Bucket
     const room = Math.max(0, ltcgCap - taxableOrdinary - currentLTCG);
 
     if (room > 0) {
@@ -245,56 +253,29 @@ function executeWaterfall({
       balances.brokerage -= amount;
       w.brokerage += amount;
       remainingNeed -= amount;
-      // Calculate Gain portion
-      const gainRatio = getGainRatio(balances.brokerage + amount, brokerageBasis);
-      // Note: Basis logic is tricky as we withdraw.
-      // Simplified: Assume average cost basis for the account
-      // Or LIFO if tracked? Let's use average basis calculation passed in?
-      // Re-calculating gain based on global ratio for the account
-      // Need total original balance to calc ratio correctly?
-      // Approximation: Use current gain ratio
-      // But brokerageBasis is an absolute amount?
-      // Let's assume brokerageBasis is the total basis for the starting balance.
-      // Gain Ratio = (Balance - Basis) / Balance.
-      // We apply this ratio to the withdrawal.
-
-      const totalBrok = balances.brokerage + amount; // Restoration to pre-withdrawal step state
+      const totalBrok = balances.brokerage + amount;
       const ratio = (totalBrok > 0) ? Math.max(0, (totalBrok - brokerageBasis) / totalBrok) : 0;
       currentLTCG += (amount * ratio);
-
-      // Update basis strictly? If we withdraw $10k and 1k is gain, 9k is basis.
-      // brokerageBasis -= (amount * (1 - ratio));
-      // For this function scope, we just track the Gain $ for tax.
     }
   }
 
   // 3. HSA (Buffer / Ordinary)
-  // Using HSA as "Stealth IRA" or buffer before hitting higher brackets
   if (remainingNeed > 0 && balances.hsa > 0) {
     const amount = Math.min(remainingNeed, balances.hsa);
     balances.hsa -= amount;
     w.hsa += amount;
-    // HSA withdrawals for non-medical are ordinary income + penalty if < 65.
-    // Assuming 65+ for retirement withdrawals or medical reimbursement (tax free).
-    // If medical, 0 tax. If not, Ordinary.
-    // Logic Assumption: If used here in waterfall, likely Ordinary (retirement income).
-    // But if treating as Medical reimbursement?
-    // Let's conservatively assume Ordinary Income if Age > 65, else Penalty?
-    // V2 Spec: "Use as Ordinary buffer".
-    if (age >= 65) {
-      currentOrdinary += amount;
-    }
+    if (age >= 65) currentOrdinary += amount;
     remainingNeed -= amount;
   }
 
   // 4. Marginal Cap (Traditional IRA)
   if (remainingNeed > 0 && balances.traditional > 0) {
+    // If Optimal, we might want to fill HIGHER brackets?
+    // Or just stick to targetBracket (default 22%)
     const bracketLimit = getBracketCeiling(filingStatus, targetBracket);
     const stdDed = getStandardDeduction(filingStatus, age);
     const taxableOrdinary = Math.max(0, currentOrdinary - stdDed);
     const room = Math.max(0, bracketLimit - taxableOrdinary);
-
-    console.log(`[WaterfallStep4] Need=${remainingNeed} Bal=${balances.traditional} Ord=${currentOrdinary} Taxable=${taxableOrdinary} Limit=${bracketLimit} Room=${room}`);
 
     if (room > 0) {
       const amount = Math.min(remainingNeed, balances.traditional, room);
@@ -306,7 +287,7 @@ function executeWaterfall({
   }
 
   // 5. Roth IRA (Last Resort / Tax Free)
-  // Preserve for legacy, but use if needed to avoid spiking tax rate.
+  // Optimal: Push this as late as possible.
   if (remainingNeed > 0 && balances.roth > 0) {
     const amount = Math.min(remainingNeed, balances.roth);
     balances.roth -= amount;
@@ -315,20 +296,14 @@ function executeWaterfall({
   }
 
   // 6. Spillover (Brokerage - Pay Capital Gains)
-  if (remainingNeed > 0 && balances.brokerage > 0) {
+  // If optimal, we already drained brokerage in step 2.
+  if (!isOptimal && remainingNeed > 0 && balances.brokerage > 0) {
     const amount = Math.min(remainingNeed, balances.brokerage);
     balances.brokerage -= amount;
     w.brokerage += amount;
     remainingNeed -= amount;
-
-    // Calc Gain
-    const totalBrokStart = balances.brokerage + amount + w.brokerage; // Rough approx of starting
-    // Better: We calculated ratio earlier.
-    // Let's perform a clean ratio calc at top of function?
-    // See Helper below.
-    const ratio = getGainRatio(balances.brokerage + amount + w.brokerage, brokerageBasis);
-    // Wait, w.brokerage includes step 2.
-    // Ideally we define one ratio for the year.
+    const totalBrok = balances.brokerage + amount;
+    const ratio = (totalBrok > 0) ? Math.max(0, (totalBrok - brokerageBasis) / totalBrok) : 0;
     currentLTCG += (amount * ratio);
   }
 
@@ -337,7 +312,7 @@ function executeWaterfall({
     const amount = Math.min(remainingNeed, balances.traditional);
     balances.traditional -= amount;
     w.traditional += amount;
-    currentOrdinary += amount;
+    currentOrdinary += amount; // This spikes income!
     remainingNeed -= amount;
   }
 
@@ -347,7 +322,7 @@ function executeWaterfall({
     balances.crypto -= amount;
     w.crypto += amount;
     remainingNeed -= amount;
-    currentLTCG += amount; // Assume 100% gain or 0 basis for simplicity / conservative
+    currentLTCG += amount;
   }
 
   // Roth Conversion (Constraint: Only if strict gap is met and no spillover? Or parallel?)
