@@ -84,45 +84,63 @@ self.onmessage = (e) => {
                 // Diagnostic removed
             }
 
-            // 2. Growth & Cash Flow
-            const flow = { ...(baseYearData.cashFlow?.byAccount || {}) };
+            // 2. Get reference data from ledger but DON'T re-apply flows
+            // CRITICAL FIX: ledger[y].balances already HAS flows applied
+            // We only use ledger for spending amounts and metadata
+            const annualSpending = baseYearData.annualExpenses || 0;
+            const withdrawals = baseYearData.withdrawals || {};
 
             // --- Dynamic Spending Adjustment ---
-            // Calculate what the "deterministic" spending was
             const totalAssetsAtStart = Object.values(currentBalances).reduce((a, b) => a + b, 0);
+
+            let targetSpending = annualSpending;
 
             // Only adjust if we have a strategy and it's retirement years
             if (spendingStrategy && spendingStrategy !== 'fixed' && baseYearData.isRetired) {
-                let targetSpending = baseYearData.annualExpenses; // Default from ledger
-
                 if (spendingStrategy === 'percentage') {
                     const rate = (spendingParams?.percentage || 4) / 100;
                     targetSpending = totalAssetsAtStart * rate;
                 } else if (spendingStrategy === 'guytonKlinger') {
-                    // Simplified GK implementation for MC
                     const initialRate = (spendingParams?.guytonKlinger?.initialRate || 4) / 100;
-                    // ... implementation details for GK would go here, but for now let's at least scale by percentage
                     targetSpending = totalAssetsAtStart * initialRate;
                 }
-
-                // Calculate correction factor
-                const ledgerSpending = baseYearData.annualExpenses;
-                const correctionFactor = ledgerSpending > 0 ? targetSpending / ledgerSpending : 1;
-
-                // Scale withdrawals proportionally
-                ['traditionalClient', 'traditionalSpouse', 'rothClient', 'rothSpouse', 'brokerage', 'crypto', 'cash'].forEach(acc => {
-                    if (flow[acc] < 0) { // It's a withdrawal
-                        flow[acc] *= correctionFactor;
-                    }
-                });
             }
 
-            // Apply Flows (Contributions, Withdrawals, Taxes, Surplus - all netted out)
-            Object.keys(flow).forEach(key => {
-                if (currentBalances[key] !== undefined) {
-                    currentBalances[key] += flow[key];
+            // Apply spending as withdrawal from accounts (proportional to ledger's withdrawal pattern)
+            const ledgerTotalWithdrawal = (withdrawals.traditional || 0) + (withdrawals.roth || 0) +
+                (withdrawals.brokerage || 0) + (withdrawals.hsa || 0) + (withdrawals.crypto || 0) + (withdrawals.cash || 0);
+
+            if (ledgerTotalWithdrawal > 0 && targetSpending > 0) {
+                // Scale each account's withdrawal proportionally
+                const scaleFactor = targetSpending / ledgerTotalWithdrawal;
+                const withdrawalRatios = {
+                    traditionalClient: ((withdrawals.traditional || 0) * (baseYearData.balances?.traditionalClient || 0.5) / (baseYearData.balances?.traditional || 1)) / ledgerTotalWithdrawal,
+                    traditionalSpouse: ((withdrawals.traditional || 0) * (baseYearData.balances?.traditionalSpouse || 0.5) / (baseYearData.balances?.traditional || 1)) / ledgerTotalWithdrawal,
+                    rothClient: ((withdrawals.roth || 0) * 0.5) / ledgerTotalWithdrawal,
+                    rothSpouse: ((withdrawals.roth || 0) * 0.5) / ledgerTotalWithdrawal,
+                    brokerage: (withdrawals.brokerage || 0) / ledgerTotalWithdrawal,
+                    crypto: (withdrawals.crypto || 0) / ledgerTotalWithdrawal,
+                    hsaClient: ((withdrawals.hsa || 0) * 0.5) / ledgerTotalWithdrawal,
+                    hsaSpouse: ((withdrawals.hsa || 0) * 0.5) / ledgerTotalWithdrawal,
+                    cash: (withdrawals.cash || 0) / ledgerTotalWithdrawal
+                };
+
+                Object.keys(withdrawalRatios).forEach(key => {
+                    if (currentBalances[key] !== undefined) {
+                        const withdrawal = targetSpending * withdrawalRatios[key];
+                        currentBalances[key] = Math.max(0, currentBalances[key] - withdrawal);
+                    }
+                });
+            } else if (targetSpending > 0) {
+                // No ledger pattern - withdraw proportionally from available accounts
+                const available = totalAssetsAtStart;
+                if (available > 0) {
+                    Object.keys(currentBalances).forEach(key => {
+                        const ratio = currentBalances[key] / available;
+                        currentBalances[key] = Math.max(0, currentBalances[key] - (targetSpending * ratio));
+                    });
                 }
-            });
+            }
 
             // Apply Returns (Stochastic)
             // Note: Ledger uses effectiveROI = 1 + growthRate.
