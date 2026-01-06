@@ -108,6 +108,7 @@ function AppContent() {
   const [darkMode, setDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState('cashflow');
   const [mcProgress, setMcProgress] = useState(0);
+  const [cacheClearedStatus, setCacheClearedStatus] = useState(false);
 
   // Strategy feature states
   const [strategySubTab, setStrategySubTab] = useState('tax');
@@ -908,63 +909,88 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-            🤖 The Architect - Retirement Planner
-          </h1>
-          <div className="flex items-center gap-4">
+      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-50">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 max-w-[1920px] mx-auto">
+          {/* Brand/Title (Left) */}
+          <div className="flex-shrink-0">
+            <h1 className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+              <span className="text-2xl">🤖</span>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">The Architect</span>
+            </h1>
+          </div>
+
+          {/* Centered Toolbelt (Center) */}
+          <div className="flex flex-wrap items-center justify-center gap-3 bg-gray-50/50 dark:bg-gray-900/30 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800/50">
             <button
               onClick={() => {
-                if (window.confirm("Clear local storage and reload defaults?")) {
-                  localStorage.clear();
-                  window.location.reload();
+                if (window.confirm("🧹 Clear all retirement plan data and restore defaults? This cannot be undone.")) {
+                  setCacheClearedStatus(true);
+                  setTimeout(() => {
+                    localStorage.clear();
+                    window.location.reload();
+                  }, 800);
                 }
               }}
-              className="px-2 py-1 text-[9px] font-black uppercase bg-gray-50 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-800/50 rounded hover:bg-gray-100 dark:hover:bg-gray-900/40 transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
-              title="Clear Local Storage"
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase transition-all flex items-center gap-2 rounded-lg shadow-sm active:scale-95 ${cacheClearedStatus
+                  ? "bg-green-600 text-white border-green-700"
+                  : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                }`}
             >
-              <span className="text-[11px]">🧹</span> CLEAR CACHE
+              <span className="text-xs">{cacheClearedStatus ? "✅" : "🧹"}</span>
+              {cacheClearedStatus ? "DATA WIPED!" : "CLEAR CACHE"}
             </button>
-            <div className="flex items-center gap-2">
-              {/* Quick Strategy Selector */}
-              <div className="hidden md:flex items-center bg-gray-100 dark:bg-gray-700 rounded-md px-2 py-1">
-                <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-gray-400 mr-2">Method:</span>
-                <select
-                  value={spendingStrategy}
-                  onChange={(e) => setSpendingStrategy(e.target.value)}
-                  className="bg-transparent text-xs font-semibold text-gray-900 dark:text-gray-100 border-none focus:ring-0 p-0 cursor-pointer outline-none"
-                >
-                  <option value="fixed" className="dark:bg-gray-800">Fixed Dollar</option>
-                  <option value="percentage" className="dark:bg-gray-800">Fixed %</option>
-                  <option value="blanchett" className="dark:bg-gray-800">Blanchett Smile</option>
-                  <option value="guardrails" className="dark:bg-gray-800">Guyton-Klinger</option>
-                  <option value="floor-ceiling" className="dark:bg-gray-800">Floor & Ceiling</option>
-                  <option value="max-spend" className="dark:bg-gray-800">Max Spending</option>
-                  <option value="dynamic" className="dark:bg-gray-800">Actuarial (ARVA)</option>
-                </select>
-              </div>
 
+            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1 hidden sm:block" />
+
+            {/* Quick Strategy Selector */}
+            <div className="flex items-center bg-white dark:bg-gray-800 rounded-lg px-3 py-1.5 border border-gray-200 dark:border-gray-700 shadow-sm">
+              <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 mr-2">Method:</span>
+              <select
+                value={spendingStrategy}
+                onChange={(e) => setSpendingStrategy(e.target.value)}
+                className="bg-transparent text-xs font-bold text-gray-900 dark:text-gray-100 border-none focus:ring-0 p-0 cursor-pointer outline-none hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              >
+                <option value="fixed" className="dark:bg-gray-800">Fixed Dollar</option>
+                <option value="percentage" className="dark:bg-gray-800">Fixed %</option>
+                <option value="blanchett" className="dark:bg-gray-800">Blanchett Smile</option>
+                <option value="guardrails" className="dark:bg-gray-800">Guyton-Klinger</option>
+                <option value="floor-ceiling" className="dark:bg-gray-800">Floor & Ceiling</option>
+                <option value="max-spend" className="dark:bg-gray-800">Max Spending</option>
+                <option value="dynamic" className="dark:bg-gray-800">Actuarial (ARVA)</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => handleTabChange('montecarlo')}
-                className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-xs"
+                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${activeTab === 'montecarlo'
+                    ? "bg-blue-600 text-white shadow-blue-500/20"
+                    : "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
               >
-                🎲 Monte Carlo
+                <span>🎲</span> Monte Carlo
               </button>
               <button
                 onClick={() => handleTabChange('cfo')}
-                className="px-3 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors text-xs"
+                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${activeTab === 'cfo'
+                    ? "bg-purple-600 text-white shadow-purple-500/20"
+                    : "bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                  }`}
               >
-                🤖 CFO Report
-              </button>
-              <button
-                onClick={() => setDarkMode(!darkMode)}
-                className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-xs"
-                aria-label="Toggle dark mode"
-              >
-                {darkMode ? '☀️' : '🌙'}
+                <span>🤖</span> CFO Report
               </button>
             </div>
+          </div>
+
+          {/* User Controls (Right) */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm active:scale-90"
+              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </button>
           </div>
         </div>
       </header>
