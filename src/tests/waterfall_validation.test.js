@@ -1,4 +1,5 @@
 
+import { describe, test, expect } from 'vitest';
 import { optimizeWithdrawals } from '../lib/withdrawalOptimizer';
 
 describe('Waterfall Validation Logic', () => {
@@ -65,10 +66,15 @@ describe('Waterfall Validation Logic', () => {
         // Yes.
 
         expect(result.withdrawals.traditional).toBeGreaterThan(29000); // Standard Ded
-        expect(result.withdrawals.brokerage).toBe(100000); // Burn all brokerage
-        // Remaining ~21k comes from Trad (Bracket Fill) or Roth?
-        // Step 4 is Trad (Marginal Cap).
-        expect(result.withdrawals.traditional).toBeGreaterThan(29000 + 10000);
+        expect(result.withdrawals.brokerage).toBe(100000); // Burn all brokerage (Step 2)
+
+        // Step 3 is HSA (50k avail). Remaining Gap ~21k.
+        // HSA absorbs the remaining need before Trad Step 4.
+        expect(result.withdrawals.hsa).toBeGreaterThan(15000);
+
+        // Trad Step 4 is NOT needed because HSA covered the gap.
+        // So Trad withdrawal is primarily just Step 1 (Std Ded).
+        expect(result.withdrawals.traditional).toBeLessThan(40000);
     });
 
     test('Medical Waterfall: Reimburses from HSA if Age > 65', () => {

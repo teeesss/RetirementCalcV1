@@ -29,8 +29,10 @@ Achieve **0-5% effective tax rate** in retirement through intelligent withdrawal
 ## 🛡️ NEW in v2.1: Logic Hardening & CFA Validation
 
 **Professional Grade Verification**
+- **CFO Automation**: Optimal Withdrawal Order (Brokerage -> HSA -> Trad -> Roth) and Dynamic Tax Bracket Filling.
+- **Tax Loss Harvesting**: Permanent "Loss Bank" tracks carryforward losses indefinitely for future tax offsets.
 - **Survivor Logic**: Automatic Filing Status switching (MFJ -> Single) & Basis Step-Up (Community Property vs Common Law).
-- **Spending Strategies**: Guyton-Klinger & Blanchett Smile mathematically verified.
+- **Crypto Rebalancing**: Automated trimming of high-growth assets to prevent portfolio concentration risk.
 - **Iterative Tax Solver**: "Penny-perfect" tax calculations resolving circular dependencies.
 
 ---

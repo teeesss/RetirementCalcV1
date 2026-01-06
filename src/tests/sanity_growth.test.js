@@ -16,9 +16,13 @@ describe('Deep Dive Sanity Check: Growth Anomalies', () => {
         assumptions: {
             inflation: 0,
             growthRate: 7,
-            startYear: 2024
+            startYear: 2024,
+            maxCryptoAllocation: 1.0 // Disable Rebalancing (100% allowed)
         },
-        taxOptimization: { enableRothConversion: false }
+        taxOptimization: {
+            enableRothConversion: false,
+            taxLossHarvesting: { crypto: 0, brokerage: 0 } // Disable TLH
+        }
     };
 
     it('should default Crypto to standard growth (7%) if unspecified', () => {

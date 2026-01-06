@@ -1,4 +1,5 @@
 
+import { describe, test, expect } from 'vitest';
 import { generateLedger } from '../lib/ledgerLogic';
 import defaultProfile from '../data/defaultProfile.json';
 

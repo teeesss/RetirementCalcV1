@@ -20,8 +20,8 @@ describe('Deep Dive Stress Tests', () => {
         input.assets.cash.total = 0;
         input.assets.brokerage.joint = 0;
         input.taxOptimization = {
-            strategy: 'optimal',
-            allowRothConversion: true,
+            withdrawalOrder: 'optimal',
+            enableRothConversion: true,
             rothConversionBracket: 0.12 // Filling 12% bracket
         };
 

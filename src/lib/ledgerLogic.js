@@ -698,9 +698,9 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             const bunchYears = dafStrategy.yearsToBunch || 5;
 
             // Check if inside the "Pre-paid" window
-            if (calendarYear >= startBunchYear && calendarYear < startBunchYear + bunchYears) {
+            if (currentYear >= startBunchYear && currentYear < startBunchYear + bunchYears) {
                 // If it's the trigger year, we pay the lump sum
-                if (calendarYear === startBunchYear) {
+                if (currentYear === startBunchYear) {
                     dafContribution = annualCharity * bunchYears;
                     annualCharity = 0; // The cash outflow is the DAF Contribution (handled below as expense or deduction)
                     // We treat dafContribution as an expense flow AND a deduction
@@ -844,7 +844,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
                 ordinaryIncome: salary + totalRMD + withdrawals.traditional + withdrawals.hsa,
                 qualifiedDividends: qualDividends, ordinaryDividends: ordDividends, ssBenefits: ss,
                 filingStatus: currentFilingStatus, age: clientAge, capitalLosses: lossBank,
-                stateRate: currentData.stateTaxRate || 0, isRetired, itemizedItems, year: calendarYear, enableTCJASunset,
+                stateRate: currentData.stateTaxRate || 0, isRetired, itemizedItems, year: currentYear, enableTCJASunset,
                 earnedIncome: salary
             });
             result = { withdrawals, taxes };
@@ -929,10 +929,19 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
 
         // Conversions (Roth)
         if (withdrawals.rothConversion > 0) {
+            // Withdraw from Trad
             applyVol('traditionalClient', 'traditionalSpouse', withdrawals.rothConversion);
-            // applyVol subtracts from target, so we subtract from Trad.
-            // Then add to Roth (Negative Withdrawal = Deposit)
-            applyVol('rothClient', 'rothSpouse', -withdrawals.rothConversion);
+
+            // Deposit to Roth (Handle 0 balance case)
+            const rothTot = balances.rothClient + balances.rothSpouse;
+            if (rothTot > 0) {
+                applyVol('rothClient', 'rothSpouse', -withdrawals.rothConversion);
+            } else {
+                // If empty, default to Client (or split 50/50? Client is safer default)
+                // Actually, if we converted, we should credit it.
+                balances.rothClient += withdrawals.rothConversion;
+                trackedCashFlow.rothClient += withdrawals.rothConversion; // Track as inflow
+            }
         }
 
         // Store unified total for UI components (Gross Outflow)

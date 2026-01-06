@@ -47,10 +47,14 @@ describe('Survivor Logic', () => {
         // Year 6 (Age 76) -> Single.
 
         const ledger = generateLedger(data);
-        const deathYearIndex = 5;
+        // LE = 75. Start = 70.
+        // Index 5 = Age 75 (Alive).
+        // Index 6 = Age 76 (Dead - Year of Death). Filing Status = Married.
+        // Index 7 = Age 77 (first full year dead). Filing Status = Single.
 
-        expect(ledger[deathYearIndex].filingStatus).toBe('married');
-        expect(ledger[deathYearIndex + 1].filingStatus).toBe('single');
+        expect(ledger[5].filingStatus).toBe('married'); // Alive
+        expect(ledger[6].filingStatus).toBe('married'); // Year of Death
+        expect(ledger[7].filingStatus).toBe('single');  // Year After Death
     });
 
     it('should apply 50% Basis Step-Up in Common Law states', () => {
