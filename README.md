@@ -144,3 +144,5 @@ MIT
 ## 🤝 Contributing
 
 See `TASKS.md` for current development priorities.
+
+<!-- Verified by Gemini: WSL Git Pipeline Check (Ubuntu) - Attempt 2 -->
