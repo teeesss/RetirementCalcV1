@@ -24,7 +24,7 @@ export default function PlanDetailsTable() {
         <div className="space-y-4">
             <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700 overflow-x-auto">
                 <table className="w-full text-xs text-left">
-                    <thead>
+                    <thead className="sticky top-0 z-10">
                         <tr className="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                             <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300 sticky left-0 bg-gray-50 dark:bg-gray-900">Age</th>
                             <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300">Status</th>

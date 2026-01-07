@@ -178,6 +178,24 @@ export default function ConeChart({ percentiles, startAge, darkMode = false }) {
           }
         },
         beginAtZero: true
+      },
+      y1: {
+        position: 'right',
+        title: {
+          display: true,
+          text: 'Net Worth ($)',
+          color: darkMode ? '#9ca3af' : '#6b7280'
+        },
+        grid: {
+          drawOnChartArea: false // Don't redraw grid lines
+        },
+        ticks: {
+          color: darkMode ? '#9ca3af' : '#6b7280',
+          callback: function (value) {
+            return '$' + (value / 1000000).toFixed(1) + 'M';
+          }
+        },
+        beginAtZero: true
       }
     }
   };

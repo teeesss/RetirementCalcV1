@@ -862,7 +862,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             }, salary + ss, currentFilingStatus);
 
             const taxes = calculateTotalTax({
-                ordinaryIncome: salary + totalRMD + withdrawals.traditional + withdrawals.hsa,
+                ordinaryIncome: salary + totalRMD + withdrawals.traditional + withdrawals.hsa + (withdrawals.rothConversion || 0),
                 qualifiedDividends: qualDividends, ordinaryDividends: ordDividends, ssBenefits: ss,
                 filingStatus: currentFilingStatus, age: clientAge, capitalLosses: lossBank,
                 stateRate: currentData.stateTaxRate || 0, isRetired, itemizedItems, year: currentYear, enableTCJASunset,
@@ -1128,10 +1128,11 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
 
         // Recalculate Total Income for Final Tax Bill
         // Define totalGrossIncome before using it
-        const totalGrossIncome = salary + totalRMD + ss + ordDividends + qualDividends + realizedGains + (withdrawals.traditional || 0) + (withdrawals.conversion || 0);
+        const totalGrossIncome = salary + totalRMD + ss + ordDividends + qualDividends + realizedGains + (withdrawals.traditional || 0) + (withdrawals.rothConversion || 0);
 
         const taxResult = calculateTotalTax({
             grossIncome: totalGrossIncome,
+            earnedIncome: salary, // Ensure FICA uses Salary only
             filingStatus: currentFilingStatus, // Use dynamic status
             stateRate: assumptions.stateTaxRate || 0,
             capitalGains: {
@@ -1170,7 +1171,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
                 ss: ss,
                 salary: salary,
                 rmd: rmdIncome,
-                pension: income // If income is used as pension elsewhere
+                pension: pension || 0
             },
             expenses: {
                 total: totalExpenses,

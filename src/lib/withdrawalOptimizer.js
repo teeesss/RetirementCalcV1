@@ -91,6 +91,10 @@ export function optimizeWithdrawals({
       rothConversionBracket
     });
 
+
+    // DEBUG LOGGING
+    // console.log(`DEBUG Iteration ${i}: Needed ${totalNeeded}, TotalOrd ${simulation.totalOrdinaryIncome}`);
+
     // 3. Calculate Tax on this Scenario
     const taxCalculation = calculateTotalTax({
       ordinaryIncome: simulation.totalOrdinaryIncome,
@@ -109,6 +113,8 @@ export function optimizeWithdrawals({
       year,
       enableTCJASunset
     });
+
+
 
     const newTax = taxCalculation.totalTax;
     const delta = newTax - currentTax;

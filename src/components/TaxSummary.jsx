@@ -81,6 +81,29 @@ export default function TaxSummary() {
         </div>
       </div>
 
+      {/* User Guidance Section */}
+      <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+        <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-2">📘 Understanding Your Tax Breakdown</h4>
+        <div className="text-xs text-gray-700 dark:text-gray-300 space-y-2">
+          <p className="font-medium">Column Definitions:</p>
+          <ul className="space-y-1 ml-4 grid grid-cols-2 gap-x-4">
+            <li><strong>RMD:</strong> Required distributions from Traditional IRA (age 73+)</li>
+            <li><strong>Trad:</strong> Voluntary Traditional IRA withdrawals (fully taxable)</li>
+            <li><strong>Roth:</strong> Tax-free Roth IRA withdrawals</li>
+            <li><strong>Brok:</strong> Brokerage/crypto sales (capital gains)</li>
+            <li><strong>Tax SS:</strong> Taxable portion of Social Security</li>
+            <li><strong>AGI:</strong> Adjusted Gross Income</li>
+            <li><strong>CG Tax:</strong> Capital Gains Tax (0-20%)</li>
+            <li><strong>Fed Tax:</strong> Federal Income Tax</li>
+            <li><strong>FICA:</strong> Payroll taxes on wages</li>
+            <li><strong>Med+:</strong> Additional Medicare Tax (0.9%)</li>
+            <li><strong>NIIT:</strong> Net Investment Income Tax (3.8%)</li>
+            <li><strong>Total:</strong> All taxes combined</li>
+          </ul>
+          <p className="text-xs text-blue-700 dark:text-blue-400 italic mt-2">💡 Watch for the "tax torpedo" when Social Security becomes taxable, spiking marginal rates to 40%+</p>
+        </div>
+      </div>
+
       <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Tax Breakdown by Year</h3>
         <div className="overflow-x-auto">

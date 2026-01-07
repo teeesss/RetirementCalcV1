@@ -167,16 +167,40 @@ export function optimizeTaxFreeWithdrawal(gap, balances, currentIncome, filingSt
  * @returns {Object} Bucket summary
  */
 export function calculateBucketInventory(assets) {
-    const preTax = (assets.traditional?.client || 0) +
-        (assets.traditional?.spouse || 0) +
-        (assets.hsa?.client || 0) +
-        (assets.hsa?.spouse || 0);
+    // Helper to safely extract value
+    const val = (v) => {
+        if (typeof v === 'number') return v;
+        if (typeof v === 'string') return Number(v) || 0;
+        return 0;
+    };
 
-    const afterTax = (assets.brokerage?.joint || 0) + (assets.cash || 0) + (calculateCryptoBalance(assets.crypto) || 0);
-    const afterTaxBasis = assets.brokerageBasis?.joint || 0;
-    const unrealizedGains = Math.max(0, (assets.brokerage?.joint || 0) - afterTaxBasis);
+    const preTax = val(assets.traditional?.client) +
+        val(assets.traditional?.spouse) +
+        val(assets.hsa?.client) +
+        val(assets.hsa?.spouse);
 
-    const taxFree = (assets.roth?.client || 0) + (assets.roth?.spouse || 0);
+    // Robust Brokerage Summation
+    let brokerageVal = 0;
+    if (typeof assets.brokerage === 'number') {
+        brokerageVal = assets.brokerage;
+    } else if (typeof assets.brokerage === 'object') {
+        brokerageVal = val(assets.brokerage.joint) + val(assets.brokerage.client) + val(assets.brokerage.spouse);
+    }
+
+    // Robust Cash Summation
+    let cashVal = 0;
+    if (typeof assets.cash === 'number') {
+        cashVal = assets.cash;
+    } else if (typeof assets.cash === 'object') {
+        cashVal = val(assets.cash.total);
+    }
+
+    const afterTax = brokerageVal + cashVal + (calculateCryptoBalance(assets.crypto) || 0);
+
+    const afterTaxBasis = val(assets.brokerageBasis?.joint) || val(assets.brokerageBasis?.client) || 0;
+    const unrealizedGains = Math.max(0, brokerageVal - afterTaxBasis);
+
+    const taxFree = val(assets.roth?.client) + val(assets.roth?.spouse);
 
     const total = preTax + afterTax + taxFree;
 

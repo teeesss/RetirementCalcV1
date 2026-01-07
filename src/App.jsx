@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { STATE_BRACKETS } from './data/stateTaxBrackets';
 import { PlanProvider, usePlan } from './contexts/PlanContext';
 import { TaxStrategyProvider } from './contexts/TaxStrategyContext';
-import Dashboard from './components/Dashboard';
+
 import TaxStrategyPanel from './components/TaxStrategyPanel';
 import ProbabilityGauge from './components/strategy/ProbabilityGauge';
 import ConfidenceBand from './components/strategy/ConfidenceBand';
@@ -26,6 +26,7 @@ const ExpenseManagement = React.lazy(() => import('./components/strategy/Expense
 const TaxFreeDashboard = React.lazy(() => import('./components/strategy/TaxFreeDashboard'));
 import GrowthDrawdownChart from './components/strategy/GrowthDrawdownChart';
 import DetailedCashFlowChart from './components/strategy/DetailedCashFlowChart';
+import EfficiencyDashboard from './components/TaxEfficiency/EfficiencyDashboard';
 
 // DIAGNOSTIC: Robust Error Boundary
 class ErrorBoundary extends React.Component {
@@ -1307,6 +1308,15 @@ function AppContent() {
                   Tax Summary
                 </button>
                 <button
+                  onClick={() => handleTabChange('tax_efficiency')}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'tax_efficiency'
+                    ? 'border-b-2 border-emerald-600 text-emerald-600'
+                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                    }`}
+                >
+                  Efficiency Dashboard
+                </button>
+                <button
                   onClick={() => handleTabChange('networth')}
                   className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'networth'
                     ? 'border-b-2 border-blue-600 text-blue-600'
@@ -1417,6 +1427,12 @@ function AppContent() {
                 )}
 
                 {activeTab === 'tax' && <TaxSummary />}
+
+                {activeTab === 'tax_efficiency' && (
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+                    <EfficiencyDashboard />
+                  </div>
+                )}
 
                 {activeTab === 'networth' && (
                   <div className="overflow-x-auto">

@@ -9,6 +9,7 @@
 
 import { usePlan } from '../contexts/PlanContext';
 import { calculateRMD } from '../lib/taxEngine';
+import { useState } from 'react';
 
 /**
  * Calculate crypto balance from holdings
@@ -24,6 +25,7 @@ function calculateCryptoBalance(crypto) {
 
 export default function CFORecommendations({ ledger, planData, updatePlan, onNavigate }) {
   const { calculateSuccess } = usePlan();
+  const [appliedAction, setAppliedAction] = useState(null);
 
   if (!ledger || ledger.length === 0) {
     return (
@@ -260,11 +262,15 @@ export default function CFORecommendations({ ledger, planData, updatePlan, onNav
                     <button
                       onClick={() => {
                         rec.onApply();
-                        alert(`Applied: ${rec.action}`);
+                        setAppliedAction(idx);
+                        setTimeout(() => setAppliedAction(null), 3000);
                       }}
-                      className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
+                      className={`px-2 py-1 rounded text-xs transition-colors ${appliedAction === idx
+                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                          : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
                     >
-                      Auto-Apply
+                      {appliedAction === idx ? '✓ Applied!' : 'Auto-Apply'}
                     </button>
                   )}
                 </div>

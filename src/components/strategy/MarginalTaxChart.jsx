@@ -144,8 +144,9 @@ export default function MarginalTaxChart({ darkMode = false }) {
         },
         scales: {
             y: {
+                position: 'left',
                 min: 0,
-                max: 100, // Cap at 100% (IRMAA cliffs can be infinite theoretically on $1, but smoothed over $100 is ~high)
+                max: 100,
                 title: { display: true, text: 'Marginal Rate (%)', color: darkMode ? '#9ca3af' : '#6b7280' },
                 ticks: { color: darkMode ? '#9ca3af' : '#6b7280' },
                 grid: { color: darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }
@@ -163,7 +164,9 @@ export default function MarginalTaxChart({ darkMode = false }) {
 
     return (
         <div className={`p-4 rounded-lg shadow-md ${darkMode ? 'bg-gray-800' : 'bg-white'}`}>
-            <Line options={options} data={chartData} />
+            <div className="h-96">
+                <Line options={options} data={chartData} />
+            </div>
             <p className="mt-2 text-xs text-center text-gray-500">
                 Shows the effective tax rate on the <b>next $100 withdrawn</b>. Note the "Tax Torpedo" effect where Social Security becomes taxable, followed by IRMAA cliffs.
             </p>

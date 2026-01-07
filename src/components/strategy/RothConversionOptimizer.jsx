@@ -12,6 +12,7 @@ import { calculateOptimalRothConversion } from '../../lib/taxFreeEngine';
 export default function RothConversionOptimizer() {
     const { planData, updatePlan } = usePlan();
     const [targetBracket, setTargetBracket] = useState('12');
+    const [showFeedback, setShowFeedback] = useState(false);
     const isEnabled = planData.taxOptimization?.enableRothConversion || false;
 
     // Calculate current income (salary + SS if applicable)
@@ -45,7 +46,9 @@ export default function RothConversionOptimizer() {
                 rothConversionTargetBracket: parseFloat(targetBracket) / 100
             }
         });
-        alert(`Roth Conversion strategy updated! Target bracket set to ${targetBracket}%. Recalculating plan...`);
+
+        setShowFeedback(true);
+        setTimeout(() => setShowFeedback(false), 2000);
     };
 
     const handleToggleStrategy = () => {
@@ -135,6 +138,12 @@ export default function RothConversionOptimizer() {
                             </div>
                         </div>
 
+                        {conversion.amount === 0 && (
+                            <div className="p-2 bg-yellow-100 text-yellow-800 text-xs rounded border border-yellow-200">
+                                <strong>Why $0?</strong> Your current income (${currentIncome.toLocaleString()}) combined with the standard deduction (${standardDeduction.toLocaleString()}) likely already fills or exceeds the {targetBracket}% bracket. Consider raising the target bracket to finding conversion room.
+                            </div>
+                        )}
+
                         <div className="grid grid-cols-2 gap-3">
                             <div>
                                 <div className="text-xs text-gray-600 dark:text-gray-400">Tax Cost ({targetBracket}%)</div>
@@ -159,9 +168,12 @@ export default function RothConversionOptimizer() {
 
                         <button
                             onClick={handleApplyConversion}
-                            className="w-full mt-3 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md font-medium transition-colors"
+                            disabled={showFeedback}
+                            className={`w-full mt-3 px-4 py-2 rounded-md font-medium transition-colors ${showFeedback
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-green-600 hover:bg-green-700 text-white'}`}
                         >
-                            Apply to Plan
+                            {showFeedback ? '✅ Plan Updated!' : 'Apply to Plan'}
                         </button>
                     </div>
                 </div>

@@ -13,11 +13,17 @@ const LegacyWaterfall = ({ finalLedgerEntry }) => {
         );
     }
 
-    const report = finalLedgerEntry.estateReport;
-    const { gross, deductions, taxes, net, config } = report;
+    const report = finalLedgerEntry.estateReport || {};
+    const {
+        gross = { portfolio: 0, realEstate: 0, insurance: 0 },
+        deductions = { mortgage: 0, hecm: 0 },
+        taxes = { estate: 0, ird: 0 },
+        net = { heirs: 0, charity: 0, specific: 0 },
+        config = { isILIT: false }
+    } = report;
 
     // Format currency
-    const fmt = (val) => formatCurrency(val);
+    const fmt = (val) => formatCurrency(val || 0);
 
     // Heir Chart Data
     const pieData = {
@@ -25,11 +31,11 @@ const LegacyWaterfall = ({ finalLedgerEntry }) => {
         datasets: [
             {
                 data: [
-                    net.heirs,
+                    net.heirs || 0,
                     net.specific || 0, // v2.2
-                    net.charity,
-                    taxes.estate + taxes.ird,
-                    deductions.mortgage + deductions.hecm
+                    net.charity || 0,
+                    (taxes.estate || 0) + (taxes.ird || 0),
+                    (deductions.mortgage || 0) + (deductions.hecm || 0)
                 ],
                 backgroundColor: [
                     '#10B981', // Emerald 500 (Heirs)
@@ -50,9 +56,15 @@ const LegacyWaterfall = ({ finalLedgerEntry }) => {
         ],
     };
 
-    const grossTotal = gross.portfolio + gross.realEstate + gross.insurance;
-    const totalDeductions = deductions.mortgage + deductions.hecm;
-    const totalTaxes = taxes.estate + taxes.ird;
+    // Safety Fallback for nested objects
+    const g = gross || { portfolio: 0, realEstate: 0, insurance: 0 };
+    const d = deductions || { mortgage: 0, hecm: 0 };
+    const t = taxes || { estate: 0, ird: 0 };
+    const n = net || { heirs: 0, charity: 0, specific: 0 };
+
+    const grossTotal = g.portfolio + g.realEstate + g.insurance;
+    const totalDeductions = d.mortgage + d.hecm;
+    const totalTaxes = t.estate + t.ird;
 
     return (
         <div className="space-y-6">

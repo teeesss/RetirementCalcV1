@@ -21,7 +21,13 @@ export default function TaxFreeKPIDashboard() {
         const retirementYears = ledger.filter(year => year.age >= retirementAge);
 
         // ... existing metrics logic ...
-        const totalWithdrawals = retirementYears.reduce((sum, year) => sum + (year.withdrawals?.total || 0), 0);
+        // GROSS Withdrawals (Spending + Conversions) for fair tax comparison
+        // We paid tax on conversions, so we must count them as "money accessed/processed"
+        const totalWithdrawals = retirementYears.reduce((sum, year) =>
+            sum + (year.withdrawals?.total || 0) + (year.withdrawals?.rothConversion || 0), 0);
+
+        const spendingWithdrawals = retirementYears.reduce((sum, year) =>
+            sum + (year.withdrawals?.total || 0), 0);
 
         const totalTaxesPaid = retirementYears.reduce((sum, year) =>
             sum + (year.taxes?.totalTax || 0), 0
@@ -46,12 +52,15 @@ export default function TaxFreeKPIDashboard() {
         const yearsOfFunding = ledger.length;
 
         // 4. Tax Savings vs Traditional Strategy
+        // If we didn't convert, we'd eventually pay tax on that principal via RMDs.
+        // So we compare Total Tax Paid vs (Gross Access * 15%)
         const estimatedTraditionalTax = totalWithdrawals * 0.15;
         const taxSavings = estimatedTraditionalTax - totalTaxesPaid;
 
         return {
             lifetimeETR,
-            totalWithdrawals,
+            totalWithdrawals, // Now includes conversions
+            spendingWithdrawals, // For display if needed
             totalTaxesPaid,
             taxSavings,
             initialGainRatio,
