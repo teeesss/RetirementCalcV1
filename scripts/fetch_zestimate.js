@@ -1,6 +1,7 @@
 
 import puppeteer from 'puppeteer';
 
+/* eslint-env node */
 /**
  * Zillow Zestimate Scraper
  * Usage: node scripts/fetch_zestimate.js "123 Main St, City, State ZIP"
@@ -27,8 +28,7 @@ async function getZestimate(address) {
         // Go to Zillow
         await page.goto('https://www.zillow.com', { waitUntil: 'domcontentloaded' });
 
-        // Type address
-        const searchInputSelector = 'input[placeholder="Enter an address, neighborhood, city, or ZIP code"]';
+        // const searchInputSelector = 'input[placeholder="Enter an address, neighborhood, city, or ZIP code"]';
 
         // Sometimes ID is specific, try generic approach or ID if known stable
         // Zillow ID is usually #search-box-input or similar.

@@ -16,7 +16,7 @@
  * @module withdrawalOptimizer
  */
 
-import { calculateRMD, calculateTotalTax, calculateTaxableSS, IRMAA_BRACKETS, getStandardDeduction } from './taxEngine.js';
+import { calculateRMD, calculateTotalTax, getStandardDeduction } from './taxEngine.js';
 
 /**
  * Optimize withdrawals for a given year using Iterative Solver
@@ -45,6 +45,7 @@ export function optimizeWithdrawals({
     order = 'optimal',
     allowRothConversion = false, // Default false to avoid phantom tax
     rothConversionBracket = 0.12,
+    // eslint-disable-next-line no-unused-vars
     shouldPayTaxes = true,
     targetBracket = 0.22
   } = strategy;
@@ -121,6 +122,7 @@ export function optimizeWithdrawals({
 
     // Update for next loop
     currentTax = newTax;
+    // eslint-disable-next-line no-unused-vars
     lastDelta = delta;
 
     // If we hit the limit, we use the last result
@@ -169,9 +171,9 @@ function executeWaterfall({
   balances,
   rmd,
   ordinaryIncome,
-  ssBenefits,
+  // ssBenefits,
   qualifiedDividends,
-  ordinaryDividends,
+  // ordinaryDividends,
   brokerageBasis,
   age,
   filingStatus,
@@ -371,6 +373,7 @@ function executeWaterfall({
 
 // --- Helpers ---
 
+// eslint-disable-next-line no-unused-vars
 function getGainRatio(currentBalance, basis) {
   if (currentBalance <= 0) return 0;
   return Math.max(0, (currentBalance - basis) / currentBalance);
@@ -386,6 +389,7 @@ function getBracketCeiling(filingStatus, targetBracket = 0.22) {
   return limits[targetBracket] || limits[0.22];
 }
 
+// eslint-disable-next-line no-unused-vars
 function getLTCGLimit(filingStatus, rate = 0.0) {
   // 0% LTCG Cap (Taxable Income)
   const caps = {

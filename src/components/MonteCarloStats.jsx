@@ -7,8 +7,17 @@
  */
 
 import { getScenarioOptions } from '../data/historicalScenarios';
+import { useState } from 'react';
 
-export default function MonteCarloStats({ results, darkMode = false }) {
+export default function MonteCarloStats({ results }) {
+  const [selectedScenario, setSelectedScenario] = useState('random');
+  const [customRange, setCustomRange] = useState({
+    equityMin: -20,
+    equityMax: 40,
+    cryptoMin: -30,
+    cryptoMax: 100
+  });
+
   if (!results) {
     return null;
   }
@@ -29,7 +38,8 @@ export default function MonteCarloStats({ results, darkMode = false }) {
         <div className="flex items-center gap-3">
           <select
             id="historical-scenario"
-            defaultValue="random"
+            value={selectedScenario}
+            onChange={(e) => setSelectedScenario(e.target.value)}
             className="flex-1 text-xs px-3 py-2 border border-indigo-300 dark:border-indigo-600 rounded bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           >
             {scenarios.map(s => (
@@ -41,13 +51,87 @@ export default function MonteCarloStats({ results, darkMode = false }) {
           <button
             onClick={() => {
               const scenarioId = document.getElementById('historical-scenario')?.value || 'random';
-              window.dispatchEvent(new CustomEvent('runScenarioSimulation', { detail: { scenarioId } }));
+              const detail = { scenarioId };
+
+              // If userDefined, include custom range
+              if (scenarioId === 'userDefined') {
+                detail.customRange = customRange;
+              }
+
+              window.dispatchEvent(new CustomEvent('runScenarioSimulation', { detail }));
             }}
             className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded transition-colors"
           >
             Run Scenario
           </button>
         </div>
+
+        {/* User-Defined Range Inputs */}
+        {selectedScenario === 'userDefined' && (
+          <div className="mt-3 p-3 bg-white dark:bg-gray-800 rounded border border-indigo-200 dark:border-indigo-700">
+            <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              ⚙️ Custom Return Range
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">
+                  Equity Min (%)
+                </label>
+                <input
+                  type="number"
+                  value={customRange.equityMin}
+                  onChange={(e) => setCustomRange(prev => ({ ...prev, equityMin: Number(e.target.value) }))}
+                  className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                  min="-100"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">
+                  Equity Max (%)
+                </label>
+                <input
+                  type="number"
+                  value={customRange.equityMax}
+                  onChange={(e) => setCustomRange(prev => ({ ...prev, equityMax: Number(e.target.value) }))}
+                  className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                  min="-100"
+                  max="200"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">
+                  Crypto Min (%)
+                </label>
+                <input
+                  type="number"
+                  value={customRange.cryptoMin}
+                  onChange={(e) => setCustomRange(prev => ({ ...prev, cryptoMin: Number(e.target.value) }))}
+                  className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                  min="-100"
+                  max="200"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-600 dark:text-gray-400 mb-1">
+                  Crypto Max (%)
+                </label>
+                <input
+                  type="number"
+                  value={customRange.cryptoMax}
+                  onChange={(e) => setCustomRange(prev => ({ ...prev, cryptoMax: Number(e.target.value) }))}
+                  className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700"
+                  min="-100"
+                  max="500"
+                />
+              </div>
+            </div>
+            <div className="mt-2 text-[10px] text-gray-500 dark:text-gray-400">
+              Returns will be randomly generated within these ranges for each year
+            </div>
+          </div>
+        )}
+
         {results.scenarioId && results.scenarioId !== 'random' && (
           <div className="mt-2 text-xs text-indigo-700 dark:text-indigo-400">
             ⚠️ Showing results for: <strong>{scenarios.find(s => s.id === results.scenarioId)?.name || results.scenarioId}</strong>
@@ -147,7 +231,7 @@ export default function MonteCarloStats({ results, darkMode = false }) {
               </div>
             </div>
             <p className="mt-2 text-[11px] text-red-700 dark:text-red-400">
-              * "Failure" means the portfolio hit $0 before the end of the plan (Age {90}).
+              {'* "Failure" means the portfolio hit $0 before the end of the plan (Age 90).'}
             </p>
           </div>
         ) : (

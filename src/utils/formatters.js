@@ -1,31 +1,29 @@
-
 /**
  * Global Currency Formatter
  * Rounds to nearest integer (no cents) for cleaner UI.
  */
-export const formatCurrency = (value) => {
+export function formatCurrency(value) {
     if (value === null || value === undefined || isNaN(value)) return '$0';
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 0,
-        minimumFractionDigits: 0
-    }).format(value);
-};
+    const sign = value < 0 ? '-' : '';
+    const abs = Math.abs(value);
+    // Round to nearest dollar (no cents)
+    const rounded = Math.round(abs);
+    return `${sign}$${rounded.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+}
 
-export const formatCompactCurrency = (value) => {
+export function formatCompactCurrency(value) {
     if (value === null || value === undefined || isNaN(value)) return '$0';
-    return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        maximumFractionDigits: 1, // $1.2M is better than $1M for comparison usually, or 0 if strict?
-        // User asked for "Round to nearest integer (no cents)".
-        // For compact, 1 decimal is standard polish. 0 decimal ($1M) can be too coarse.
-        // I will stick to 1 decimal for compact, 0 for standard.
-        notation: "compact",
-        compactDisplay: "short"
-    }).format(value);
-};
+    const sign = value < 0 ? '-' : '';
+    const abs = Math.abs(value);
+
+    // Use M for millions, K for thousands, round to nearest dollar
+    if (abs >= 1000000) {
+        return `${sign}${(abs / 1000000).toFixed(1)}m`;
+    } else if (abs >= 1000) {
+        return `${sign}${(abs / 1000).toFixed(0)}k`;
+    }
+    return `${sign}$${Math.round(abs)}`;
+}
 
 export const formatPercent = (value) => {
     if (value === null || value === undefined || isNaN(value)) return '0%';

@@ -41,7 +41,7 @@ export default function ConfidenceBand({ percentiles, years, darkMode = false })
     // Generate labels array - use years if provided, otherwise create from percentile length
     const numYears = percentiles.p50.length;
     const labels = years && Array.isArray(years) && years.length === numYears
-        ? years.map((year, idx) => `${year}`)
+        ? years.map(year => `${year}`)
         : Array.from({ length: numYears }, (_, idx) => `Year ${idx + 1}`);
 
     const data = {

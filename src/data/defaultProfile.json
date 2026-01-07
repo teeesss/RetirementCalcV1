@@ -217,5 +217,58 @@
   "monteCarlo": {
     "iterations": 10000,
     "enabled": true
+  },
+  "uiTheme": {
+    "colors": {
+      "traditional": "rgba(37, 99, 235, 0.8)",
+      "roth": "rgba(57, 255, 20, 0.9)",
+      "brokerage": "rgba(160, 82, 45, 0.9)",
+      "cash": "rgba(209, 213, 219, 0.9)",
+      "hsa": "rgba(0, 0, 128, 0.9)",
+      "crypto": "rgba(251, 191, 36, 0.9)",
+      "socialSecurity": "rgba(34, 197, 94, 0.9)",
+      "pension": "rgba(20, 184, 166, 0.8)",
+      "salary": "rgba(34, 197, 94, 0.9)",
+      "rmd": "rgba(6, 182, 212, 0.8)",
+      "realEstate": "rgba(249, 115, 22, 0.9)",
+      "mortgage": "rgba(139, 92, 246, 0.8)",
+      "essential": "rgba(239, 68, 68, 0.9)",
+      "discretionary": "rgba(253, 186, 116, 0.8)",
+      "healthcare": "rgba(244, 114, 182, 0.8)",
+      "housing": "rgba(0, 0, 0, 0.9)",
+      "taxFederal": "rgba(153, 27, 27, 0.8)",
+      "taxState": "rgba(185, 28, 28, 0.8)",
+      "taxFica": "rgba(127, 29, 29, 0.8)",
+      "fiTarget": "rgba(220, 38, 38, 0.9)"
+    },
+    "tooltip": {
+      "backgroundColor": {
+        "light": "rgba(255, 255, 255, 0.98)",
+        "dark": "rgba(17, 24, 39, 0.98)"
+      },
+      "titleColor": {
+        "light": "#111827",
+        "dark": "#f3f4f6"
+      },
+      "bodyColor": {
+        "light": "#374151",
+        "dark": "#e5e7eb"
+      },
+      "borderColor": {
+        "light": "#d1d5db",
+        "dark": "#4b5563"
+      },
+      "borderWidth": 2,
+      "padding": 16,
+      "titleFont": {
+        "size": 16,
+        "weight": "bold"
+      },
+      "bodyFont": {
+        "size": 13
+      },
+      "displayColors": true,
+      "boxPadding": 4
+    }
   }
 }

@@ -1,14 +1,14 @@
 
 import { optimizeWithdrawals } from '../lib/withdrawalOptimizer.js';
 
-const balances = {
-    traditional: 1000000,
-    roth: 200000,
-    brokerage: 0,
-    crypto: 0,
-    hsa: 0,
-    cash: 25000 // Test case has 25k cash
-};
+// const balances = {
+//     traditional: 1000000,
+//     roth: 200000,
+//     brokerage: 0,
+//     crypto: 0,
+//     hsa: 0,
+//     cash: 25000 // Test case has 25k cash
+// };
 
 // Test case matches Integration Test "Tax Brackets"
 // But "Tax Brackets" set explicit assets: traditional 1M. Default cash?

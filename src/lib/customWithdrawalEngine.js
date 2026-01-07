@@ -36,10 +36,9 @@ export function applyCustomWithdrawalRule(rule, balances, gap) {
         let withdrawAmount = 0;
 
         switch (amountConfig.type) {
-            case 'percentage':
+            case 'percentage': {
                 // Withdraw a percentage of the account
                 const percentAmount = availableBalance * ((amountConfig.maxPercent || amountConfig.value) / 100);
-
                 // If a dollar cap exists, clamp it
                 if (amountConfig.maxDollarCap && amountConfig.maxDollarCap > 0) {
                     withdrawAmount = Math.min(percentAmount, amountConfig.maxDollarCap, remainingGap);
@@ -47,6 +46,7 @@ export function applyCustomWithdrawalRule(rule, balances, gap) {
                     withdrawAmount = Math.min(percentAmount, remainingGap);
                 }
                 break;
+            }
 
             case 'fixed':
                 // Withdraw a fixed dollar amount

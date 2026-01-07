@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import NetWorthChart from '../NetWorthChart';
 import CustomWithdrawalRules from './CustomWithdrawalRules';
 
@@ -82,7 +81,7 @@ export default function SpendingSettings({
                         <div>
                             <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Fixed Strategy Settings</h4>
                             <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                                Standard: Uses your "Essential" and "Discretionary" expenses adjusted for inflation.
+                                Standard: Uses your &quot;Essential&quot; and &quot;Discretionary&quot; expenses adjusted for inflation.
                             </p>
                             <div className="flex items-center justify-between text-xs text-gray-500 p-2 bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-600">
                                 <span>Calculated Base Spend:</span>
@@ -206,7 +205,7 @@ export default function SpendingSettings({
                     <div className="bg-amber-50 dark:bg-amber-900/10 p-4 rounded-lg space-y-4 border border-amber-100 dark:border-amber-900/30">
                         <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Max Spending Settings</h4>
                         <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-                            Maximize spending during your "Go-Go" years (the Window). Spending will deplete the portfolio down to your Legacy Goal by the End Age.
+                            Maximize spending during your &quot;Go-Go&quot; years (the Window). Spending will deplete the portfolio down to your Legacy Goal by the End Age.
                         </p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>

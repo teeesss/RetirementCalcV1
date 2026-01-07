@@ -32,8 +32,12 @@ ChartJS.register(
     Legend
 );
 
+import defaultProfile from '../data/defaultProfile.json';
+import { getStripePattern } from '../utils/chartPatterns';
+
 export default function CashFlowChart({ ledger, darkMode = false }) {
     const chartRef = useRef(null);
+    const colors = defaultProfile.uiTheme?.colors || {};
 
     if (!ledger || ledger.length === 0) {
         return (
@@ -50,75 +54,85 @@ export default function CashFlowChart({ ledger, darkMode = false }) {
         datasets: [
             {
                 type: 'line',
-                label: 'Total Expenses + Tax',
+                label: 'Yearly Drawdown',
                 data: ledger.map(y => (y.expenses?.total || 0) + (y.taxes?.totalTax || 0)),
-                borderColor: 'rgba(239, 68, 68, 1)', // Red 500
+                borderColor: colors.essential || 'rgba(220, 38, 38, 1)',
+                backgroundColor: getStripePattern(colors.essential || 'rgba(220, 38, 38, 0.9)', 'rgba(255, 255, 255, 0.2)'),
                 borderWidth: 2,
                 pointRadius: 0,
-                tension: 0.1
+                fill: false,
+                tension: 0.1,
+                yAxisID: 'y'
             },
             {
                 type: 'bar',
                 label: 'Ordinary Income (Salary+SS)',
                 data: ledger.map(y => (y.income?.total || 0)),
-                backgroundColor: 'rgba(75, 85, 99, 0.8)', // Gray 600
-                borderColor: 'rgba(75, 85, 99, 1)',
+                backgroundColor: colors.salary,
+                borderColor: colors.salary,
                 borderWidth: 1,
                 stack: 'Stack 0',
+                yAxisID: 'y'
             },
             {
                 type: 'bar',
                 label: 'RMD / Trad W/D',
                 data: ledger.map(y => y.withdrawals?.traditional || 0),
-                backgroundColor: 'rgba(59, 130, 246, 0.8)', // Blue 500
-                borderColor: 'rgba(59, 130, 246, 1)',
+                backgroundColor: getStripePattern(colors.traditional, 'rgba(255, 255, 255, 0.2)'),
+                borderColor: colors.traditional,
                 borderWidth: 1,
                 stack: 'Stack 0',
+                yAxisID: 'y'
             },
             {
                 type: 'bar',
                 label: 'Roth W/D',
                 data: ledger.map(y => y.withdrawals?.roth || 0),
-                backgroundColor: 'rgba(168, 85, 247, 0.8)', // Purple 500
-                borderColor: 'rgba(168, 85, 247, 1)',
+                backgroundColor: getStripePattern(colors.roth, 'rgba(255, 255, 255, 0.2)'), // Pattern fill
+                borderColor: colors.roth,
                 borderWidth: 1,
                 stack: 'Stack 0',
+                yAxisID: 'y'
             },
             {
                 type: 'bar',
                 label: 'Brokerage W/D',
                 data: ledger.map(y => y.withdrawals?.brokerage || 0),
-                backgroundColor: 'rgba(236, 72, 153, 0.8)', // Pink 500
-                borderColor: 'rgba(236, 72, 153, 1)',
+                backgroundColor: getStripePattern(colors.brokerage, 'rgba(255, 255, 255, 0.2)'),
+                borderColor: colors.brokerage,
                 borderWidth: 1,
                 stack: 'Stack 0',
+                yAxisID: 'y'
             },
             {
                 type: 'bar',
                 label: 'Cash W/D',
                 data: ledger.map(y => y.withdrawals?.cash || 0),
-                backgroundColor: 'rgba(16, 185, 129, 0.8)', // Emerald 500
-                borderColor: 'rgba(16, 185, 129, 1)',
+                backgroundColor: getStripePattern(colors.cash, 'rgba(255, 255, 255, 0.2)'),
+                borderColor: colors.cash,
                 borderWidth: 1,
                 stack: 'Stack 0',
+                yAxisID: 'y'
             },
             {
                 type: 'bar',
                 label: 'Crypto W/D',
                 data: ledger.map(y => y.withdrawals?.crypto || 0),
-                backgroundColor: 'rgba(249, 115, 22, 0.8)', // Orange 500
-                borderColor: 'rgba(249, 115, 22, 1)',
+                backgroundColor: getStripePattern(colors.crypto, 'rgba(255, 255, 255, 0.2)'),
+                borderColor: colors.crypto,
                 borderWidth: 1,
                 stack: 'Stack 0',
+                yAxisID: 'y'
             },
             {
                 type: 'bar',
                 label: 'HSA W/D',
                 data: ledger.map(y => y.withdrawals?.hsa || 0),
-                backgroundColor: 'rgba(99, 102, 241, 0.8)', // Indigo 500
-                borderColor: 'rgba(99, 102, 241, 1)',
+                backgroundColor: getStripePattern(colors.hsa, 'rgba(255, 255, 255, 0.2)'),
+                borderColor: colors.hsa,
                 borderWidth: 1,
                 stack: 'Stack 0',
+                yAxisID: 'y'
             }
         ]
     };
@@ -131,6 +145,14 @@ export default function CashFlowChart({ ledger, darkMode = false }) {
             intersect: false,
         },
         plugins: {
+            title: {
+                display: true,
+                text: 'Cash Flow Analysis',
+                align: 'center',
+                color: darkMode ? '#d1d5db' : '#374151',
+                font: { size: 16, weight: 'bold' },
+                padding: { top: 10, bottom: 20 }
+            },
             legend: {
                 position: 'bottom',
                 labels: {
@@ -141,29 +163,52 @@ export default function CashFlowChart({ ledger, darkMode = false }) {
                 }
             },
             tooltip: {
-                backgroundColor: darkMode ? 'rgba(17, 24, 39, 0.98)' : 'rgba(255, 255, 255, 0.98)',
-                titleColor: darkMode ? '#f3f4f6' : '#111827',
-                bodyColor: darkMode ? '#e5e7eb' : '#374151',
-                borderColor: darkMode ? '#4b5563' : '#d1d5db',
-                borderWidth: 2,
-                padding: 16,
-                titleFont: {
-                    size: 16,
-                    weight: 'bold'
+                backgroundColor: darkMode ? defaultProfile.uiTheme.tooltip.backgroundColor.dark : defaultProfile.uiTheme.tooltip.backgroundColor.light,
+                titleColor: darkMode ? defaultProfile.uiTheme.tooltip.titleColor.dark : defaultProfile.uiTheme.tooltip.titleColor.light,
+                bodyColor: darkMode ? defaultProfile.uiTheme.tooltip.bodyColor.dark : defaultProfile.uiTheme.tooltip.bodyColor.light,
+                borderColor: darkMode ? defaultProfile.uiTheme.tooltip.borderColor.dark : defaultProfile.uiTheme.tooltip.borderColor.light,
+                borderWidth: defaultProfile.uiTheme.tooltip.borderWidth,
+                padding: defaultProfile.uiTheme.tooltip.padding,
+                titleFont: defaultProfile.uiTheme.tooltip.titleFont,
+                bodyFont: defaultProfile.uiTheme.tooltip.bodyFont,
+                displayColors: defaultProfile.uiTheme.tooltip.displayColors,
+                boxPadding: defaultProfile.uiTheme.tooltip.boxPadding,
+                itemSort: (a, b) => {
+                    // Filter will happen in beforeBody, but sort by absolute value descending
+                    return Math.abs(b.raw) - Math.abs(a.raw);
                 },
-                bodyFont: {
-                    size: 13
+                filter: function (tooltipItem) {
+                    // Only show items with non-zero values
+                    return Math.abs(tooltipItem.raw) > 0.01;
                 },
-                displayColors: true,
-                boxPadding: 8,
                 callbacks: {
                     title: function (context) {
                         return `Age ${context[0].label}`;
                     },
                     label: function (context) {
-                        const label = context.dataset.label || '';
-                        const value = context.parsed.y;
-                        return `${label}: ${formatCurrency(value)}`;
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += formatCurrency(context.parsed.y);
+                        }
+                        return label;
+                    },
+                    beforeBody: function (tooltipItems) {
+                        // Sort items: positive values first (high to low), then negative (most negative to least)
+                        tooltipItems.sort((a, b) => {
+                            const aVal = a.raw;
+                            const bVal = b.raw;
+
+                            // Both positive or both negative: sort by absolute value descending
+                            if ((aVal >= 0 && bVal >= 0) || (aVal < 0 && bVal < 0)) {
+                                return Math.abs(bVal) - Math.abs(aVal);
+                            }
+                            // One positive, one negative: positive first
+                            return bVal - aVal;
+                        });
+                        return [];
                     },
                     afterBody: function (tooltipItems) {
                         const index = tooltipItems[0].dataIndex;
@@ -181,7 +226,6 @@ export default function CashFlowChart({ ledger, darkMode = false }) {
                         const net = totalIncome - totalExpenses;
 
                         return [
-                            '',
                             '─────────────────────────',
                             `💵 Total In: ${formatCurrency(totalIncome)}`,
                             `📉 Total Out: ${formatCurrency(totalExpenses)}`,
@@ -212,15 +256,49 @@ export default function CashFlowChart({ ledger, darkMode = false }) {
                 grid: { color: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 0.5)' },
                 ticks: {
                     color: darkMode ? '#9ca3af' : '#6b7280',
-                    callback: (value) => '$' + (value / 1000).toFixed(0) + 'k'
+                    callback: (value) => {
+                        const abs = Math.abs(value);
+                        if (abs >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'm';
+                        return '$' + (value / 1000).toFixed(0) + 'k';
+                    }
+                }
+            },
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                title: {
+                    display: true,
+                    text: 'Annual Cash Flow ($)',
+                    color: darkMode ? '#9ca3af' : '#6b7280'
+                },
+                ticks: {
+                    color: darkMode ? '#9ca3af' : '#6b7280',
+                    callback: (value) => {
+                        const abs = Math.abs(value);
+                        if (abs >= 1000000) return '$' + (value / 1000000).toFixed(1) + 'm';
+                        return '$' + (value / 1000).toFixed(0) + 'k';
+                    }
+                },
+                grid: {
+                    drawOnChartArea: false
+                },
+                // Link to y axis to mirror its scale
+                min: function (context) {
+                    const yScale = context.chart.scales.y;
+                    return yScale ? yScale.min : undefined;
+                },
+                max: function (context) {
+                    const yScale = context.chart.scales.y;
+                    return yScale ? yScale.max : undefined;
                 }
             }
         }
     };
 
     return (
-        <div className="h-96 w-full" role="img" aria-label="Cash flow chart">
+        <div className="h-96 w-full" role="img" aria- label="Cash flow chart" >
             <Chart type='bar' ref={chartRef} data={chartData} options={options} />
-        </div>
+        </div >
     );
 }

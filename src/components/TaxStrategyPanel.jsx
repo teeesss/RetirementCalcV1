@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { useTaxStrategy } from '../contexts/TaxStrategyContext';
 import { usePlan } from '../contexts/PlanContext';
 import TaxBracketChart from './TaxBracketChart';
@@ -207,16 +206,21 @@ export default function TaxStrategyPanel({ darkMode = false }) {
                 </div>
             </div>
 
+            {/* Tax Torpedo Chart - Constrained Height */}
             <div className="mt-6">
-                <MarginalTaxChart darkMode={darkMode} />
+                <div className="h-96">
+                    <MarginalTaxChart darkMode={darkMode} />
+                </div>
             </div>
 
-            <div className="mt-6">
-                <TaxBracketHeatmap darkMode={darkMode} />
-            </div>
-
-            <div className="mt-6">
-                <RothBreakEvenCalculator darkMode={darkMode} />
+            {/* Heatmap and Break Even - Side by Side */}
+            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                    <TaxBracketHeatmap darkMode={darkMode} />
+                </div>
+                <div>
+                    <RothBreakEvenCalculator darkMode={darkMode} />
+                </div>
             </div>
 
             {

@@ -103,13 +103,13 @@ export default function MAGIMonitor() {
                         </div>
 
                         <div className={`p-4 rounded-lg border-2 ${qualifiesForACA
-                                ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700'
-                                : 'bg-gray-50 dark:bg-gray-900/20 border-gray-300 dark:border-gray-700'
+                            ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-700'
+                            : 'bg-gray-50 dark:bg-gray-900/20 border-gray-300 dark:border-gray-700'
                             }`}>
                             <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">ACA Subsidy Status</div>
                             <div className={`text-2xl font-bold ${qualifiesForACA
-                                    ? 'text-green-600 dark:text-green-400'
-                                    : 'text-gray-600 dark:text-gray-400'
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-gray-600 dark:text-gray-400'
                                 }`}>
                                 {qualifiesForACA ? '✅ Qualified' : '❌ Not Qualified'}
                             </div>
@@ -217,7 +217,7 @@ export default function MAGIMonitor() {
                                     <div className="bg-white dark:bg-gray-800 p-3 rounded border border-yellow-300 dark:border-yellow-700 text-sm">
                                         <div className="font-semibold text-gray-900 dark:text-white mb-1">🚨 Action Required:</div>
                                         <p className="text-gray-700 dark:text-gray-300">
-                                            You&apos;re only ${distanceToNextBracket.toLocaleString()} away from a ${((nextIRMAABracket.surcharge - currentIRMAABracket.surcharge) * 12).toLocaleString()}/year Medicare surcharge increase!
+                                            {"You're only"} ${distanceToNextBracket.toLocaleString()} {"away from a"} ${((nextIRMAABracket.surcharge - currentIRMAABracket.surcharge) * 12).toLocaleString()}{"/year Medicare surcharge increase!"}
                                             Use Roth withdrawals instead of Traditional IRA to avoid crossing the IRMAA threshold.
                                         </p>
                                     </div>
@@ -247,7 +247,7 @@ export default function MAGIMonitor() {
                                 </div>
                                 <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded border border-purple-200 dark:border-purple-800">
                                     <div className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                                        Today&apos;s MAGI (Will affect IRMAA in 2 years)
+                                        {"Today's MAGI (Will affect IRMAA in 2 years)"}
                                     </div>
                                     <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                                         ${magi.toLocaleString()}
@@ -260,7 +260,7 @@ export default function MAGIMonitor() {
                             <div className="mt-4 p-3 bg-gray-50 dark:bg-gray-900/50 rounded text-sm">
                                 <div className="font-semibold text-gray-900 dark:text-white mb-1">📝 Important:</div>
                                 <p className="text-gray-700 dark:text-gray-300">
-                                    IRMAA surcharges are based on your MAGI from 2 years ago. Today&apos;s Roth conversions and withdrawals will affect
+                                    IRMAA surcharges are based on your MAGI from 2 years ago. {"Today's"} Roth conversions and withdrawals will affect
                                     your Medicare premiums in {currentAge + 2}, so plan accordingly!
                                 </p>
                             </div>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { usePlan } from '../../contexts/PlanContext';
-import { optimizeTaxFreeWithdrawal, calculate0PercentThresholds } from '../../lib/taxFreeEngine';
+import { optimizeTaxFreeWithdrawal } from '../../lib/taxFreeEngine';
 
 export default function WithdrawalSimulator() {
     const { planData, ledger } = usePlan();
@@ -8,7 +8,7 @@ export default function WithdrawalSimulator() {
     const [selectedYear, setSelectedYear] = useState(0);
 
     const filingStatus = planData.profile?.filingStatus || 'married';
-    const thresholds = calculate0PercentThresholds(filingStatus);
+    // const thresholds = calculate0PercentThresholds(filingStatus);
 
     // Get situational data for the selected year
     const yearData = ledger?.[selectedYear] || {};
@@ -30,7 +30,7 @@ export default function WithdrawalSimulator() {
     );
 
     const taxImpact = result.taxImpact || {};
-    const totalOut = (result.traditional || 0) + (result.brokerage || 0) + (result.roth || 0) + (result.hsa || 0);
+    // const totalOut = (result.traditional || 0) + (result.brokerage || 0) + (result.roth || 0) + (result.hsa || 0);
 
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">

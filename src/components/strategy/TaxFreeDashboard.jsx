@@ -239,9 +239,9 @@ export default function TaxFreeDashboard() {
                     <div className="flex gap-3">
                         <div className="text-2xl">3️⃣</div>
                         <div>
-                            <div className="font-semibold text-gray-900 dark:text-white">Use "Invisible Money"</div>
+                            <div className="font-semibold text-gray-900 dark:text-white">Use &quot;Invisible Money&quot;</div>
                             <div className="text-gray-600 dark:text-gray-400">
-                                Take all remaining needs from Roth IRA. This money is <span className="font-semibold text-green-600">completely invisible to the IRS</span> - doesn't count as income, doesn't affect ACA subsidies, doesn't trigger IRMAA surcharges.
+                                Take all remaining needs from Roth IRA. This money is <span className="font-semibold text-green-600">completely invisible to the IRS</span> - doesn&apos;t count as income, doesn&apos;t affect ACA subsidies, doesn&apos;t trigger IRMAA surcharges.
                             </div>
                         </div>
                     </div>

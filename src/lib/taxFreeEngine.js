@@ -11,7 +11,7 @@
  * @param {number} year - Tax year
  * @returns {Object} Bucket thresholds
  */
-export function calculate0PercentThresholds(filingStatus, year = 2025) {
+export function calculate0PercentThresholds(filingStatus) {
     // Standard Deduction (Bucket #1 - Traditional IRA withdrawal)
     const standardDeduction = {
         single: 15000,
@@ -99,7 +99,7 @@ export function optimizeTaxFreeWithdrawal(gap, balances, currentIncome, filingSt
             if (remaining > 0) {
                 const cryptoAvailable = calculateCryptoBalance(balances.crypto);
                 // Assume 0 basis for crypto (conservative tax estimate) or use a default if available
-                const cryptoGainRatio = 1.0;
+                // const cryptoGainRatio = 1.0;
                 const currentGainRealized = withdrawals.brokerage * brokGainRatio;
                 const remainingBucket2Room = Math.max(0, bucket2Room - currentGainRealized);
 

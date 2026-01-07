@@ -20,6 +20,7 @@ export default function WithdrawalSequenceUI() {
         );
     }
 
+    // eslint-disable-next-line no-unused-vars
     const thresholds = calculate0PercentThresholds(planData.profile?.filingStatus || 'married');
     const yearData = ledger[selectedYear];
     const clientAge = yearData?.age || 0;

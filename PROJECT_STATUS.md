@@ -15,11 +15,17 @@ This document helps LLMs (or new developers) quickly understand what's been impl
   - **Historical Scenario Stress Test**: Added 8 scenarios (Great Depression, 2008, etc.) to test plan robustness.
   - **Spending Fix**: Resolved critical bug where worker ignored spending (incorrect field name).
   - **Scaling Fix**: Fixed "Spend More/Less" logic to correctly scale monthly expense fields.
+- **UI Refinements (v2.1.1)**:
+  - **Centered Header**: Perfectly aligned brand title, toolbelt (Clear Cache, Monte Carlo, CFO), and theme toggle using a 3-column grid.
+  - **Clear Cache Feedback**: Added visual confirmation (green "DATA WIPED!") after cache clear.
+  - **Environment Stabilization**: Enforced strict port 3000 binding to prevent dev server drift.
 - **Regressions Fixed**:
   - **Sanity Growth**: Fixed crypto growth calculations to respect rebalancing caps.
   - **Waterfall Validation**: Fixed withdrawal order expectations to account for HSA prioritization.
   - **Roth Conversion**: Fixed bug preventing conversion deposits into empty Roth accounts.
-  - **Lint Clean**: Fixed undefined variables (`calendarYear`) and missing imports in test suite.
+  - **Phase 12: Advanced Growth & Drawdown**: Integrated yearly asset growth vs. drawdown visualization into the Cash Flow tab, using ledger metrics as a single source of truth.
+  - **Phase 13: Detailed Cash Flow Visualization**: Added comprehensive `DetailedCashFlowChart` (stacked source/use bars) and `GrowthDrawdownChart` enhancements (Cumulative Growth overlay, Dual Y-Axis).
+- **Lint Clean**: Resolved 90+ lint errors including `no-undef`, `no-unused-vars`, and `react-hooks/exhaustive-deps`, ensuring a stable dev environment.
 
 **Tests**:
 - Full Regression Suite (`npm test`) -> **GREEN** (32 Files, 168 Tests Passed).
@@ -53,7 +59,7 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 
 ## 🧠 PROJECT STATUS - Retirement Planner
 
-> **Last Updated:** January 6, 2026 (v2.1 Logic Hardening)
+> **Last Updated:** January 6, 2026 (v2.1.2 Growth & Drawdown Visualization)
 > **Purpose:** Comprehensive status guide for LLM review and onboarding
 > **Quick Start:** Read `.cursorrules` first, then this file, then dive into code
 
@@ -98,5 +104,5 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 
 ---
 
-**Last Updated**: 2026-01-06 (v2.1 Logic Hardening COMPLETE)
-**Status**: ✅ **STABLE & VERIFIED** - Ready for Release.
+**Last Updated**: 2026-01-06 (v2.1.2 COMPLETE)
+**Status**: ✅ **STABLE & VERIFIED** - Phase 12 Visualization & Lint Cleanup COMPLETE.

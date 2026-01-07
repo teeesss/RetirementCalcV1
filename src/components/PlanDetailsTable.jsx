@@ -31,6 +31,7 @@ export default function PlanDetailsTable() {
                             <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300 text-right">Expenses</th>
                             <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300 text-right">Healthcare</th>
                             <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300 text-right">Mortgage</th>
+                            <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300 text-right text-cyan-600">RMD</th>
                             <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300 text-right">Income</th>
                             <th className="py-1 px-1 font-semibold text-gray-700 dark:text-gray-300 text-right">Withdrawals</th>
                             <th className="py-1 px-1 font-semibold text-gray-900 dark:text-gray-100 text-right border-l border-gray-200 dark:border-gray-700">Total Bal</th>
@@ -73,6 +74,9 @@ export default function PlanDetailsTable() {
                                     </td>
                                     <td className="py-1 px-1 text-right text-orange-600 dark:text-orange-400">
                                         {mortgagePayment > 0 ? formatCurrency(mortgagePayment) : '-'}
+                                    </td>
+                                    <td className="py-1 px-1 text-right text-cyan-600 dark:text-cyan-400">
+                                        {row.metrics?.detailedCashFlow?.inflows?.rmd > 0 ? formatCurrency(row.metrics.detailedCashFlow.inflows.rmd) : '-'}
                                     </td>
                                     <td className="py-1 px-1 text-right text-teal-600 dark:text-teal-400">
                                         {row.income?.total > 0 ? formatCurrency(row.income.total || 0) : '-'}

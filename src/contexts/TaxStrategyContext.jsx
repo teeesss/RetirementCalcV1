@@ -1,5 +1,6 @@
 
 
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useMemo, useEffect, useCallback } from 'react';
 import { usePlan } from './PlanContext';
 

@@ -5,7 +5,7 @@
  * Provides dynamic breakdown and tax impact analysis.
  */
 
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { usePlan } from '../../contexts/PlanContext';
 import { Bar } from 'react-chartjs-2';
 import {
@@ -28,7 +28,7 @@ ChartJS.register(
 );
 
 export default function WithdrawalPlannerView({ darkMode = false }) {
-    const { ledger, planData } = usePlan();
+    const { ledger } = usePlan();
     const [viewMode, setViewMode] = useState('chart'); // 'chart' or 'table'
 
     const ages = useMemo(() => ledger?.map(y => y.age) || [], [ledger]);
@@ -241,7 +241,7 @@ export default function WithdrawalPlannerView({ darkMode = false }) {
                                 <div className="bg-gradient-to-r from-green-400 to-green-600 h-full w-[94%] shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
                             </div>
                             <p className="text-[9px] text-gray-500 dark:text-gray-400 mt-2 italic text-center">
-                                * Your strategy currently avoids IRMAA surcharges and minimizes "Tax Torpedo" effects on Social Security.
+                                * Your strategy currently avoids IRMAA surcharges and minimizes &quot;Tax Torpedo&quot; effects on Social Security.
                             </p>
                         </div>
                     </div>

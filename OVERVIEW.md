@@ -169,6 +169,17 @@ Uses **Geometric Brownian Motion (GBM)** with Cholesky Decomposition for correla
     - Recalculates Monte Carlo with applied shocks
     - Shows success rate impact and wealth at risk
 
+- **`GrowthDrawdownChart.jsx`**:
+    - High-fidelity visualization of yearly asset growth, total withdrawals, and net portfolio change.
+    - Synchronized with ledger metrics to ensure absolute data integrity.
+    - **Dual Axis**: Overlay of Cumulative Asset Growth (Right Axis) vs Yearly Flows (Left Axis).
+
+- **`DetailedCashFlowChart.jsx`**:
+    - Forensic analysis of every dollar entering and leaving the plan.
+    - **Sources**: Stacked bars for Salary, SS, Pension, and specific bucket drawdowns (Roth, Brokerage, etc.).
+    - **Uses**: Stacked bars for Taxes, Mortgage, Medical, and Living Expenses.
+    - **Appreciation**: Tracking line for Real Estate value overlay.
+
 ---
 
 ## 6. Known Limitations & Roadmap

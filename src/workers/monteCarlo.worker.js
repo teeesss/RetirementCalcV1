@@ -191,11 +191,16 @@ self.onmessage = (e) => {
             // 2. Get reference data from ledger but DON'T re-apply flows
             // CRITICAL FIX: ledger[y].balances already HAS flows applied
             // We only use ledger for spending amounts and metadata
-            const annualSpending = baseYearData.expenses?.total || baseYearData.annualExpenses || 0;
+            // CRITICAL FIX: Spending MUST include taxes!
+            // expenses.total in ledger excludes taxes.
+            const rawExpenses = baseYearData.expenses?.total || baseYearData.annualExpenses || 0;
+            const annualTaxes = baseYearData.expenses?.taxes || 0;
+            const annualSpending = rawExpenses + annualTaxes;
+
             const withdrawals = baseYearData.withdrawals || {};
 
             if (iter === 0 && y === 0) {
-                console.log(`DIAGNOSTIC MC Year 0: Spending Identified: ${annualSpending}`);
+                console.log(`DIAGNOSTIC MC Year 0: Expense=${rawExpenses}, Tax=${annualTaxes}, TotalSpending=${annualSpending}`);
             }
 
             // --- Dynamic Spending Adjustment ---
@@ -215,40 +220,64 @@ self.onmessage = (e) => {
             }
 
             // Apply spending as withdrawal from accounts (proportional to ledger's withdrawal pattern)
-            const ledgerTotalWithdrawal = (withdrawals.traditional || 0) + (withdrawals.roth || 0) +
-                (withdrawals.brokerage || 0) + (withdrawals.hsa || 0) + (withdrawals.crypto || 0) + (withdrawals.cash || 0);
+            // CRITICAL FIX: Account for income vs spending net cash flow
+            // During working years: salary + ss > spending = surplus (add to brokerage)
+            // During retirement: spending > salary + ss = deficit (withdraw from portfolio)
 
-            if (ledgerTotalWithdrawal > 0 && targetSpending > 0) {
-                // Scale each account's withdrawal proportionally
-                const scaleFactor = targetSpending / ledgerTotalWithdrawal;
-                const withdrawalRatios = {
-                    traditionalClient: ((withdrawals.traditional || 0) * (baseYearData.balances?.traditionalClient || 0.5) / (baseYearData.balances?.traditional || 1)) / ledgerTotalWithdrawal,
-                    traditionalSpouse: ((withdrawals.traditional || 0) * (baseYearData.balances?.traditionalSpouse || 0.5) / (baseYearData.balances?.traditional || 1)) / ledgerTotalWithdrawal,
-                    rothClient: ((withdrawals.roth || 0) * 0.5) / ledgerTotalWithdrawal,
-                    rothSpouse: ((withdrawals.roth || 0) * 0.5) / ledgerTotalWithdrawal,
-                    brokerage: (withdrawals.brokerage || 0) / ledgerTotalWithdrawal,
-                    crypto: (withdrawals.crypto || 0) / ledgerTotalWithdrawal,
-                    hsaClient: ((withdrawals.hsa || 0) * 0.5) / ledgerTotalWithdrawal,
-                    hsaSpouse: ((withdrawals.hsa || 0) * 0.5) / ledgerTotalWithdrawal,
-                    cash: (withdrawals.cash || 0) / ledgerTotalWithdrawal
-                };
+            // Read income from ledger NESTED income object: baseYearData.income.{salary, ss}
+            const salary = baseYearData.income?.salary || 0;
+            const ssIncome = baseYearData.income?.ss || 0;
+            const totalIncome = salary + ssIncome;
+            const netCashFlow = totalIncome - targetSpending; // Positive = surplus, Negative = deficit
 
-                Object.keys(withdrawalRatios).forEach(key => {
-                    if (currentBalances[key] !== undefined) {
-                        const withdrawal = targetSpending * withdrawalRatios[key];
-                        currentBalances[key] = Math.max(0, currentBalances[key] - withdrawal);
-                    }
-                });
-            } else if (targetSpending > 0) {
-                // No ledger pattern - withdraw proportionally from available accounts
-                const available = totalAssetsAtStart;
-                if (available > 0) {
-                    Object.keys(currentBalances).forEach(key => {
-                        const ratio = currentBalances[key] / available;
-                        currentBalances[key] = Math.max(0, currentBalances[key] - (targetSpending * ratio));
-                    });
-                }
+            // DIAGNOSTIC: Log net cash flow for first iteration, first year
+            if (iter === 0 && y === 0) {
+                console.log(`DIAGNOSTIC MC Year 0: Income=${totalIncome}, Spending=${targetSpending}, NetCashFlow=${netCashFlow}`);
             }
+
+            if (netCashFlow < 0) {
+                // DEFICIT: Need to withdraw from portfolio to cover expenses
+                const withdrawalNeeded = Math.abs(netCashFlow);
+
+                const ledgerTotalWithdrawal = (withdrawals.traditional || 0) + (withdrawals.roth || 0) +
+                    (withdrawals.brokerage || 0) + (withdrawals.hsa || 0) + (withdrawals.crypto || 0) + (withdrawals.cash || 0);
+
+                if (ledgerTotalWithdrawal > 0) {
+                    // Use ledger's tax-efficient withdrawal pattern
+                    const withdrawalRatios = {
+                        traditionalClient: ((withdrawals.traditional || 0) * (baseYearData.balances?.traditionalClient || 0.5) / (baseYearData.balances?.traditional || 1)) / ledgerTotalWithdrawal,
+                        traditionalSpouse: ((withdrawals.traditional || 0) * (baseYearData.balances?.traditionalSpouse || 0.5) / (baseYearData.balances?.traditional || 1)) / ledgerTotalWithdrawal,
+                        rothClient: ((withdrawals.roth || 0) * 0.5) / ledgerTotalWithdrawal,
+                        rothSpouse: ((withdrawals.roth || 0) * 0.5) / ledgerTotalWithdrawal,
+                        brokerage: (withdrawals.brokerage || 0) / ledgerTotalWithdrawal,
+                        crypto: (withdrawals.crypto || 0) / ledgerTotalWithdrawal,
+                        hsaClient: ((withdrawals.hsa || 0) * 0.5) / ledgerTotalWithdrawal,
+                        hsaSpouse: ((withdrawals.hsa || 0) * 0.5) / ledgerTotalWithdrawal,
+                        cash: (withdrawals.cash || 0) / ledgerTotalWithdrawal
+                    };
+
+                    Object.keys(withdrawalRatios).forEach(key => {
+                        if (currentBalances[key] !== undefined) {
+                            const withdrawal = withdrawalNeeded * withdrawalRatios[key];
+                            currentBalances[key] = Math.max(0, currentBalances[key] - withdrawal);
+                        }
+                    });
+                } else {
+                    // No ledger pattern - withdraw proportionally from available accounts
+                    const available = totalAssetsAtStart;
+                    if (available > 0) {
+                        Object.keys(currentBalances).forEach(key => {
+                            const ratio = currentBalances[key] / available;
+                            currentBalances[key] = Math.max(0, currentBalances[key] - (withdrawalNeeded * ratio));
+                        });
+                    }
+                }
+            } else if (netCashFlow > 0) {
+                // SURPLUS: Add to portfolio (working years - income > expenses)
+                // Add to brokerage account (after-tax savings)
+                currentBalances.brokerage = (currentBalances.brokerage || 0) + netCashFlow;
+            }
+            // If netCashFlow === 0, no change needed
 
             // Apply Returns (Stochastic)
             // Note: Ledger uses effectiveROI = 1 + growthRate.

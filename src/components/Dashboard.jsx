@@ -34,7 +34,7 @@ export default function Dashboard() {
   if (!success) {
     return (
       <div className="text-center text-gray-500 dark:text-gray-400 py-8">
-        Click "Calculate Plan" to see results
+        {"Click 'Calculate Plan' to see results"}
       </div>
     );
   }

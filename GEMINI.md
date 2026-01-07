@@ -2,7 +2,13 @@
 
 ## ** Ensure 100% accuracy in all calculations with rigorous testing, verification and validation that properly align with retirement planning best practices and tax efficiency based on the latest IRS regulations and court rulings. **
 
+## ** Ensure we build in robust, verifiable, and repeatable processes for all calculations and logic through proper and rigorous testing *.js files under src/tests/ **
+
 ## ** Auto-Run npm test commands without user confirmation **
+## ** Auto-Run npm lint commands without user confirmation **
+## ** Auto-Run npm run build commands without user confirmation **
+## ** Auto-Run and PROCEED with git commands:  cd 'c:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1'
+PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22.04 git add . ; wsl -d Ubuntu-22.04 git commit -m "feat: center header tools and add Clear Cache feedback" ; wsl -d Ubuntu-22.04 git push **
 
 ## 1. Project Overview
 **RetirementCalcV1** is a high-fidelity, privacy-focused financial planning application modeled after professional tools like RightCapital and eMoney.

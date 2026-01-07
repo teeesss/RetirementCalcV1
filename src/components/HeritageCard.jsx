@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { usePlan } from '../contexts/PlanContext';
 
 export default function HeritageCard({ darkMode = false }) {

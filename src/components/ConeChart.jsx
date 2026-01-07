@@ -6,7 +6,7 @@
  * @module ConeChart
  */
 
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -131,7 +131,7 @@ export default function ConeChart({ percentiles, startAge, darkMode = false }) {
         borderWidth: 1,
         padding: 12,
         callbacks: {
-          label: function(context) {
+          label: function (context) {
             const value = context.parsed.y;
             return `${context.dataset.label}: $${value.toLocaleString(undefined, {
               minimumFractionDigits: 0,
@@ -166,7 +166,7 @@ export default function ConeChart({ percentiles, startAge, darkMode = false }) {
         },
         ticks: {
           color: darkMode ? '#9ca3af' : '#6b7280',
-          callback: function(value) {
+          callback: function (value) {
             return '$' + (value / 1000).toFixed(0) + 'k';
           }
         },

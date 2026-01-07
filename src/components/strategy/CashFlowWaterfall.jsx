@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
 
 /**
  * CashFlowWaterfall - Detailed breakdown of cash flows for a specific year
  * Shows all inflows (salary, SS, withdrawals) and outflows (expenses, taxes) as a waterfall
  */
-export default function CashFlowWaterfall({ ledger, selectedYear, darkMode = false }) {
+export default function CashFlowWaterfall({ ledger, selectedYear }) {
     const [year, setYear] = useState(selectedYear || 0);
 
     if (!ledger || ledger.length === 0) {

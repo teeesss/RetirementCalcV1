@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * SmartInput - A wrapper around input type="number" that handles empty strings and 0s better.
@@ -26,7 +26,7 @@ export default function SmartInput({ value, onChange, className, placeholder, st
                 setLocalValue(value.toString());
             }
         }
-    }, [value]);
+    }, [value, localValue]);
 
     const handleChange = (e) => {
         const newVal = e.target.value;

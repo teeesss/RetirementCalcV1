@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { usePlan } from '../contexts/PlanContext';
@@ -53,7 +53,6 @@ export default function SocialSecurityOptimizer() {
 
     // Toggle Logic
     const isJoint = viewMode === 'joint';
-    const activeData = isJoint ? jointAnalysis : singleAnalysis;
 
     // Chart Data Preparation
     const chartData = useMemo(() => {

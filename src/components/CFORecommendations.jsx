@@ -118,11 +118,13 @@ export default function CFORecommendations({ ledger, planData, updatePlan, onNav
 
   // Check withdrawal strategy
   const retirementYears = ledger.filter(y => y.isRetired);
+  /*
   const avgWithdrawal = retirementYears.reduce((sum, y) => {
     const w = (y.withdrawals?.traditional || 0) + (y.withdrawals?.roth || 0) +
       (y.withdrawals?.brokerage || 0) + (y.withdrawals?.crypto || 0);
     return sum + w;
   }, 0) / retirementYears.length;
+  */
 
   if (retirementYears.some(y => (y.withdrawals?.roth || 0) > (y.withdrawals?.traditional || 0) && y.age < 75)) {
     recommendations.push({

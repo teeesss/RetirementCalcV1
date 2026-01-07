@@ -291,7 +291,7 @@ export default function StressTestDashboard({ onRunStressTest, isRunning, result
                         </h4>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className={`p-4 rounded-lg border-2 ${results.successRate >= results.baselineSuccessRate ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-red-500 bg-red-50 dark:bg-red-900/20'}`}>
-                                <div class="text-xs text-gray-600 dark:text-gray-400 mb-1">Success Rate Impact</div>
+                                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Success Rate Impact</div>
                                 <div className={`text-xl font-bold ${results.successRate >= results.baselineSuccessRate ? 'text-green-600' : 'text-red-600'}`}>
                                     {((results.successRate - results.baselineSuccessRate) * 100).toFixed(1)}%
                                 </div>

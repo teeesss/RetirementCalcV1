@@ -548,9 +548,11 @@ export function calculateTotalTax({
   ordinaryDividends = 0,
   ssBenefits = 0,
   capitalLosses = 0,
+  // eslint-disable-next-line no-unused-vars
   isRetired = false,
   earnedIncome = 0,
   itemizedItems = { medical: 0, propertyTax: 0, mortgageInterest: 0, charity: 0 },
+  // eslint-disable-next-line no-unused-vars
   deductionMode = 'standard',
   itemizedDeduction = 0,
   age = 50,
@@ -561,7 +563,7 @@ export function calculateTotalTax({
 }) {
   // Parsing Capital Gains (Handle Number vs Object for backward compatibility if needed)
   const longTermGains = typeof capitalGains === 'object' ? (capitalGains.long || 0) : capitalGains;
-  const shortTermGains = typeof capitalGains === 'object' ? (capitalGains.short || 0) : 0;
+  // const shortTermGains = typeof capitalGains === 'object' ? (capitalGains.short || 0) : 0;
 
   // Short term gains are treated as ordinary income usually?
   // For this engine, let's treat input 'ordinaryIncome' as the base.

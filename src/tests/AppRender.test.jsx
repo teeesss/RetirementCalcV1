@@ -1,6 +1,7 @@
-import React from 'react';
+/* eslint-env node */
+// import React from 'react';
 import { render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import App from '../App';
 
 // Mock Web Worker
@@ -9,7 +10,7 @@ class Worker {
         this.url = stringUrl;
         this.onmessage = () => { };
     }
-    postMessage(msg) {
+    postMessage(/* msg */) {
         this.onmessage({ data: { type: 'result', results: { successRate: 1, finalBalances: { median: 1000000 } } } });
     }
     terminate() { }
@@ -52,6 +53,6 @@ describe('App Root', () => {
         const { container } = render(<App />);
         expect(container).toBeTruthy();
         // Check if main content renders (e.g. Header text we saw earlier)
-        expect(container.innerHTML).toContain('Retirement Planner');
+        expect(container.innerHTML).toContain('The Architect');
     });
 });

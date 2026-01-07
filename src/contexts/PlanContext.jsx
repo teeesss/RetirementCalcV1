@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 /**
  * Plan Context - Global state management for retirement plan
  *
@@ -203,7 +204,7 @@ export function PlanProvider({ children }) {
    */
   useEffect(() => {
     calculateLedger();
-  }, [planData, spendingStrategy, guardrails, calculateLedger]); // Fixed: Added strategy deps for auto-calc
+  }, [planData, spendingStrategy, guardrails, calculateLedger, planData.realEstate]); // Fixed: Added realEstate dep for linter
 
   const calculateSuccess = useMemo(() => {
     if (!ledger.length) return null;

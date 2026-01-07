@@ -34,6 +34,7 @@ Achieve **0-5% effective tax rate** in retirement through intelligent withdrawal
 - **Survivor Logic**: Automatic Filing Status switching (MFJ -> Single) & Basis Step-Up (Community Property vs Common Law).
 - **Crypto Rebalancing**: Automated trimming of high-growth assets to prevent portfolio concentration risk.
 - **Iterative Tax Solver**: "Penny-perfect" tax calculations resolving circular dependencies.
+- **Advanced Visualization**: New "Growth & Drawdown" chart providing forensic analysis of asset growth vs. extraction dynamics.
 
 ---
 

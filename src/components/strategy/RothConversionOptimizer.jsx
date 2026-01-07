@@ -116,7 +116,7 @@ export default function RothConversionOptimizer() {
                             <option value="24">24% - Aggressive (Higher rate, more conversion)</option>
                         </select>
                         <p className="text-xs text-gray-500 mt-1">
-                            We'll convert up to the top of this bracket each year
+                            We&apos;ll convert up to the top of this bracket each year
                         </p>
                     </div>
                 </div>

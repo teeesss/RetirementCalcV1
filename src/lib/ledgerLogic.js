@@ -1,4 +1,4 @@
-import { calculateRMD, calculateTotalTax, calculateACASubsidy, calculateMedicarePremiums, FEDERAL_BRACKETS, SUNSET_BRACKETS } from './taxEngine';
+import { calculateRMD, calculateTotalTax, calculateACASubsidy, calculateMedicarePremiums } from './taxEngine';
 import { optimizeWithdrawals } from './withdrawalOptimizer';
 import { calculateSSBenefit } from './ssOptimizer';
 import { growHECM, calculateInitialPrincipalLimit } from './reverseMortgage';
@@ -397,9 +397,9 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
         const getMonthsEligible = (bDate, startAge, year) => {
             // Claim Date = BirthDate + StartAge (Years) + (StartAge Fraction * 12 Months)
             // Actually, simpler: ClaimDate = BirthDate + StartAge Years
-            const claimYear = bDate.getFullYear() + Math.floor(startAge);
+            bDate.getFullYear() + Math.floor(startAge);
             const claimMonthFraction = (startAge % 1);
-            let claimMonth = bDate.getMonth() + Math.round(claimMonthFraction * 12);
+            bDate.getMonth() + Math.round(claimMonthFraction * 12);
 
             // console.log(`[SS Debug] Year: ${year}, StartAge: ${startAge}, ClaimY: ${claimYear}, ClaimM: ${claimMonth}`);
 
@@ -470,7 +470,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             if ((clientAlive && !spouseAlive) || (!clientAlive && spouseAlive)) {
                 // Determine who is the survivor
                 const isPrimarySurvivor = clientAlive;
-                const survivorStart = isPrimarySurvivor ? primaryStart : spouseStart; // When do they claim?
+                isPrimarySurvivor ? primaryStart : spouseStart; // When do they claim?
                 // Actually survivor can claim EARLIER (age 60).
                 // For now, assume they claim at their planned age or immediately if eligible.
 
@@ -751,9 +751,9 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
 
         let incomeWithMandatory = income + rmdIncome + totalDividends;
 
-        let estimatedTax = 0;
+        // let estimatedTax = 0;
         let iterationResult = null;
-        let annualCashDraw = 0;
+        // let annualCashDraw = 0;
         let annualLocBorrow = 0, annualCryptoLocBorrow = 0, annualHecmBorrow = 0;
         let bucketRefilled = false;
 
@@ -827,7 +827,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             const draft = Math.min(gapPostBucket, balances.cash);
             balances.cash -= draft;
             gapPostBucket -= draft;
-            annualCashDraw += draft;
+            // annualCashDraw += draft;
         }
 
         // Withdrawal Optimization
@@ -1196,8 +1196,50 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             },
             cashFlow: {
                 byAccount: trackedCashFlow
+            },
+            // Phase 12: Advanced Metrics (Single Source of Authority)
+            metrics: {
+                totalWithdrawals: withdrawals.total,
+                yearlyAssetGrowth: i > 0 ? ((portVal + totalRealEstateValue - totalDebt) - ledger[i - 1].netWorth) + withdrawals.total : 0,
+                cumulativeAssetGrowth: 0, // Will be updated recursively below
+                yearlyNetDifference: i > 0 ? (portVal + totalRealEstateValue - totalDebt) - ledger[i - 1].netWorth : 0,
+                // Phase 13: Detailed Cash Flow breakdown for visualization
+                detailedCashFlow: {
+                    inflows: {
+                        salary: salary,
+                        socialSecurity: ss,
+                        pension: 0, // FIXED: Was 'income' which double-counted Salary+SS
+                        rmd: rmdIncome,
+                        other: 0
+                    },
+                    drawdowns: {
+                        traditional: withdrawals.traditional || 0,
+                        roth: withdrawals.roth || 0,
+                        brokerage: withdrawals.brokerage || 0,
+                        crypto: withdrawals.crypto || 0,
+                        hsa: withdrawals.hsa || 0,
+                        cash: withdrawals.cash || 0
+                    },
+                    outflows: {
+                        essential: effectiveAnnualExpenses,
+                        discretionary: discretionaryExpenses,
+                        healthcare: healthcareCost,
+                        housing: housingCost,
+                        mortgage: totalMortPayment,
+                        taxes: {
+                            federal: taxResult.federalTax || 0,
+                            state: taxResult.stateTax || 0,
+                            fica: taxResult.fica?.total || 0,
+                            total: taxResult.totalTax || 0
+                        }
+                    }
+                }
             }
         });
+
+        if (i > 0) {
+            ledger[i].metrics.cumulativeAssetGrowth = ledger[i - 1].metrics.cumulativeAssetGrowth + ledger[i].metrics.yearlyAssetGrowth;
+        }
 
         // Update tracking state for next iteration
         wasClientAlive = clientAlive;

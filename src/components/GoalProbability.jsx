@@ -8,7 +8,7 @@
 
 import { usePlan } from '../contexts/PlanContext';
 
-export default function GoalProbability({ monteCarloResults }) {
+export default function GoalProbability() {
   const { planData, ledger } = usePlan();
 
   if (!planData.goals || planData.goals.length === 0) {
@@ -34,7 +34,7 @@ export default function GoalProbability({ monteCarloResults }) {
 
   return (
     <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-yellow-500 dark:border-yellow-600">
-      <h3 className="text-sm font-semibold mb-3 text-yellow-600 dark:text-yellow-400">Goal Probability</h3>
+      <h3 className="text-sm font-semibold mb-3 text-yellow-600 dark:text-yellow-400">{'Goal Probability'}</h3>
       <div className="space-y-2">
         {goalProbabilities.map((goal, idx) => (
           <div key={idx} className="text-xs">

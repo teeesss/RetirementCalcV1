@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { fetchRentCastValue, validateRentCastKey } from './lib/realEstateAPI';
 import { STATE_BRACKETS } from './data/stateTaxBrackets';
 import { PlanProvider, usePlan } from './contexts/PlanContext';
 import { TaxStrategyProvider } from './contexts/TaxStrategyContext';
@@ -12,7 +11,6 @@ import CashFlowChart from './components/CashFlowChart';
 import NetWorthChart from './components/NetWorthChart';
 import MonteCarloStats from './components/MonteCarloStats';
 import GoalProbability from './components/GoalProbability';
-import RMDTracker from './components/RMDTracker';
 import CFORecommendations from './components/CFORecommendations';
 import TaxSummary from './components/TaxSummary';
 import AssetInputForm from './components/AssetInputForm';
@@ -26,6 +24,8 @@ const StressTestDashboard = React.lazy(() => import('./components/strategy/Stres
 const EstateSettings = React.lazy(() => import('./components/strategy/EstateSettings'));
 const ExpenseManagement = React.lazy(() => import('./components/strategy/ExpenseManagement'));
 const TaxFreeDashboard = React.lazy(() => import('./components/strategy/TaxFreeDashboard'));
+import GrowthDrawdownChart from './components/strategy/GrowthDrawdownChart';
+import DetailedCashFlowChart from './components/strategy/DetailedCashFlowChart';
 
 // DIAGNOSTIC: Robust Error Boundary
 class ErrorBoundary extends React.Component {
@@ -103,8 +103,6 @@ function AppContent() {
   } = usePlan();
 
   const [fetchingRE, setFetchingRE] = useState(null); // idx of fetching property
-  const [isValidatingKey, setIsValidatingKey] = useState(false);
-  const [showRESettings, setShowRESettings] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [activeTab, setActiveTab] = useState('cashflow');
   const [mcProgress, setMcProgress] = useState(0);
@@ -309,8 +307,9 @@ function AppContent() {
       });
       autoFetchRan.current = true;
     }
-  }, [planData.settings?.apiKeys?.rentcast, fetchRealEstateValue]);
+  }, [planData.settings?.apiKeys?.rentcast, planData.realEstate, fetchRealEstateValue]);
 
+  /*
   const handleValidateKey = async () => {
     const key = planData.settings?.apiKeys?.rentcast;
     if (!key) {
@@ -332,6 +331,7 @@ function AppContent() {
       setIsValidatingKey(false);
     }
   };
+  */
 
   const runMonteCarloSim = useCallback(async () => {
     if (!ledger || ledger.length === 0) {
@@ -429,7 +429,7 @@ function AppContent() {
   }, []); // Run once on mount explicitly
 
   // Helper for Async Worker - Helper to run a single simulation promise
-  const runProb = async (ledgerToUse, requestId, iterations = 1000, customPlan = null) => {
+  const runProb = useCallback(async (ledgerToUse, requestId, iterations = 1000, customPlan = null) => {
     const sourcePlan = customPlan || planData;
     // Worker Params
     const params = {
@@ -459,7 +459,7 @@ function AppContent() {
       };
       worker.postMessage({ ...params, ledger: ledgerToUse, initialBalances: ledgerToUse.initialBalances, requestId });
     });
-  };
+  }, [planData]);
 
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [optimizationResult, setOptimizationResult] = useState(null);
@@ -615,7 +615,7 @@ function AppContent() {
     } finally {
       setIsOptimizing(false);
     }
-  }, [planData, calculateLedger, isOptimizing, runMonteCarloSim, updatePlan]);
+  }, [planData, calculateLedger, isOptimizing, runMonteCarloSim, updatePlan, runProb]);
 
   // Listen for optimizer trigger from MonteCarloStats component
   useEffect(() => {
@@ -1259,8 +1259,7 @@ function AppContent() {
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-8 space-y-1">
-            <Dashboard />
+          <div className="lg:col-span-8 space-y-4">
 
             {/* Net Worth Trajectory Chart - Moved up */}
             {ledger && ledger.length > 0 && (
@@ -1273,7 +1272,6 @@ function AppContent() {
             {/* Goal Probability and RMD */}
             <div className="grid grid-cols-2 gap-2">
               <GoalProbability monteCarloResults={monteCarloResults} />
-              <RMDTracker />
             </div>
 
             {/* Advanced Features Tabs */}
@@ -1356,9 +1354,19 @@ function AppContent() {
               <div className="p-3">
                 {activeTab === 'cashflow' && (
                   <div className="space-y-4">
+                    {/* Phase 13: Detailed Cash Flow */}
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm h-[500px]">
+                      <DetailedCashFlowChart ledger={ledger} darkMode={darkMode} />
+                    </div>
+
                     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Cash Flow Analysis</h3>
                       <CashFlowChart ledger={ledger} darkMode={darkMode} />
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                      <div className="h-96">
+                        <GrowthDrawdownChart ledger={ledger} darkMode={darkMode} />
+                      </div>
                     </div>
                     <div className="overflow-x-auto">
                       <table className="w-full text-xs">
