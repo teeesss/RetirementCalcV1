@@ -87,6 +87,9 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 ## 🐛 Known Bugs / Issues
 
 ### Recently Fixed (v2.1)
+- ✅ **Monte Carlo Blank Charts**: Resolved data type mismatch causing zero results/blank charts. Added strict type coercion in Worker and input safeguards in App.
+- ✅ **Mortgage Amortization**: Fixed logic where mortgage final payment left small remainder.
+- ✅ **UI Polish**: Standardized Chart Tooltips and added missing titles.
 - ✅ **Testing Regressions**: Fixed 5 failing test suites caused by new logic (Rebalancing, HSA Priority).
 - ✅ **Roth Conversion**: Fixed bug where conversions into empty accounts failed.
 - ✅ **Filing Status**: Fixed logic where widows remained "Married" indefinitely.
@@ -104,5 +107,5 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 
 ---
 
-**Last Updated**: 2026-01-06 (v2.1.2 COMPLETE)
-**Status**: ✅ **STABLE & VERIFIED** - Phase 12 Visualization & Lint Cleanup COMPLETE.
+**Last Updated**: 2026-01-07 (v2.1.3 STABILITY FIXES)
+**Status**: ✅ **STABLE & VERIFIED** - Monte Carlo Blank Charts & Mortgage Logic Fixed.

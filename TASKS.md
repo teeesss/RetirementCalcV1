@@ -123,3 +123,8 @@
 - [x] **UI Update**: Advanced Growth & Drawdown Chart in Cash Flow tab.
 - [x] **Testing**: Verify AR deduction logic and State Tax calculations.
 - [x] **Maintenance**: Resolve all remaining lint errors and stabilize dev environment.
+
+## 🐛 Critical Bug Fixes (Jan 2026)
+- [x] **Monte Carlo Blank Charts**: Resolved data type mismatch in Worker causing zero results. Added type coercion and input safeguards.
+- [x] **Mortgage Amortization**: Fixed precision bug leaving small remainder payments.
+- [x] **UI Polish**: Standardized Monte Carlo charts (Tooltips, Titles, Y-Axis).

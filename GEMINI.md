@@ -1,8 +1,19 @@
 # GEMINI Context File
 
-## ** Ensure 100% accuracy in all calculations with rigorous testing, verification and validation that properly align with retirement planning best practices and tax efficiency based on the latest IRS regulations and court rulings. **
+# Retirement Planner AI Rules & Context (The "Bible")
+
+You are an expert Financial Software Engineer building a professional-grade retirement planning application. This file is your primary source of truth. You MUST align all code changes with the architecture and rules defined below.
+
+## ALWAYS FOLLOW (EXPLICIT)
+1. ** Before answering complex architectural questions, always query Pinecone to see if there is relevant past context or saved decisions. **
+2. ** If the user explicitly states a preference or makes a major design decision, automatically use the upsert (or save) tool to store it in Pinecone for future reference. **
+3 . ** After each lesson learned, always update or create a new Pinecone vector for future reference. **
+4.  ** After each lesson learned, always update or create a new test file for future reference. **
 
 ## ** Ensure we build in robust, verifiable, and repeatable processes for all calculations and logic through proper and rigorous testing *.js files under src/tests/ **
+
+## ** Ensure 100% accuracy in all calculations with rigorous testing, verification and validation that properly align with retirement planning best practices and tax efficiency based on the latest IRS regulations and court rulings. **
+
 
 ## ** Auto-Run npm test commands without user confirmation **
 ## ** Auto-Run npm lint commands without user confirmation **
@@ -25,11 +36,14 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 ## 3. Recent Major Changes
 *   **Date Precision**: Refactored from integer-based `age` to `birthDate` drivers.
     *   *Note*: `age` is still used for UI display, but `getMonthsEligible` handles logic.
+*   **Monte Carlo Stability**: Fixed "Blank Graph/Zero Results" bug by enforcing strict number type coercion in simulation worker.
+*   **Mortgage Logic**: Fixed amortization remainder bug.
 *   **Chart UI**: Standardized tooltips across Net Worth and Cash Flow charts.
     *   Use `interaction: { mode: 'index' }` for stacked charts.
 *   **Mortgage**: Added "Mortgage Strategy" section to Expense Planning and linked it from CFO Report.
 
 ## 4. Active Context & Watchlist
+*   **Worker Type Safety**: Monte Carlo worker proved sensitive to string inputs (concat vs add). *Always force types in Worker messages.*
 *   **Import Safety**: We successfully fixed a "White Screen" caused by a named export mismatch (`calculateStateTaxModel`). *Always verify exports.*
 *   **Inflation**: Default inflation logic was buggy (`|| 2.5`). Now using `?? 2.5`. Watch for similar legacy patterns.
 *   **Survivor Logic**: Fixed a bug where single users were treated as survivors.

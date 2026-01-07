@@ -1,6 +1,7 @@
 
 import { describe, it, expect } from 'vitest';
 import { generateLedger } from '../lib/ledgerLogic';
+import defaultProfile from '../data/defaultProfile.json';
 
 describe('Golden Master Logic Verification', () => {
     // "Kitchen Sink" Scenario: Complex enough to touch most logic paths
@@ -50,6 +51,13 @@ describe('Golden Master Logic Verification', () => {
             enableTaxLossHarvesting: true
         }
     };
+
+    it('should match the regression snapshot for the Default Profile (Authoritative Source)', () => {
+        // Use defaultProfile as the single source of truth for this test
+        // We clone it to ensure purity
+        const ledger = generateLedger(JSON.parse(JSON.stringify(defaultProfile)));
+        expect(ledger).toMatchSnapshot();
+    });
 
     it('should match the regression snapshot for the Kitchen Sink scenario', () => {
         const ledger = generateLedger(KITCHEN_SINK_SCENARIO);

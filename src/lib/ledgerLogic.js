@@ -486,7 +486,10 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
         // Apply Shock
         ss = ss * shockSS;
 
-        const income = salary + ss;
+        // Pension Logic
+        const pension = (currentData.pension || currentData.income?.pension || 0);
+
+        const income = salary + ss + pension;
 
         // Legacy Survivor Logic Removed (Consolidated at top of loop)
 
@@ -1217,7 +1220,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
                     inflows: {
                         salary: salary,
                         socialSecurity: ss,
-                        pension: 0, // FIXED: Was 'income' which double-counted Salary+SS
+                        pension: pension,
                         rmd: rmdIncome,
                         other: 0
                     },

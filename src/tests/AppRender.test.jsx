@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import App from '../App';
 
-// Mock Web Worker
+// Mock Worker
 class Worker {
     constructor(stringUrl) {
         this.url = stringUrl;
@@ -16,6 +16,70 @@ class Worker {
     terminate() { }
 }
 global.Worker = Worker;
+
+// Mock HTMLCanvasElement.prototype.getContext to appease Chart.js
+HTMLCanvasElement.prototype.getContext = () => {
+    return {
+        fillRect: () => { },
+        clearRect: () => { },
+        getImageData: (x, y, w, h) => {
+            return {
+                data: new Array(w * h * 4)
+            };
+        },
+        putImageData: () => { },
+        createImageData: () => [],
+        createPattern: () => null,
+        setTransform: () => { },
+        drawImage: () => { },
+        save: () => { },
+        fillText: () => { },
+        restore: () => { },
+        beginPath: () => { },
+        moveTo: () => { },
+        lineTo: () => { },
+        closePath: () => { },
+        stroke: () => { },
+        translate: () => { },
+        scale: () => { },
+        rotate: () => { },
+        arc: () => { },
+        fill: () => { },
+        measureText: () => {
+            return { width: 0 };
+        },
+        transform: () => { },
+        rect: () => { },
+        clip: () => { },
+    };
+};
+
+// Mock ResizeObserver
+global.ResizeObserver = class ResizeObserver {
+    observe() { }
+    unobserve() { }
+    disconnect() { }
+};
+
+// Mock chart.js components
+vi.mock('react-chartjs-2', () => ({
+    Chart: () => null,
+    Bar: () => null,
+    Line: () => null,
+    Pie: () => null,
+    Doughnut: () => null,
+}));
+
+vi.mock('chart.js', async (importOriginal) => {
+    const actual = await importOriginal();
+    return {
+        ...actual,
+        Chart: {
+            ...actual.Chart,
+            register: () => { }
+        }
+    };
+});
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {

@@ -12,62 +12,22 @@
 import { describe, it, expect } from 'vitest';
 import { generateLedger } from '../lib/ledgerLogic';
 
+import defaultProfile from '../data/defaultProfile.json';
+
+
 describe('Monte Carlo Deep Validation', () => {
-    // Helper to create a simple test profile
-    const createTestProfile = (overrides = {}) => ({
-        people: [
-            {
-                name: 'Client',
-                birthDate: '1960-01-01',
-                age: 65,
-                retirementAge: 65,
-                lifeExpectancy: 90
-            }
-        ],
-        profile: {
-            filingStatus: 'single',
-            state: 'none'
-        },
-        assets: {
-            traditional: { client: 1000000, spouse: 0 },
-            roth: { client: 500000, spouse: 0 },
-            brokerage: { client: 300000, spouse: 0 },
-            crypto: { client: 0, spouse: 0 },
-            cash: { total: 50000 },
-            hsa: { client: 0, spouse: 0 },
-            realEstate: { total: 0 }
-        },
-        income: {
-            salaryClient: 0,
-            salarySpouse: 0
-        },
-        socialSecurity: {
-            primary: {
-                enabled: true,
-                annualAmount: 30000,
-                startAge: 67
-            },
-            spouse: {
-                enabled: false
-            }
-        },
-        expenses: {
-            essential: 50000,
-            discretionary: 20000,
-            oneTime: []
-        },
-        assumptions: {
-            inflation: 2.5,
-            growthRate: 7.0,
-            cryptoGrowthRate: 10.0,
-            startYear: 2026
-        },
-        spending: {
-            strategy: 'fixed',
-            fixedAmount: 70000
-        },
-        ...overrides
-    });
+    // Helper to create a simple test profile based on Default
+    const createTestProfile = (overrides = {}) => {
+        // Deep clone default profile to avoid mutations
+        const base = JSON.parse(JSON.stringify(defaultProfile));
+
+        // rudimentary deep merge for simple overrides (or use lodash if available, but let's stick to simple spread for now since overrides are usually top-level blocks)
+        // For distinct blocks like 'assets', if we override it, we likely want to replace it for the test case (e.g. "Rich Profile").
+        return {
+            ...base,
+            ...overrides,
+        };
+    };
 
     describe('Deterministic vs Monte Carlo Median Comparison', () => {
         it('should have Monte Carlo median close to deterministic ledger (within 15%)', () => {

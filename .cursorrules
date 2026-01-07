@@ -131,6 +131,9 @@ The `calculateLedger` loop in `PlanContext` runs annually from `currentAge` to `
         *   *Fix*: Ensure survivor logic checks `if (spouse && ...)`.
     12. **The Zero Inflation Fallacy** (Jan 2026): `inflation || 2.5` caused 0% inflation to default to 2.5%.
         *   *Fix*: Use nullish coalescing `inflation ?? 2.5`.
+    13. **The Worker's Blind Spot** (Jan 2026): Worker thread received strings ("50") for age, causing "50" + 0 = "500" loop errors and blank charts.
+        *   *Fix*: **ALWAYS** enforce explicit type coercion (`Number()`) at the TOP of every Worker's `onmessage` handler.
+        *   *Prevention*: Never trust `postMessage` payloads to be typed correctly. Cast inputs before use.
 
 ## 🚨 White Screen Protocol
 If the app shows a white screen:

@@ -35,6 +35,7 @@ Achieve **0-5% effective tax rate** in retirement through intelligent withdrawal
 - **Crypto Rebalancing**: Automated trimming of high-growth assets to prevent portfolio concentration risk.
 - **Iterative Tax Solver**: "Penny-perfect" tax calculations resolving circular dependencies.
 - **Advanced Visualization**: New "Growth & Drawdown" chart providing forensic analysis of asset growth vs. extraction dynamics.
+- **Stability & Performance (v2.1.3)**: Solved critical Monte Carlo concurrency issues (Blank Charts) and Mortgage precision errors.
 
 ---
 
