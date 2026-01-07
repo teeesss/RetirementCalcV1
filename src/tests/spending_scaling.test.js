@@ -63,4 +63,27 @@ describe('Spending Strategy Scaling', () => {
         // Verify 2.0x is higher than 1.9x
         expect(expenses200).toBeGreaterThan(expenses190);
     });
+
+    it('should scale monotonically from 110% to 180%', () => {
+        const guardrails = { floorPercent: 0.85, ceilingPercent: 1.20, adjustmentRate: 0.10 };
+        const strategy = 'fixed';
+
+        let previousExpenses = 0;
+        const multipliers = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8];
+
+        console.log('--- Verify 110% through 180% ---');
+
+        multipliers.forEach(mult => {
+            const plan = createScaledPlan(defaultProfile, mult);
+            const ledger = generateLedger(plan, strategy, guardrails);
+            const expenses = ledger[0].expenses.total;
+
+            console.log(`${(mult * 100).toFixed(0)}%: $${expenses.toLocaleString()}`);
+
+            if (previousExpenses > 0) {
+                expect(expenses).toBeGreaterThan(previousExpenses);
+            }
+            previousExpenses = expenses;
+        });
+    });
 });
