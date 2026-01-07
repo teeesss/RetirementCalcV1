@@ -345,6 +345,17 @@ function AppContent() {
     const client = planData.people?.[0] || { age: 50, lifeExpectancy: 90 };
     const spouse = planData.people?.[1];
 
+    // SAFEGUARD: Ensure valid simulation range
+    const startAge = Number(client.age) || 50;
+    const endAge = Math.max(Number(client.lifeExpectancy) || 90, Number(spouse?.lifeExpectancy) || 0);
+
+    if (startAge >= endAge) {
+      alert(`Simulation Error: Start Age (${startAge}) must be less than Life Expectancy (${endAge}). Please check Profile settings.`);
+      setIsCalculatingMC(false);
+      setMcProgress(0);
+      return;
+    }
+
     const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), { type: 'module' });
 
     worker.onmessage = (e) => {

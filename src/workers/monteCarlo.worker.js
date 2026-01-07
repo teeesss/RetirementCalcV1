@@ -112,7 +112,11 @@ self.onmessage = (e) => {
         scenarioId = 'random'
     } = e.data;
 
-    const years = endAge - startAge + 1;
+    // Ensure types are numbers to prevent logic errors
+    const startAgeNum = Number(startAge);
+    const endAgeNum = Number(endAge);
+    const years = endAgeNum - startAgeNum + 1;
+    const iterationsNum = Number(iterations);
     // console.log(`DIAGNOSTIC: MC Worker Params...`);
 
     const results = [];
@@ -120,9 +124,9 @@ self.onmessage = (e) => {
     const successFlags = [];
     const ruinAges = [];
 
-    for (let iter = 0; iter < iterations; iter++) {
+    for (let iter = 0; iter < iterationsNum; iter++) {
         if (iter % 100 === 0) {
-            self.postMessage({ type: 'progress', progress: (iter / iterations) * 100 });
+            self.postMessage({ type: 'progress', progress: (iter / iterationsNum) * 100 });
         }
 
         // Initialize with START-OF-YEAR 0 balances (before any flows)
@@ -144,7 +148,7 @@ self.onmessage = (e) => {
         const trialYearResults = [];
 
         for (let y = 0; y < years; y++) {
-            const age = startAge + y;
+            const age = startAgeNum + y;
             const yearIndex = Math.min(y, ledger.length - 1);
             const baseYearData = ledger[yearIndex];
 
@@ -338,7 +342,7 @@ self.onmessage = (e) => {
             if (!trialSuccess) {
                 // Fill remaining years with 0
                 for (let r = y + 1; r < years; r++) {
-                    trialYearResults.push({ age: startAge + r, totalBalance: 0 });
+                    trialYearResults.push({ age: startAgeNum + r, totalBalance: 0 });
                 }
                 break; // STRICT EXIT
             }
@@ -384,7 +388,7 @@ self.onmessage = (e) => {
 
     // Calculate Percentiles
     const percentiles = calculatePercentiles(results);
-    const successRate = successFlags.filter(s => s).length / iterations;
+    const successRate = successFlags.filter(s => s).length / iterationsNum;
 
     // Failure Stats
     const failureStats = {
@@ -403,7 +407,7 @@ self.onmessage = (e) => {
         type: 'result',
         requestId,
         results: {
-            iterations,
+            iterations: iterationsNum,
             successRate,
             percentiles,
             initialBalance: initialB,
