@@ -600,20 +600,29 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             if (re.mortgageBalance > 0 && re.mortgage) {
                 const monthlyPmt = Number(re.mortgage.paymentPI) || 0;
                 const annualPayment = monthlyPmt * 12;
+
+                // Calculate Interest First
+                const annualRate = (Number(re.mortgage.rate) || 0) / 100;
+                const interest = re.mortgageBalance * annualRate;
+
                 let extraPayment = 0;
                 if (re.mortgage.targetAge && re.mortgage.targetAge > clientAge) {
                     const yearsRemaining = re.mortgage.targetAge - clientAge;
                     extraPayment = Math.max(0, (re.mortgageBalance - (annualPayment * yearsRemaining)) / yearsRemaining);
                 }
                 const totalAnnualPayment = annualPayment + extraPayment;
-                const payment = Math.min(re.mortgageBalance, totalAnnualPayment);
-                totalMortPayment += payment;
 
-                const annualRate = (Number(re.mortgage.rate) || 0) / 100;
-                const interest = re.mortgageBalance * annualRate;
+                // Fix: Cap payment at Balance + Interest (Total Liability), not just Balance
+                // Otherwise we leave interest unpaid and balance never hits exactly 0
+                const payment = Math.min(re.mortgageBalance + interest, totalAnnualPayment);
+
+                totalMortPayment += payment;
                 totalMortInterest += interest;
+
                 const principal = Math.max(0, payment - interest);
                 re.mortgageBalance = Math.max(0, re.mortgageBalance - principal);
+
+                // Snap to 0 if very small (handling floating point noise)
                 if (re.mortgageBalance < 5) re.mortgageBalance = 0;
             }
 

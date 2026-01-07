@@ -122,6 +122,10 @@ export default function MarginalTaxChart({ darkMode = false }) {
     const options = {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+            mode: 'index',
+            intersect: false,
+        },
         plugins: {
             legend: {
                 position: 'top',
