@@ -154,7 +154,7 @@ export default function ConfidenceBand({ percentiles, years, darkMode = false })
             }
         },
         interaction: {
-            mode: 'nearest',
+            mode: 'index',
             axis: 'x',
             intersect: false
         }

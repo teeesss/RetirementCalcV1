@@ -123,6 +123,12 @@ export default function ConeChart({ percentiles, startAge, darkMode = false }) {
           }
         }
       },
+      title: {
+        display: true,
+        text: 'Projected Net Worth by Age',
+        color: darkMode ? '#d1d5db' : '#374151',
+        font: { size: 14, weight: 'bold' }
+      },
       tooltip: {
         backgroundColor: darkMode ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)',
         titleColor: darkMode ? '#e5e7eb' : '#111827',
@@ -133,10 +139,11 @@ export default function ConeChart({ percentiles, startAge, darkMode = false }) {
         callbacks: {
           label: function (context) {
             const value = context.parsed.y;
-            return `${context.dataset.label}: $${value.toLocaleString(undefined, {
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0
-            })}`;
+            // Standardize tooltip format to $M for consistency if values are large
+            if (Math.abs(value) >= 1000000) {
+              return `${context.dataset.label}: $${(value / 1000000).toFixed(2)}M`;
+            }
+            return `${context.dataset.label}: $${(value / 1000).toFixed(0)}k`;
           }
         }
       }
@@ -167,7 +174,7 @@ export default function ConeChart({ percentiles, startAge, darkMode = false }) {
         ticks: {
           color: darkMode ? '#9ca3af' : '#6b7280',
           callback: function (value) {
-            return '$' + (value / 1000).toFixed(0) + 'k';
+            return '$' + (value / 1000000).toFixed(1) + 'M';
           }
         },
         beginAtZero: true
