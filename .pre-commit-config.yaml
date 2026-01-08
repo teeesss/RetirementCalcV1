@@ -36,3 +36,13 @@ repos:
         language: system
         files: \.(js|jsx|json|md|yml|yaml)$
         pass_filenames: true
+
+  # ESLint – JavaScript/JSX linting (with auto-fix)
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint
+        entry: npm run lint -- --fix
+        language: system
+        files: \.(js|jsx)$
+        pass_filenames: true
