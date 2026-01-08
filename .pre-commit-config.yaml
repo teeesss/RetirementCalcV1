@@ -13,11 +13,11 @@ repos:
 
   # Checkov – official hook, fixed rev to a real tag
   - repo: https://github.com/bridgecrewio/checkov
-    rev: 3.2.266  # Valid tag (no "v" prefix)
+    rev: 3.2.266 # Valid tag (no "v" prefix)
     hooks:
       - id: checkov
         name: Checkov Security Scan
-        args: [--quiet, --compact]  # Optional: quieter output
+        args: [--quiet, --compact] # Optional: quieter output
         # files: \.(tf|yaml|yml|json|Dockerfile)$  # Uncomment to limit scanning
 
   # Gitleaks – secret detection
@@ -27,12 +27,22 @@ repos:
       - id: gitleaks
         verbose: false
 
-  # ESLint – JavaScript/JSX linting
+  # Prettier – code formatting (runs before ESLint)
+  - repo: local
+    hooks:
+      - id: prettier
+        name: Prettier
+        entry: npx prettier --write
+        language: system
+        files: \.(js|jsx|json|md|yml|yaml)$
+        pass_filenames: true
+
+  # ESLint – JavaScript/JSX linting (with auto-fix)
   - repo: local
     hooks:
       - id: eslint
         name: ESLint
-        entry: npm run lint --
+        entry: npm run lint -- --fix
         language: system
         files: \.(js|jsx)$
         pass_filenames: true
