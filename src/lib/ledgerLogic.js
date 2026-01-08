@@ -1156,7 +1156,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
         }
 
         // We just need discretionaryExpenses.
-        const discretionaryExpenses = (expenses.discretionary || 0) * ((i === 0) ? 1 : Math.pow(1 + (assumptions.inflationRate / 100), i));
+        const discretionaryExpenses = safeNum(expenses.discretionary) * ((i === 0) ? 1 : Math.pow(1 + (safeNum(assumptions?.inflationRate) / 100), i));
 
         if (i === 0) { /* Debug removed */ }
 

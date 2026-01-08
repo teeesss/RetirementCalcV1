@@ -182,7 +182,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 74160,
       "healthcare": 0,
       "housing": 13081,
@@ -219,7 +219,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 74160,
           "healthcare": 0,
           "housing": 13081,
@@ -319,7 +319,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 76384.8,
       "healthcare": 0,
       "housing": 13473.43,
@@ -356,7 +356,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 76384.8,
           "healthcare": 0,
           "housing": 13473.43,
@@ -456,7 +456,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 78676.344,
       "healthcare": 0,
       "housing": 13877.6329,
@@ -493,7 +493,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 78676.344,
           "healthcare": 0,
           "housing": 13877.6329,
@@ -593,7 +593,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 81036.63432000001,
       "healthcare": 0,
       "housing": 14293.961887000001,
@@ -630,7 +630,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 81036.63432000001,
           "healthcare": 0,
           "housing": 14293.961887000001,
@@ -730,7 +730,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 83467.7333496,
       "healthcare": 0,
       "housing": 14722.780743610001,
@@ -767,7 +767,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 83467.7333496,
           "healthcare": 0,
           "housing": 14722.780743610001,
@@ -867,7 +867,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 85971.76535008801,
       "healthcare": 0,
       "housing": 15164.4641659183,
@@ -904,7 +904,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 85971.76535008801,
           "healthcare": 0,
           "housing": 15164.4641659183,
@@ -1004,7 +1004,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 88550.91831059066,
       "healthcare": 0,
       "housing": 15619.398090895851,
@@ -1041,7 +1041,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 88550.91831059066,
           "healthcare": 0,
           "housing": 15619.398090895851,
@@ -1141,7 +1141,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 91207.44585990837,
       "healthcare": 0,
       "housing": 16087.980033622727,
@@ -1178,7 +1178,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 91207.44585990837,
           "healthcare": 0,
           "housing": 16087.980033622727,
@@ -1278,7 +1278,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 93943.66923570563,
       "healthcare": 0,
       "housing": 16570.619434631408,
@@ -1315,7 +1315,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 93943.66923570563,
           "healthcare": 0,
           "housing": 16570.619434631408,
@@ -1415,7 +1415,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 96761.9793127768,
       "healthcare": 0,
       "housing": 17067.738017670352,
@@ -1452,7 +1452,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 96761.9793127768,
           "healthcare": 0,
           "housing": 17067.738017670352,
@@ -1552,7 +1552,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 99664.8386921601,
       "healthcare": 0,
       "housing": 17579.770158200467,
@@ -1589,7 +1589,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 99664.8386921601,
           "healthcare": 0,
           "housing": 17579.770158200467,
@@ -1689,7 +1689,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 102654.78385292491,
       "healthcare": 0,
       "housing": 18107.163262946477,
@@ -1726,7 +1726,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 16245.975001257473,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 102654.78385292491,
           "healthcare": 0,
           "housing": 18107.163262946477,
@@ -1826,7 +1826,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 105734.42736851267,
       "healthcare": 0,
       "housing": 18650.378160834873,
@@ -1863,7 +1863,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 33466.7085025904,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 105734.42736851267,
           "healthcare": 0,
           "housing": 18650.378160834873,
@@ -1963,7 +1963,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 108906.46018956805,
       "healthcare": 0,
       "housing": 19209.88950565992,
@@ -2000,7 +2000,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 34470.70975766811,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 108906.46018956805,
           "healthcare": 0,
           "housing": 19209.88950565992,
@@ -2100,7 +2100,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 112173.65399525508,
       "healthcare": 7103.400000000001,
       "housing": 19786.186190829714,
@@ -2137,7 +2137,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 35504.831050398156,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 112173.65399525508,
           "healthcare": 7103.400000000001,
           "housing": 19786.186190829714,
@@ -2237,7 +2237,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 115538.86361511274,
       "healthcare": 7103.400000000001,
       "housing": 20379.77177655461,
@@ -2274,7 +2274,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 36569.9759819101,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 115538.86361511274,
           "healthcare": 7103.400000000001,
           "housing": 20379.77177655461,
@@ -2374,7 +2374,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 119005.02952356613,
       "healthcare": 7103.400000000001,
       "housing": 20991.16492985125,
@@ -2411,7 +2411,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 37667.075261367405,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 119005.02952356613,
           "healthcare": 7103.400000000001,
           "housing": 20991.16492985125,
@@ -2511,7 +2511,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 122575.18040927313,
       "healthcare": 7103.400000000001,
       "housing": 21620.899877746786,
@@ -2548,7 +2548,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 38797.087519208435,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 122575.18040927313,
           "healthcare": 7103.400000000001,
           "housing": 21620.899877746786,
@@ -2648,7 +2648,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 126252.43582155132,
       "healthcare": 7103.400000000001,
       "housing": 22269.526874079187,
@@ -2685,7 +2685,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 39961.00014478468,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 126252.43582155132,
           "healthcare": 7103.400000000001,
           "housing": 22269.526874079187,
@@ -2785,7 +2785,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 130040.00889619786,
       "healthcare": 7103.400000000001,
       "housing": 22937.612680301572,
@@ -2822,7 +2822,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 41159.830149128225,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 130040.00889619786,
           "healthcare": 7103.400000000001,
           "housing": 22937.612680301572,
@@ -2922,7 +2922,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 133941.2091630838,
       "healthcare": 8698.2,
       "housing": 23625.741060710614,
@@ -2959,7 +2959,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 42394.625053602074,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 133941.2091630838,
           "healthcare": 8698.2,
           "housing": 23625.741060710614,
@@ -3059,7 +3059,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 137959.44543797633,
       "healthcare": 8698.2,
       "housing": 24334.513292531934,
@@ -3096,7 +3096,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 43666.463805210136,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 137959.44543797633,
           "healthcare": 8698.2,
           "housing": 24334.513292531934,
@@ -3196,7 +3196,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 142098.22880111562,
       "healthcare": 8698.2,
       "housing": 25064.548691307893,
@@ -3233,7 +3233,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 44976.457719366445,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 142098.22880111562,
           "healthcare": 8698.2,
           "housing": 25064.548691307893,
@@ -3333,7 +3333,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 146361.1756651491,
       "healthcare": 8698.2,
       "housing": 25816.48515204713,
@@ -3370,7 +3370,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 46325.751450947435,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 146361.1756651491,
           "healthcare": 8698.2,
           "housing": 25816.48515204713,
@@ -3470,7 +3470,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 150752.01093510355,
       "healthcare": 9244.2,
       "housing": 26590.979706608545,
@@ -3507,7 +3507,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 47715.52399447586,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 150752.01093510355,
           "healthcare": 9244.2,
           "housing": 26590.979706608545,
@@ -3607,7 +3607,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 155274.5712631567,
       "healthcare": 9244.2,
       "housing": 27388.709097806804,
@@ -3644,7 +3644,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 49146.98971431014,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 155274.5712631567,
           "healthcare": 9244.2,
           "housing": 27388.709097806804,
@@ -3744,7 +3744,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 159932.80840105138,
       "healthcare": 9244.2,
       "housing": 28210.37037074101,
@@ -3781,7 +3781,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 50621.399405739445,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 159932.80840105138,
           "healthcare": 9244.2,
           "housing": 28210.37037074101,
@@ -3881,7 +3881,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 164730.79265308293,
       "healthcare": 9244.2,
       "housing": 29056.68148186324,
@@ -3918,7 +3918,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 52140.041387911624,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 164730.79265308293,
           "healthcare": 9244.2,
           "housing": 29056.68148186324,
@@ -4018,7 +4018,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 169672.71643267543,
       "healthcare": 9244.2,
       "housing": 29928.381926319136,
@@ -4055,7 +4055,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 53704.24262954898,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 169672.71643267543,
           "healthcare": 9244.2,
           "housing": 29928.381926319136,
@@ -4155,7 +4155,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 174762.89792565568,
       "healthcare": 9244.2,
       "housing": 30826.23338410871,
@@ -4192,7 +4192,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 55315.36990843545,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 174762.89792565568,
           "healthcare": 9244.2,
           "housing": 30826.23338410871,
@@ -4292,7 +4292,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 180005.78486342533,
       "healthcare": 9244.2,
       "housing": 31751.02038563197,
@@ -4329,7 +4329,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 56974.83100568851,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 180005.78486342533,
           "healthcare": 9244.2,
           "housing": 31751.02038563197,
@@ -4429,7 +4429,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 185405.95840932813,
       "healthcare": 9244.2,
       "housing": 32703.55099720093,
@@ -4466,7 +4466,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 58684.07593585917,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 185405.95840932813,
           "healthcare": 9244.2,
           "housing": 32703.55099720093,
@@ -4566,7 +4566,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 190968.13716160797,
       "healthcare": 9244.2,
       "housing": 33684.65752711696,
@@ -4603,7 +4603,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 60444.59821393495,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 190968.13716160797,
           "healthcare": 9244.2,
           "housing": 33684.65752711696,
@@ -4703,7 +4703,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 196697.1812764562,
       "healthcare": 9244.2,
       "housing": 34695.19725293046,
@@ -4740,7 +4740,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 62257.93616035299,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 196697.1812764562,
           "healthcare": 9244.2,
           "housing": 34695.19725293046,
@@ -4840,7 +4840,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 202598.0967147499,
       "healthcare": 9244.2,
       "housing": 35736.05317051838,
@@ -4877,7 +4877,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 64125.674245163595,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 202598.0967147499,
           "healthcare": 9244.2,
           "housing": 35736.05317051838,
@@ -4977,7 +4977,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 208676.03961619243,
       "healthcare": 9244.2,
       "housing": 36808.13476563394,
@@ -5014,7 +5014,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 66049.4444725185,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 208676.03961619243,
           "healthcare": 9244.2,
           "housing": 36808.13476563394,
@@ -5114,7 +5114,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 214936.3208046782,
       "healthcare": 9244.2,
       "housing": 37912.37880860295,
@@ -5151,7 +5151,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 68030.92780669406,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 214936.3208046782,
           "healthcare": 9244.2,
           "housing": 37912.37880860295,
@@ -5251,7 +5251,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 221384.41042881855,
       "healthcare": 9244.2,
       "housing": 39049.75017286105,
@@ -5288,7 +5288,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 70071.85564089488,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 221384.41042881855,
           "healthcare": 9244.2,
           "housing": 39049.75017286105,
@@ -5388,7 +5388,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 228025.9427416831,
       "healthcare": 9244.2,
       "housing": 40221.24267804688,
@@ -5425,7 +5425,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 72174.01131012171,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 228025.9427416831,
           "healthcare": 9244.2,
           "housing": 40221.24267804688,
@@ -5525,7 +5525,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 234866.72102393358,
       "healthcare": 9244.2,
       "housing": 41427.87995838829,
@@ -5562,7 +5562,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 74339.23164942538,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 234866.72102393358,
           "healthcare": 9244.2,
           "housing": 41427.87995838829,
@@ -5662,7 +5662,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 241912.72265465162,
       "healthcare": 9244.2,
       "housing": 42670.716357139936,
@@ -5699,7 +5699,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 76569.40859890814,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 241912.72265465162,
           "healthcare": 9244.2,
           "housing": 42670.716357139936,
@@ -5799,7 +5799,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 249170.10433429116,
       "healthcare": 9244.2,
       "housing": 43950.83784785414,
@@ -5836,7 +5836,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 78866.49085687539,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 249170.10433429116,
           "healthcare": 9244.2,
           "housing": 43950.83784785414,
@@ -5936,7 +5936,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 256645.20746431992,
       "healthcare": 9244.2,
       "housing": 45269.36298328976,
@@ -5973,7 +5973,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 81232.48558258166,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 256645.20746431992,
           "healthcare": 9244.2,
           "housing": 45269.36298328976,
@@ -6073,7 +6073,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 264344.5636882495,
       "healthcare": 9244.2,
       "housing": 46627.443872788455,
@@ -6110,7 +6110,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 83669.46015005911,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 264344.5636882495,
           "healthcare": 9244.2,
           "housing": 46627.443872788455,
@@ -6210,7 +6210,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 0,
       "essential": 272274.900598897,
       "healthcare": 9244.2,
       "housing": 48026.26718897211,
@@ -6247,7 +6247,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 86179.54395456087,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 0,
           "essential": 272274.900598897,
           "healthcare": 9244.2,
           "housing": 48026.26718897211,
@@ -6489,7 +6489,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 102499.99999999999,
       "healthcare": 0,
       "housing": 0,
@@ -6526,7 +6526,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 102499.99999999999,
           "healthcare": 0,
           "housing": 0,
@@ -6626,7 +6626,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 105062.49999999999,
       "healthcare": 0,
       "housing": 0,
@@ -6663,7 +6663,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 105062.49999999999,
           "healthcare": 0,
           "housing": 0,
@@ -6763,7 +6763,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 107689.06249999997,
       "healthcare": 0,
       "housing": 0,
@@ -6800,7 +6800,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 107689.06249999997,
           "healthcare": 0,
           "housing": 0,
@@ -6900,7 +6900,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 110381.28906249996,
       "healthcare": 0,
       "housing": 0,
@@ -6937,7 +6937,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 110381.28906249996,
           "healthcare": 0,
           "housing": 0,
@@ -7037,7 +7037,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 113140.82128906244,
       "healthcare": 0,
       "housing": 0,
@@ -7074,7 +7074,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 113140.82128906244,
           "healthcare": 0,
           "housing": 0,
@@ -7174,7 +7174,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 115969.341821289,
       "healthcare": 0,
       "housing": 0,
@@ -7211,7 +7211,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 115969.341821289,
           "healthcare": 0,
           "housing": 0,
@@ -7311,7 +7311,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 118868.57536682123,
       "healthcare": 0,
       "housing": 0,
@@ -7348,7 +7348,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 118868.57536682123,
           "healthcare": 0,
           "housing": 0,
@@ -7448,7 +7448,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 121840.28975099172,
       "healthcare": 0,
       "housing": 0,
@@ -7485,7 +7485,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 121840.28975099172,
           "healthcare": 0,
           "housing": 0,
@@ -7585,7 +7585,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 124886.29699476653,
       "healthcare": 0,
       "housing": 0,
@@ -7622,7 +7622,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 124886.29699476653,
           "healthcare": 0,
           "housing": 0,
@@ -7722,7 +7722,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 128008.45441963566,
       "healthcare": 0,
       "housing": 0,
@@ -7759,7 +7759,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 128008.45441963566,
           "healthcare": 0,
           "housing": 0,
@@ -7859,7 +7859,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 131208.66578012655,
       "healthcare": 0,
       "housing": 0,
@@ -7896,7 +7896,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 131208.66578012655,
           "healthcare": 0,
           "housing": 0,
@@ -7996,7 +7996,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 134488.8824246297,
       "healthcare": 0,
       "housing": 0,
@@ -8033,7 +8033,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 134488.8824246297,
           "healthcare": 0,
           "housing": 0,
@@ -8133,7 +8133,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 137851.10448524542,
       "healthcare": 0,
       "housing": 0,
@@ -8170,7 +8170,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 137851.10448524542,
           "healthcare": 0,
           "housing": 0,
@@ -8270,7 +8270,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 141297.38209737657,
       "healthcare": 0,
       "housing": 0,
@@ -8307,7 +8307,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 141297.38209737657,
           "healthcare": 0,
           "housing": 0,
@@ -8407,7 +8407,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 144829.81664981096,
       "healthcare": 2867.3999999999996,
       "housing": 0,
@@ -8444,7 +8444,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 144829.81664981096,
           "healthcare": 2867.3999999999996,
           "housing": 0,
@@ -8544,7 +8544,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 148450.5620660562,
       "healthcare": 2867.3999999999996,
       "housing": 0,
@@ -8581,7 +8581,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 148450.5620660562,
           "healthcare": 2867.3999999999996,
           "housing": 0,
@@ -8681,7 +8681,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 152161.82611770762,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -8718,7 +8718,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 152161.82611770762,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -8818,7 +8818,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 155965.8717706503,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -8855,7 +8855,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 0,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 155965.8717706503,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -8955,7 +8955,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 159865.01856491654,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -8992,7 +8992,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 31973.003712983307,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 159865.01856491654,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -9092,7 +9092,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 163861.64402903942,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -9129,7 +9129,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 103888.28231441099,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 163861.64402903942,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -9229,7 +9229,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 167958.18512976542,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -9266,7 +9266,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 106485.48937227127,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 167958.18512976542,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -9366,7 +9366,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 172157.13975800952,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -9403,7 +9403,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 109147.62660657804,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 172157.13975800952,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -9503,7 +9503,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 176461.06825195975,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -9540,7 +9540,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 111876.31727174247,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 176461.06825195975,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -9640,7 +9640,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 180872.5949582587,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -9677,7 +9677,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 114673.22520353601,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 180872.5949582587,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -9777,7 +9777,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 166854.96884899365,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -9814,7 +9814,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 117540.05583362441,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 166854.96884899365,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -9914,7 +9914,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 171026.34307021849,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -9951,7 +9951,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 120478.55722946502,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 171026.34307021849,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -10051,7 +10051,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 175302.00164697395,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -10088,7 +10088,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 123490.52116020164,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 175302.00164697395,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -10188,7 +10188,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 179684.55168814826,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -10225,7 +10225,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 126577.78418920666,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 179684.55168814826,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -10325,7 +10325,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 184176.66548035198,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -10362,7 +10362,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 129742.22879393683,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 184176.66548035198,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -10462,7 +10462,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 188781.08211736073,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -10499,7 +10499,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 132985.7845137852,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 188781.08211736073,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -10599,7 +10599,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 193500.60917029475,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -10636,7 +10636,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 136310.42912662987,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 193500.60917029475,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -10736,7 +10736,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 198338.1243995521,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -10773,7 +10773,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 139718.18985479558,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 198338.1243995521,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -10873,7 +10873,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 203296.5775095409,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -10910,7 +10910,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 143211.14460116546,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 203296.5775095409,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11010,7 +11010,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 208378.99194727937,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -11047,7 +11047,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 146791.42321619458,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 208378.99194727937,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11147,7 +11147,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 189856.41488529896,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -11184,7 +11184,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 150461.2087965994,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 189856.41488529896,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11284,7 +11284,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 194602.82525743142,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -11321,7 +11321,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 154222.7390165144,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 194602.82525743142,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11421,7 +11421,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 199467.8958888672,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -11458,7 +11458,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 158078.30749192726,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 199467.8958888672,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11558,7 +11558,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 204454.59328608887,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -11595,7 +11595,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 162030.26517922542,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 204454.59328608887,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11695,7 +11695,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 209565.95811824105,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -11732,7 +11732,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 166081.02180870602,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 209565.95811824105,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11832,7 +11832,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 214805.10707119707,
       "healthcare": 5734.799999999999,
       "housing": 0,
@@ -11869,7 +11869,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 170233.04735392367,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 214805.10707119707,
           "healthcare": 5734.799999999999,
           "housing": 0,
@@ -11969,7 +11969,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 220175.234747977,
       "healthcare": 2867.3999999999996,
       "housing": 0,
@@ -12006,7 +12006,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 119445.0648507775,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 220175.234747977,
           "healthcare": 2867.3999999999996,
           "housing": 0,
@@ -12106,7 +12106,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
       },
     },
     "expenses": {
-      "discretionary": NaN,
+      "discretionary": 20000,
       "essential": 225679.61561667637,
       "healthcare": 7103.400000000001,
       "housing": 0,
@@ -12143,7 +12143,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "socialSecurity": 122431.19147204692,
         },
         "outflows": {
-          "discretionary": NaN,
+          "discretionary": 20000,
           "essential": 225679.61561667637,
           "healthcare": 7103.400000000001,
           "housing": 0,
