@@ -26,3 +26,13 @@ repos:
     hooks:
       - id: gitleaks
         verbose: false
+
+  # ESLint – JavaScript/JSX linting
+  - repo: local
+    hooks:
+      - id: eslint
+        name: ESLint
+        entry: npm run lint --
+        language: system
+        files: \.(js|jsx)$
+        pass_filenames: true
