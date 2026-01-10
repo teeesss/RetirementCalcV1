@@ -28,6 +28,7 @@ const AllGraphsView = React.lazy(() => import('./components/strategy/AllGraphsVi
 import GrowthDrawdownChart from './components/strategy/GrowthDrawdownChart';
 import DetailedCashFlowChart from './components/strategy/DetailedCashFlowChart';
 import EfficiencyDashboard from './components/TaxEfficiency/EfficiencyDashboard';
+import Wizard from './components/Wizard';
 
 // DIAGNOSTIC: Robust Error Boundary
 class ErrorBoundary extends React.Component {
@@ -397,8 +398,11 @@ function AppContent() {
     };
 
     worker.postMessage({
-      startAge: client.age,
-      endAge: Math.max(client.lifeExpectancy || 90, spouse?.lifeExpectancy || 0),
+      startAge: ledger[0]?.age || client.age || 50,
+      endAge: Math.max(
+        ledger[ledger.length - 1]?.age || client.lifeExpectancy || 90,
+        spouse?.lifeExpectancy || 0
+      ),
       iterations: planData.monteCarlo?.iterations || 10000,
 
       equityReturn: planData.assumptions.equityReturn / 100,
@@ -475,9 +479,9 @@ function AppContent() {
       const sourcePlan = customPlan || planData;
       // Worker Params
       const params = {
-        startAge: sourcePlan.people[0].age,
+        startAge: ledgerToUse[0]?.age || sourcePlan.people[0].age || 50,
         endAge: Math.max(
-          sourcePlan.people[0].lifeExpectancy || 90,
+          ledgerToUse[ledgerToUse.length - 1]?.age || sourcePlan.people[0].lifeExpectancy || 90,
           sourcePlan.people[1]?.lifeExpectancy || 0
         ),
         iterations,
@@ -999,12 +1003,15 @@ function AppContent() {
   const handleTabChange = (tab) => {
     setActiveTab(tab);
     setTimeout(() => {
-      tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }, 100);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      {planData.people[0]?.isNewProfile && (
+        <Wizard initialData={planData} onComplete={(finalData) => updatePlan(finalData)} />
+      )}
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-50">
         <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 max-w-[1920px] mx-auto">
@@ -1106,6 +1113,65 @@ function AppContent() {
 
           {/* User Controls (Right) */}
           <div className="flex items-center gap-3 justify-self-end">
+            <button
+              onClick={() => {
+                if (confirm('Clear all data and start fresh?')) {
+                  localStorage.removeItem('retirement_planData');
+                  localStorage.removeItem('retirecalc_is_ray');
+                  window.location.href = window.location.pathname;
+                }
+              }}
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 text-xs font-bold rounded-xl border border-red-200 dark:border-red-900/30 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shadow-sm active:scale-95"
+              title="Reset All Data"
+            >
+              🗑️ Reset
+            </button>
+            <button
+              onClick={() => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (e) => {
+                  const file = e.target.files[0];
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    try {
+                      const imported = JSON.parse(event.target.result);
+                      updatePlan(imported);
+                      alert('Plan imported successfully!');
+                    } catch (err) {
+                      alert('Failed to parse plan file.');
+                    }
+                  };
+                  reader.readAsText(file);
+                };
+                input.click();
+              }}
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-xl border border-blue-200 dark:border-blue-900/30 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all shadow-sm active:scale-95"
+              title="Import Plan from JSON"
+            >
+              📥 Import
+            </button>
+            <button
+              onClick={() => {
+                const dataStr =
+                  'data:text/json;charset=utf-8,' +
+                  encodeURIComponent(JSON.stringify(planData, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute('href', dataStr);
+                downloadAnchorNode.setAttribute(
+                  'download',
+                  `retirement_plan_${planData.people[0].name.toLowerCase().replace(/\s/g, '_')}_${new Date().toISOString().split('T')[0]}.json`
+                );
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+              }}
+              className="px-3 py-1.5 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs font-bold rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm active:scale-95"
+              title="Export Plan to JSON"
+            >
+              📤 Export
+            </button>
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm active:scale-90"
@@ -1461,6 +1527,7 @@ function AppContent() {
             {/* Advanced Features Tabs */}
             <div
               ref={tabsRef}
+              style={{ scrollMarginTop: '80px' }}
               className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
             >
               <div className="flex flex-wrap justify-center border-b border-gray-200 dark:border-gray-700">

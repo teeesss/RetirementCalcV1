@@ -1,0 +1,147 @@
+{
+  "people": [
+    {
+      "id": "client",
+      "name": "New User",
+      "birthDate": "1980-01-01",
+      "retirementAge": 65,
+      "lifeExpectancy": 95,
+      "isNewProfile": true
+    }
+  ],
+  "profile": {
+    "filingStatus": "single",
+    "stateOfResidence": "FL",
+    "stateTaxModel": {
+      "enabled": true,
+      "useMarginal": true,
+      "overrideRate": null
+    },
+    "isCommunityProperty": false
+  },
+  "strategy": {
+    "bucket": {
+      "enabled": false,
+      "yearsOfCash": 2,
+      "refillCondition": "market_up"
+    },
+    "daf": {
+      "enabled": false,
+      "yearsToBunch": 5,
+      "startYear": 2025
+    }
+  },
+  "salary": 0,
+  "contributions": {
+    "traditional": 0,
+    "roth": 0,
+    "hsa": 0,
+    "afterTax401k": 0
+  },
+  "assets": {
+    "traditional": {
+      "client": 0,
+      "spouse": 0
+    },
+    "roth": {
+      "client": 0,
+      "spouse": 0
+    },
+    "hsa": {
+      "client": 0,
+      "spouse": 0
+    },
+    "brokerage": {
+      "joint": 0
+    },
+    "brokerageBasis": {
+      "joint": 0
+    },
+    "cash": {
+      "total": 0
+    },
+    "crypto": {
+      "btc": {
+        "quantity": 0,
+        "price": 93000,
+        "owner": "client"
+      },
+      "eth": {
+        "quantity": 0,
+        "price": 3200,
+        "owner": "client"
+      },
+      "sol": {
+        "quantity": 0,
+        "price": 140,
+        "owner": "client"
+      }
+    }
+  },
+  "realEstate": [],
+  "socialSecurity": {
+    "primary": {
+      "annualAmount": 0,
+      "startAge": 67
+    },
+    "spouse": {
+      "annualAmount": 0,
+      "startAge": 67
+    }
+  },
+  "expenses": {
+    "essentialMonthly": 5000,
+    "discretionaryMonthly": 2000,
+    "charity": 0,
+    "growthRate": 3.0,
+    "spendingPhases": {
+      "startAge": 65,
+      "slowGoAge": 75,
+      "slowGoReduction": 0.85,
+      "noGoAge": 85,
+      "noGoReduction": 0.75
+    },
+    "flexibility": {
+      "enabled": true,
+      "portfolioDropThreshold": 0.1,
+      "discretionaryCut": 0.3
+    },
+    "recurring": [],
+    "oneTime": []
+  },
+  "assumptions": {
+    "growthRate": 7,
+    "dividendYield": 2,
+    "qualifiedRatio": 85,
+    "equityReturn": 8,
+    "equityVolatility": 15,
+    "cryptoReturn": 10,
+    "cryptoVolatility": 40,
+    "correlation": 0.1,
+    "inflation": 3,
+    "withdrawalStrategy": "fixed",
+    "withdrawalRate": 4,
+    "aca": {
+      "benchmarkPremium": 600,
+      "householdSize": 1,
+      "povertyLine": 15060
+    },
+    "enableTCJASunset": false,
+    "enableCAPE": false
+  },
+  "taxOptimization": {
+    "taxLossHarvesting": {
+      "crypto": 0,
+      "brokerage": 0,
+      "startAge": 50
+    },
+    "rothStrategy": "none",
+    "withdrawalOrder": "optimal",
+    "rothConversions": []
+  },
+  "goals": [],
+  "monteCarlo": {
+    "iterations": 1000,
+    "enabled": true
+  }
+}

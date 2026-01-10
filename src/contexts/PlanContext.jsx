@@ -13,14 +13,13 @@
 
 import { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import defaultProfile from '../data/defaultProfile.json';
+import blankProfile from '../data/blankProfile.json';
 import { generateLedger } from '../lib/ledgerLogic';
 
 // Create the context
 export const PlanContext = createContext();
 
 // Helper functions moved to src/lib/ledgerLogic.js
-
-
 
 /**
  * PlanProvider - Context provider component
@@ -30,22 +29,32 @@ export const PlanContext = createContext();
 export function PlanProvider({ children }) {
   const [planData, setPlanData] = useState(() => {
     try {
+      // 1. Check for URL profile key: ?profile=ray
+      const urlParams = new URLSearchParams(window.location.search);
+      const profileKey = urlParams.get('profile');
+      const isRay = profileKey === 'ray' || localStorage.getItem('retirecalc_is_ray') === 'true';
+
+      if (profileKey === 'ray') {
+        localStorage.setItem('retirecalc_is_ray', 'true');
+      }
+
       const saved = localStorage.getItem('retirement_planData');
       if (saved) {
         const parsed = JSON.parse(saved);
         // Basic schema check
         if (parsed.assets && parsed.people) {
           // Migration: Ensure settings and apiKeys exist
-          if (!parsed.settings) parsed.settings = defaultProfile.settings || { apiKeys: { rentcast: '' } };
+          if (!parsed.settings)
+            parsed.settings = defaultProfile.settings || { apiKeys: { rentcast: '' } };
           if (!parsed.settings.apiKeys) parsed.settings.apiKeys = { rentcast: '' };
 
           // CRITICAL VALIDATION: Ensure people have minimal valid data
           if (Array.isArray(parsed.people) && parsed.people.length > 0) {
-            parsed.people = parsed.people.map(p => ({
+            parsed.people = parsed.people.map((p) => ({
               ...p,
               age: Number(p.age) || 50,
               lifeExpectancy: Number(p.lifeExpectancy) || 90,
-              retirementAge: Number(p.retirementAge) || 65
+              retirementAge: Number(p.retirementAge) || 65,
             }));
           } else {
             console.warn('PlanContext: People array corrupted, resetting.');
@@ -54,18 +63,18 @@ export function PlanProvider({ children }) {
 
           // MIGRATION: Ensure top-level mortgage exists for Section 7 compatibility
           if (!parsed.mortgage) {
-            console.log("PlanContext: Restoring Default Top-Level Mortgage ($245k)");
+            console.log('PlanContext: Restoring Default Top-Level Mortgage ($245k)');
             parsed.mortgage = defaultProfile.mortgage;
           }
 
           // MIGRATION: Sanitize Goals (Remove "Phantom Goals" from previous corrupted versions)
           if (parsed.goals && Array.isArray(parsed.goals)) {
-            parsed.goals = parsed.goals.filter(g => {
+            parsed.goals = parsed.goals.filter((g) => {
               // Identify rogue goals by signature: Age 60/Amount 3.5M, Age 75/Amount 6M
-              const isRogue60 = (g.age === 60 && g.amount === 3500000);
-              const isRogue75 = (g.age === 75 && g.amount === 6000000);
+              const isRogue60 = g.age === 60 && g.amount === 3500000;
+              const isRogue75 = g.age === 75 && g.amount === 6000000;
               if (isRogue60 || isRogue75) {
-                console.warn("Deleted Phantom Goal:", g);
+                console.warn('Deleted Phantom Goal:', g);
                 return false;
               }
               return true;
@@ -74,30 +83,42 @@ export function PlanProvider({ children }) {
 
           // MIGRATION: Fix Real Estate (If value is 0/Missing OR Mortgage is 0, restore default $633k/$245k)
           const primaryRE = parsed.realEstate?.[0];
-          const needsRestore = !parsed.realEstate ||
+          const needsRestore =
+            !parsed.realEstate ||
             parsed.realEstate.length === 0 ||
             (primaryRE && primaryRE.currentValue === 0) ||
             (primaryRE && (!primaryRE.mortgage || primaryRE.mortgage.balance === 0));
 
           if (needsRestore) {
-            console.log("PlanContext: Restoring Default Real Estate ($633k value, $245k mortgage)");
+            console.log('PlanContext: Restoring Default Real Estate ($633k value, $245k mortgage)');
             parsed.realEstate = defaultProfile.realEstate;
           }
           // MIGRATION: Normalize Real Estate (Ensure top-level array exists and is populated)
           // If top-level is empty but assets.realEstate exists (Legacy), migrate it.
-          if ((!parsed.realEstate || !Array.isArray(parsed.realEstate) || parsed.realEstate.length === 0) &&
-            (parsed.assets?.realEstate && Array.isArray(parsed.assets.realEstate) && parsed.assets.realEstate.length > 0)) {
-            console.warn("PlanContext: Migrating Legacy Real Estate to Top-Level");
+          if (
+            (!parsed.realEstate ||
+              !Array.isArray(parsed.realEstate) ||
+              parsed.realEstate.length === 0) &&
+            parsed.assets?.realEstate &&
+            Array.isArray(parsed.assets.realEstate) &&
+            parsed.assets.realEstate.length > 0
+          ) {
+            console.warn('PlanContext: Migrating Legacy Real Estate to Top-Level');
             parsed.realEstate = [...parsed.assets.realEstate];
           }
 
           return parsed;
         }
       }
-      return defaultProfile;
+
+      // Default fallback
+      return isRay ? defaultProfile : blankProfile;
     } catch (e) {
       console.warn('Failed to load planData from localStorage', e);
-      return defaultProfile;
+      const ucParsed = new URLSearchParams(window.location.search);
+      const isRaySession =
+        ucParsed.get('profile') === 'ray' || localStorage.getItem('retirecalc_is_ray') === 'true';
+      return isRaySession ? defaultProfile : blankProfile;
     }
   });
   const [ledger, setLedger] = useState([]);
@@ -126,9 +147,11 @@ export function PlanProvider({ children }) {
   const [guardrails, setGuardrails] = useState(() => {
     try {
       const saved = localStorage.getItem('guardrails');
-      return saved ? JSON.parse(saved) : { floorPercent: 0.85, ceilingPercent: 1.20, adjustmentRate: 0.10 };
+      return saved
+        ? JSON.parse(saved)
+        : { floorPercent: 0.85, ceilingPercent: 1.2, adjustmentRate: 0.1 };
     } catch (e) {
-      return { floorPercent: 0.85, ceilingPercent: 1.20, adjustmentRate: 0.10 };
+      return { floorPercent: 0.85, ceilingPercent: 1.2, adjustmentRate: 0.1 };
     }
   });
 
@@ -146,17 +169,20 @@ export function PlanProvider({ children }) {
     return () => clearTimeout(timer);
   }, [planData]);
 
-
   /**
    * Update plan data
    */
   const updatePlan = useCallback((updates) => {
-    setPlanData(prev => {
+    setPlanData((prev) => {
       const updated = { ...prev };
 
       // Deep merge for nested objects
-      Object.keys(updates).forEach(key => {
-        if (typeof updates[key] === 'object' && !Array.isArray(updates[key]) && updates[key] !== null) {
+      Object.keys(updates).forEach((key) => {
+        if (
+          typeof updates[key] === 'object' &&
+          !Array.isArray(updates[key]) &&
+          updates[key] !== null
+        ) {
           updated[key] = { ...updated[key], ...updates[key] };
         } else {
           updated[key] = updates[key];
@@ -170,34 +196,39 @@ export function PlanProvider({ children }) {
   /**
    * Calculate cash flow ledger for all years
    */
-  const calculateLedger = useCallback((dataOverride = null) => {
-    setIsCalculating(true);
+  const calculateLedger = useCallback(
+    (dataOverride = null) => {
+      setIsCalculating(true);
 
-    // Use override data if provided, otherwise generic state
-    const currentData = dataOverride || planData;
-    const isHypothetical = !!dataOverride;
+      // Use override data if provided, otherwise generic state
+      const currentData = dataOverride || planData;
+      const isHypothetical = !!dataOverride;
 
-    console.log('DIAGNOSTIC: calculateLedger starting...', { isHypothetical });
-    try {
-      if (!currentData || !currentData.people || !currentData.assets) {
-        console.warn('DIAGNOSTIC: planData incomplete, skipping ledger calculation', { currentData });
+      console.log('DIAGNOSTIC: calculateLedger starting...', { isHypothetical });
+      try {
+        if (!currentData || !currentData.people || !currentData.assets) {
+          console.warn('DIAGNOSTIC: planData incomplete, skipping ledger calculation', {
+            currentData,
+          });
+          setIsCalculating(false);
+          return;
+        }
+
+        const ledger = generateLedger(currentData, spendingStrategy, guardrails);
+
+        if (!isHypothetical) {
+          setLedger(ledger);
+        }
         setIsCalculating(false);
-        return;
+        return ledger;
+      } catch (error) {
+        console.error('Error calculating ledger:', error);
+        setIsCalculating(false);
+        throw error;
       }
-
-      const ledger = generateLedger(currentData, spendingStrategy, guardrails);
-
-      if (!isHypothetical) {
-        setLedger(ledger);
-      }
-      setIsCalculating(false);
-      return ledger;
-    } catch (error) {
-      console.error('Error calculating ledger:', error);
-      setIsCalculating(false);
-      throw error;
-    }
-  }, [planData, spendingStrategy, guardrails]);
+    },
+    [planData, spendingStrategy, guardrails]
+  );
 
   /**
    * Auto-recalculate on plan changes
@@ -212,7 +243,7 @@ export function PlanProvider({ children }) {
     return {
       success: final.totalBalance > 0,
       finalBalance: final.totalBalance,
-      lifetimeTax: ledger.reduce((sum, year) => sum + (year.taxes?.totalTax || 0), 0)
+      lifetimeTax: ledger.reduce((sum, year) => sum + (year.taxes?.totalTax || 0), 0),
     };
   }, [ledger]);
 
@@ -235,9 +266,9 @@ export function PlanProvider({ children }) {
     const successRate = mcResults?.successRate !== undefined ? mcResults.successRate : 0;
 
     // v1.5: Capture Annual Data for Charts
-    const annualTaxRates = currentLedger.map(y => y.taxes?.effectiveRate || 0);
-    const annualNetWorth = currentLedger.map(y => y.netWorth || 0);
-    const annualLegacy = currentLedger.map(y => y.legacyValue || 0);
+    const annualTaxRates = currentLedger.map((y) => y.taxes?.effectiveRate || 0);
+    const annualNetWorth = currentLedger.map((y) => y.netWorth || 0);
+    const annualLegacy = currentLedger.map((y) => y.legacyValue || 0);
 
     return {
       endingWealth,
@@ -245,49 +276,55 @@ export function PlanProvider({ children }) {
       successRate,
       annualTaxRates,
       annualNetWorth,
-      annualLegacy
+      annualLegacy,
     };
   }, []);
 
   /**
    * Save current plan as a scenario
    */
-  const saveScenario = useCallback((name) => {
-    const metrics = calculateScenarioMetrics(ledger, monteCarloResults);
+  const saveScenario = useCallback(
+    (name) => {
+      const metrics = calculateScenarioMetrics(ledger, monteCarloResults);
 
-    const kpis = {
-      ...metrics, // endingWealth, cumulativeTax, successRate
-      finalBalance: metrics.endingWealth, // Keep backward compatibility if needed
-      netWorth: ledger[ledger.length - 1]?.netWorth || 0, // Keep netWorth for now
-      lifetimeTax: metrics.cumulativeTax // Aliased for backward compatibility
-    };
+      const kpis = {
+        ...metrics, // endingWealth, cumulativeTax, successRate
+        finalBalance: metrics.endingWealth, // Keep backward compatibility if needed
+        netWorth: ledger[ledger.length - 1]?.netWorth || 0, // Keep netWorth for now
+        lifetimeTax: metrics.cumulativeTax, // Aliased for backward compatibility
+      };
 
-    const newScenario = {
-      id: Date.now().toString(),
-      name,
-      planData: JSON.parse(JSON.stringify(planData)),
-      kpis,
-      timestamp: new Date().toISOString()
-    };
-    setScenarios(prev => [...prev, newScenario]);
-  }, [planData, ledger, monteCarloResults, calculateScenarioMetrics]);
+      const newScenario = {
+        id: Date.now().toString(),
+        name,
+        planData: JSON.parse(JSON.stringify(planData)),
+        kpis,
+        timestamp: new Date().toISOString(),
+      };
+      setScenarios((prev) => [...prev, newScenario]);
+    },
+    [planData, ledger, monteCarloResults, calculateScenarioMetrics]
+  );
 
   /**
    * Load a scenario as the current plan
    */
-  const loadScenario = useCallback((id) => {
-    const scenario = scenarios.find(s => s.id === id);
-    if (scenario) {
-      setPlanData(JSON.parse(JSON.stringify(scenario.planData)));
-      // Ledger will be recalculated by the component's useEffect
-    }
-  }, [scenarios]);
+  const loadScenario = useCallback(
+    (id) => {
+      const scenario = scenarios.find((s) => s.id === id);
+      if (scenario) {
+        setPlanData(JSON.parse(JSON.stringify(scenario.planData)));
+        // Ledger will be recalculated by the component's useEffect
+      }
+    },
+    [scenarios]
+  );
 
   /**
    * Delete a scenario
    */
   const deleteScenario = useCallback((id) => {
-    setScenarios(prev => prev.filter(s => s.id !== id));
+    setScenarios((prev) => prev.filter((s) => s.id !== id));
   }, []);
 
   // Persist spending strategy and guardrails
@@ -315,7 +352,7 @@ export function PlanProvider({ children }) {
     spendingStrategy,
     setSpendingStrategy,
     guardrails,
-    setGuardrails
+    setGuardrails,
   };
 
   return <PlanContext.Provider value={value}>{children}</PlanContext.Provider>;
