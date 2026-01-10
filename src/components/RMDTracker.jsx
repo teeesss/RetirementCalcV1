@@ -10,7 +10,7 @@ import { usePlan } from '../contexts/PlanContext';
 import { calculateRMD } from '../lib/taxEngine';
 
 export default function RMDTracker() {
-  const { ledger, darkMode } = usePlan(); // Ensure darkMode is available in context
+  const { ledger } = usePlan();
 
   if (!ledger || ledger.length === 0) {
     return null;
@@ -18,19 +18,19 @@ export default function RMDTracker() {
 
   // Find first RMD year (age 73+)
   const rmdYears = ledger
-    .filter(year => year.age >= 73)
+    .filter((year) => year.age >= 73)
     .slice(0, 10) // Show next 10 years
-    .map(year => ({
+    .map((year) => ({
       age: year.age,
       balance: year.balances?.traditional || 0,
-      rmd: calculateRMD(year.balances?.traditional || 0, year.age)
+      rmd: calculateRMD(year.balances?.traditional || 0, year.age),
     }));
 
   if (rmdYears.length === 0) return null;
 
   // Simple Inline Bar Chart Data (using simple CSS for lightness, or we could import Chart.js)
   // Let's use a simple CSS bar visualization to keep it lightweight and "smaller" as requested.
-  const maxRMD = Math.max(...rmdYears.map(r => r.rmd));
+  const maxRMD = Math.max(...rmdYears.map((r) => r.rmd));
 
   return (
     <div className="bg-white dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700 h-full">
@@ -42,7 +42,10 @@ export default function RMDTracker() {
         {/* Left: Table */}
         <div className="space-y-1 text-xs w-1/2">
           {rmdYears.map((rmd, idx) => (
-            <div key={idx} className="flex justify-between items-center group hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded px-1 transition-colors">
+            <div
+              key={idx}
+              className="flex justify-between items-center group hover:bg-gray-50 dark:hover:bg-gray-700/50 rounded px-1 transition-colors"
+            >
               <span className="text-gray-500 dark:text-gray-400 w-12">Age {rmd.age}</span>
               <span className="font-mono font-medium text-gray-900 dark:text-gray-100">
                 ${rmd.rmd.toLocaleString(undefined, { maximumFractionDigits: 0 })}

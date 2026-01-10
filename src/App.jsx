@@ -24,6 +24,7 @@ const StressTestDashboard = React.lazy(() => import('./components/strategy/Stres
 const EstateSettings = React.lazy(() => import('./components/strategy/EstateSettings'));
 const ExpenseManagement = React.lazy(() => import('./components/strategy/ExpenseManagement'));
 const TaxFreeDashboard = React.lazy(() => import('./components/strategy/TaxFreeDashboard'));
+const AllGraphsView = React.lazy(() => import('./components/strategy/AllGraphsView'));
 import GrowthDrawdownChart from './components/strategy/GrowthDrawdownChart';
 import DetailedCashFlowChart from './components/strategy/DetailedCashFlowChart';
 import EfficiencyDashboard from './components/TaxEfficiency/EfficiencyDashboard';
@@ -40,7 +41,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("🔴 GLOBAL ERROR CAUGHT:", error, errorInfo);
+    console.error('🔴 GLOBAL ERROR CAUGHT:', error, errorInfo);
     this.setState({ errorInfo });
   }
 
@@ -55,8 +56,12 @@ class ErrorBoundary extends React.Component {
             <p className="text-lg font-semibold mb-2">The simulator encountered a fatal error.</p>
 
             <div className="bg-gray-900 text-green-400 p-6 rounded-lg font-mono text-sm mb-6 overflow-x-auto shadow-inner">
-              <p className="font-bold text-red-400 text-base mb-2">{this.state.error?.toString()}</p>
-              <pre className="whitespace-pre-wrap opacity-75">{this.state.errorInfo?.componentStack}</pre>
+              <p className="font-bold text-red-400 text-base mb-2">
+                {this.state.error?.toString()}
+              </p>
+              <pre className="whitespace-pre-wrap opacity-75">
+                {this.state.errorInfo?.componentStack}
+              </pre>
             </div>
 
             <div className="flex gap-4">
@@ -87,7 +92,6 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-
 function AppContent() {
   const {
     planData,
@@ -100,7 +104,7 @@ function AppContent() {
     spendingStrategy,
     setSpendingStrategy,
     guardrails,
-    setGuardrails
+    setGuardrails,
   } = usePlan();
 
   const [fetchingRE, setFetchingRE] = useState(null); // idx of fetching property
@@ -116,7 +120,6 @@ function AppContent() {
 
   // Comparison state from TaxStrategyContext
   // Comparison state from TaxStrategyContext removed unused
-
 
   // Toggle dark mode
   useEffect(() => {
@@ -139,7 +142,7 @@ function AppContent() {
     if (!planData.people || planData.people.length === 0) {
       console.log('Migrating legacy profile to people array...');
       const clientAge = planData.profile?.age || 50;
-      const spouseAge = planData.profile?.spouseAge || (clientAge - 2);
+      const spouseAge = planData.profile?.spouseAge || clientAge - 2;
 
       updates.people = [
         {
@@ -147,15 +150,15 @@ function AppContent() {
           name: 'Client',
           age: clientAge,
           retirementAge: planData.profile?.retirementAge || 65,
-          lifeExpectancy: planData.profile?.lifeExpectancy || 90
+          lifeExpectancy: planData.profile?.lifeExpectancy || 90,
         },
         {
           id: 'spouse',
           name: 'Spouse',
           age: spouseAge,
           retirementAge: planData.profile?.spouseRetirementAge || 65,
-          lifeExpectancy: planData.profile?.lifeExpectancy || 95
-        }
+          lifeExpectancy: planData.profile?.lifeExpectancy || 95,
+        },
       ];
 
       // Move salary to top level if it was in profile
@@ -167,7 +170,7 @@ function AppContent() {
       updates.profile = {
         filingStatus: planData.profile?.filingStatus || 'married',
         stateOfResidence: planData.profile?.stateOfResidence || 'TX',
-        stateTaxRate: planData.profile?.stateTaxRate || 0
+        stateTaxRate: planData.profile?.stateTaxRate || 0,
       };
     }
 
@@ -177,12 +180,12 @@ function AppContent() {
       updates.socialSecurity = {
         primary: {
           annualAmount: planData.socialSecurity.annualAmount || 0,
-          startAge: planData.socialSecurity.startAge || 62
+          startAge: planData.socialSecurity.startAge || 62,
         },
         spouse: {
           annualAmount: 0,
-          startAge: 67
-        }
+          startAge: 67,
+        },
       };
     }
 
@@ -199,8 +202,8 @@ function AppContent() {
           slowGoAge: 75,
           slowGoReduction: 0.85,
           noGoAge: 85,
-          noGoReduction: 0.75
-        }
+          noGoReduction: 0.75,
+        },
       };
       delete updates.expenses.annual;
     }
@@ -214,13 +217,13 @@ function AppContent() {
         roth: { client: planData.assets.roth || 0, spouse: 0 },
         hsa: { client: planData.assets.hsa || 0, spouse: 0 },
         brokerage: { joint: planData.assets.brokerage || 0 },
-        brokerageBasis: { joint: planData.assets.brokerageBasis || 0 }
+        brokerageBasis: { joint: planData.assets.brokerageBasis || 0 },
       };
 
       // Also migrate crypto if items don't have owner
       if (planData.assets.crypto) {
         const crypto = { ...planData.assets.crypto };
-        Object.keys(crypto).forEach(key => {
+        Object.keys(crypto).forEach((key) => {
           if (!crypto[key].owner) {
             crypto[key].owner = 'client';
           }
@@ -242,61 +245,68 @@ function AppContent() {
   const [isCalculatingMC, setIsCalculatingMC] = useState(false);
 
   // --- Real Estate Fetch ---
-  const fetchRealEstateValue = useCallback(async (reIndex, manual = true) => {
-    const property = planData.realEstate[reIndex];
-    if (!property?.address) {
-      if (manual) alert("Please enter a property address first.");
-      return;
-    }
+  const fetchRealEstateValue = useCallback(
+    async (reIndex, manual = true) => {
+      const property = planData.realEstate[reIndex];
+      if (!property?.address) {
+        if (manual) alert('Please enter a property address first.');
+        return;
+      }
 
-    // Month-level caching check for auto-fetches
-    const now = new Date();
-    const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
-    const lastUpdateKey = property.lastUpdated ? `${new Date(property.lastUpdated).getFullYear()}-${new Date(property.lastUpdated).getMonth()}` : null;
+      // Month-level caching check for auto-fetches
+      const now = new Date();
+      const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
+      const lastUpdateKey = property.lastUpdated
+        ? `${new Date(property.lastUpdated).getFullYear()}-${new Date(property.lastUpdated).getMonth()}`
+        : null;
 
-    if (!manual && lastUpdateKey === currentMonthKey) {
-      console.log('Skipping auto-fetch, already updated this month:', property.address);
-      return;
-    }
+      if (!manual && lastUpdateKey === currentMonthKey) {
+        console.log('Skipping auto-fetch, already updated this month:', property.address);
+        return;
+      }
 
-    // ---------------------------------------------------------
-    // 1. Attempt Local Zillow Scraper (Prioritized)
-    // ---------------------------------------------------------
-    setFetchingRE(reIndex);
+      // ---------------------------------------------------------
+      // 1. Attempt Local Zillow Scraper (Prioritized)
+      // ---------------------------------------------------------
+      setFetchingRE(reIndex);
 
-    try {
-      const localResp = await fetch(`http://localhost:3001/api/zestimate?address=${encodeURIComponent(property.address)}`);
-      if (localResp.ok) {
-        const data = await localResp.json();
-        if (data.success && data.value) {
-          // Parse "$1,234,567" -> 1234567
-          const numVal = parseFloat(data.value.replace(/[^0-9.]/g, ''));
-          if (!isNaN(numVal)) {
-            const newRE = [...planData.realEstate];
-            newRE[reIndex].currentValue = numVal;
-            newRE[reIndex].lastUpdated = new Date().toISOString();
-            updatePlan({ realEstate: newRE });
-            setFetchingRE(null);
-            if (manual) alert(`🤖 Local Scraper Success! Value: ${data.value}`);
-            return;
+      try {
+        const localResp = await fetch(
+          `http://localhost:3001/api/zestimate?address=${encodeURIComponent(property.address)}`
+        );
+        if (localResp.ok) {
+          const data = await localResp.json();
+          if (data.success && data.value) {
+            // Parse "$1,234,567" -> 1234567
+            const numVal = parseFloat(data.value.replace(/[^0-9.]/g, ''));
+            if (!isNaN(numVal)) {
+              const newRE = [...planData.realEstate];
+              newRE[reIndex].currentValue = numVal;
+              newRE[reIndex].lastUpdated = new Date().toISOString();
+              updatePlan({ realEstate: newRE });
+              setFetchingRE(null);
+              if (manual) alert(`🤖 Local Scraper Success! Value: ${data.value}`);
+              return;
+            }
           }
         }
+      } catch (err) {
+        // Local server likely not running, ignore and fall through
+        console.log('Local scraper not available, falling back to API.');
       }
-    } catch (err) {
-      // Local server likely not running, ignore and fall through
-      console.log("Local scraper not available, falling back to API.");
-    }
 
-    // ---------------------------------------------------------
-    // ---------------------------------------------------------
-    // 2. Fallback: Manual Entry Only
-    // ---------------------------------------------------------
-    if (manual) {
-      // As requested: Auto-open Zillow Search so user can find it manually
-      window.open('https://www.zillow.com/how-much-is-my-home-worth/', '_blank');
-    }
-    setFetchingRE(null);
-  }, [planData, updatePlan]);
+      // ---------------------------------------------------------
+      // ---------------------------------------------------------
+      // 2. Fallback: Manual Entry Only
+      // ---------------------------------------------------------
+      if (manual) {
+        // As requested: Auto-open Zillow Search so user can find it manually
+        window.open('https://www.zillow.com/how-much-is-my-home-worth/', '_blank');
+      }
+      setFetchingRE(null);
+    },
+    [planData, updatePlan]
+  );
 
   // Auto-fetch RE on load (respects caching)
   const autoFetchRan = useRef(false);
@@ -348,16 +358,23 @@ function AppContent() {
 
     // SAFEGUARD: Ensure valid simulation range
     const startAge = Number(client.age) || 50;
-    const endAge = Math.max(Number(client.lifeExpectancy) || 90, Number(spouse?.lifeExpectancy) || 0);
+    const endAge = Math.max(
+      Number(client.lifeExpectancy) || 90,
+      Number(spouse?.lifeExpectancy) || 0
+    );
 
     if (startAge >= endAge) {
-      alert(`Simulation Error: Start Age (${startAge}) must be less than Life Expectancy (${endAge}). Please check Profile settings.`);
+      alert(
+        `Simulation Error: Start Age (${startAge}) must be less than Life Expectancy (${endAge}). Please check Profile settings.`
+      );
       setIsCalculatingMC(false);
       setMcProgress(0);
       return;
     }
 
-    const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), { type: 'module' });
+    const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), {
+      type: 'module',
+    });
 
     worker.onmessage = (e) => {
       const { type, progress, results } = e.data;
@@ -394,10 +411,10 @@ function AppContent() {
       spendingStrategy: planData.assumptions.withdrawalStrategy || 'fixed',
       spendingParams: {
         guytonKlinger: planData.assumptions.guytonKlinger,
-        guardrails: planData.assumptions.guardrails
+        guardrails: planData.assumptions.guardrails,
       },
       ledger,
-      initialBalances: ledger.initialBalances // Explicit pass to survive serialization
+      initialBalances: ledger.initialBalances, // Explicit pass to survive serialization
     });
   }, [planData, ledger, setMonteCarloResults]);
 
@@ -405,13 +422,13 @@ function AppContent() {
   useEffect(() => {
     const fetchPrices = async () => {
       // 1-second delay before fetching
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       try {
         const [btcRes, ethRes, solRes] = await Promise.all([
           fetch('https://api.coinbase.com/v2/prices/BTC-USD/spot'),
           fetch('https://api.coinbase.com/v2/prices/ETH-USD/spot'),
-          fetch('https://api.coinbase.com/v2/prices/SOL-USD/spot')
+          fetch('https://api.coinbase.com/v2/prices/SOL-USD/spot'),
         ]);
         const btc = await btcRes.json();
         const eth = await ethRes.json();
@@ -425,11 +442,23 @@ function AppContent() {
               crypto: {
                 ...planData.assets.crypto,
                 // Parse float then round to nearest dollar
-                btc: { ...planData.assets.crypto?.btc, price: Math.round(parseFloat(btc.data.amount)) || planData.assets.crypto?.btc?.price },
-                eth: { ...planData.assets.crypto?.eth, price: Math.round(parseFloat(eth.data.amount)) || planData.assets.crypto?.eth?.price },
-                sol: { ...planData.assets.crypto?.sol, price: Math.round(parseFloat(sol.data.amount)) || planData.assets.crypto?.sol?.price }
-              }
-            }
+                btc: {
+                  ...planData.assets.crypto?.btc,
+                  price:
+                    Math.round(parseFloat(btc.data.amount)) || planData.assets.crypto?.btc?.price,
+                },
+                eth: {
+                  ...planData.assets.crypto?.eth,
+                  price:
+                    Math.round(parseFloat(eth.data.amount)) || planData.assets.crypto?.eth?.price,
+                },
+                sol: {
+                  ...planData.assets.crypto?.sol,
+                  price:
+                    Math.round(parseFloat(sol.data.amount)) || planData.assets.crypto?.sol?.price,
+                },
+              },
+            },
           });
         }
       } catch (e) {
@@ -441,198 +470,228 @@ function AppContent() {
   }, []); // Run once on mount explicitly
 
   // Helper for Async Worker - Helper to run a single simulation promise
-  const runProb = useCallback(async (ledgerToUse, requestId, iterations = 1000, customPlan = null) => {
-    const sourcePlan = customPlan || planData;
-    // Worker Params
-    const params = {
-      startAge: sourcePlan.people[0].age,
-      endAge: Math.max(sourcePlan.people[0].lifeExpectancy || 90, sourcePlan.people[1]?.lifeExpectancy || 0),
-      iterations,
-      equityReturn: sourcePlan.assumptions.equityReturn / 100,
-      equityVolatility: sourcePlan.assumptions.equityVolatility / 100,
-      cryptoReturn: sourcePlan.assumptions.cryptoReturn / 100,
-      cryptoVolatility: sourcePlan.assumptions.cryptoVolatility / 100,
-      correlation: sourcePlan.assumptions.correlation || 0.1,
-      enableCAPE: sourcePlan.assumptions.enableCAPE,
-      stressTest: sourcePlan.stressTest // Pass stress config
-    };
+  const runProb = useCallback(
+    async (ledgerToUse, requestId, iterations = 1000, customPlan = null) => {
+      const sourcePlan = customPlan || planData;
+      // Worker Params
+      const params = {
+        startAge: sourcePlan.people[0].age,
+        endAge: Math.max(
+          sourcePlan.people[0].lifeExpectancy || 90,
+          sourcePlan.people[1]?.lifeExpectancy || 0
+        ),
+        iterations,
+        equityReturn: sourcePlan.assumptions.equityReturn / 100,
+        equityVolatility: sourcePlan.assumptions.equityVolatility / 100,
+        cryptoReturn: sourcePlan.assumptions.cryptoReturn / 100,
+        cryptoVolatility: sourcePlan.assumptions.cryptoVolatility / 100,
+        correlation: sourcePlan.assumptions.correlation || 0.1,
+        enableCAPE: sourcePlan.assumptions.enableCAPE,
+        stressTest: sourcePlan.stressTest, // Pass stress config
+      };
 
-    return new Promise((resolve, reject) => {
-      const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), { type: 'module' });
-      worker.onmessage = (e) => {
-        if (e.data.type === 'result') {
-          resolve(e.data.results);
+      return new Promise((resolve, reject) => {
+        const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), {
+          type: 'module',
+        });
+        worker.onmessage = (e) => {
+          if (e.data.type === 'result') {
+            resolve(e.data.results);
+            worker.terminate();
+          }
+        };
+        worker.onerror = (err) => {
+          reject(err);
           worker.terminate();
-        }
-      };
-      worker.onerror = (err) => {
-        reject(err);
-        worker.terminate();
-      };
-      worker.postMessage({ ...params, ledger: ledgerToUse, initialBalances: ledgerToUse.initialBalances, requestId });
-    });
-  }, [planData]);
+        };
+        worker.postMessage({
+          ...params,
+          ledger: ledgerToUse,
+          initialBalances: ledgerToUse.initialBalances,
+          requestId,
+        });
+      });
+    },
+    [planData]
+  );
 
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [optimizationResult, setOptimizationResult] = useState(null);
 
+  const handleAutoOptimize = useCallback(
+    async (TARGET_SUCCESS = 0.95) => {
+      if (isOptimizing) return;
+      setIsOptimizing(true);
+      setOptimizationResult(null);
 
-  const handleAutoOptimize = useCallback(async (TARGET_SUCCESS = 0.95) => {
-    if (isOptimizing) return;
-    setIsOptimizing(true);
-    setOptimizationResult(null);
+      try {
+        // Strategy:
+        // 1. Try cutting Discretionary (Disc) from 100% -> 0%.
+        // 2. If Disc=0% fails, keep Disc=0% and cut Recurring from 100% -> 0%.
+        // 3. If Rec=0% fails, keep Rec=0% and cut Essential from 100% -> 0%.
 
-    try {
-      // Strategy:
-      // 1. Try cutting Discretionary (Disc) from 100% -> 0%.
-      // 2. If Disc=0% fails, keep Disc=0% and cut Recurring from 100% -> 0%.
-      // 3. If Rec=0% fails, keep Rec=0% and cut Essential from 100% -> 0%.
+        const originalDisc =
+          planData.expenses.discretionaryMonthly || planData.expenses.discretionary / 12 || 0;
+        const originalRec = planData.expenses.recurring || [];
+        const originalEss =
+          planData.expenses.essentialMonthly || planData.expenses.essential / 12 || 0;
 
-      const originalDisc = planData.expenses.discretionaryMonthly || (planData.expenses.discretionary / 12) || 0;
-      const originalRec = planData.expenses.recurring || [];
-      const originalEss = planData.expenses.essentialMonthly || (planData.expenses.essential / 12) || 0;
+        let safeDisc = originalDisc;
+        let safeRecFactor = 1.0;
+        let safeEss = originalEss;
 
-      let safeDisc = originalDisc;
-      let safeRecFactor = 1.0;
-      let safeEss = originalEss;
+        let successFound = false;
 
-      let successFound = false;
+        // --- STAGE 1: Discretionary ---
+        console.log(
+          `Optimizing for ${(TARGET_SUCCESS * 100).toFixed(0)}% success: Stage 1 (Discretionary)`
+        );
+        // Check if 0% Disc is enough?
+        let tempPlan = JSON.parse(JSON.stringify(planData));
+        tempPlan.expenses.discretionaryMonthly = 0;
+        let ledger = calculateLedger(tempPlan);
+        let res = await runProb(ledger, 'stage1-check', 500);
 
-      // --- STAGE 1: Discretionary ---
-      console.log(`Optimizing for ${(TARGET_SUCCESS * 100).toFixed(0)}% success: Stage 1 (Discretionary)`);
-      // Check if 0% Disc is enough?
-      let tempPlan = JSON.parse(JSON.stringify(planData));
-      tempPlan.expenses.discretionaryMonthly = 0;
-      let ledger = calculateLedger(tempPlan);
-      let res = await runProb(ledger, 'stage1-check', 500);
+        // TARGET_SUCCESS is now passed as parameter
 
-      // TARGET_SUCCESS is now passed as parameter
+        if (res.successRate >= TARGET_SUCCESS) {
+          // Success is possible within Discretionary cut! Find exact amount.
+          let low = 0.0; // 0% spending
+          let high = 1.0; // 100% spending
+          let bestFactor = 0.0;
 
-      if (res.successRate >= TARGET_SUCCESS) {
-        // Success is possible within Discretionary cut! Find exact amount.
-        let low = 0.0; // 0% spending
-        let high = 1.0; // 100% spending
-        let bestFactor = 0.0;
-
-        for (let i = 0; i < 6; i++) {
-          const mid = (low + high) / 2;
-          tempPlan.expenses.discretionaryMonthly = Math.floor(originalDisc * mid);
-          ledger = calculateLedger(tempPlan);
-          // if ledger failed validation
-          if (!ledger || !ledger.length) { low = mid; continue; }
-
-          res = await runProb(ledger, `stage1 - ${i} `, 1000);
-          if (res.successRate >= TARGET_SUCCESS) {
-            bestFactor = mid;
-            low = mid; // Try spending more
-          } else {
-            high = mid; // Spend less
-          }
-        }
-        safeDisc = Math.floor(originalDisc * bestFactor);
-        successFound = true;
-      } else {
-        // Stage 1 failed even at $0. Lock Disc at $0 and move to Stage 2.
-        safeDisc = 0;
-      }
-
-      // --- STAGE 2: Recurring ---
-      if (!successFound) {
-        console.log("Optimizing: Stage 2 (Recurring)");
-        if (originalRec.length === 0) {
-          // Skip if no recurring
-        } else {
-          // Check if 0% Recurring works?
-          tempPlan.expenses.discretionaryMonthly = 0;
-          tempPlan.expenses.recurring = originalRec.map(r => ({ ...r, amount: 0 }));
-          ledger = calculateLedger(tempPlan);
-          res = await runProb(ledger, 'stage2-check', 500);
-
-          if (res.successRate >= TARGET_SUCCESS) {
-            // Success possible in Recurring! Find factor.
-            let low = 0.0;
-            let high = 1.0;
-            let bestFactor = 0.0;
-
-            for (let i = 0; i < 6; i++) {
-              const mid = (low + high) / 2;
-              tempPlan.expenses.recurring = originalRec.map(r => ({ ...r, amount: Math.floor(r.amount * mid) }));
-              ledger = calculateLedger(tempPlan);
-              res = await runProb(ledger, `stage2 - ${i} `, 1000);
-              if (res.successRate >= TARGET_SUCCESS) {
-                bestFactor = mid;
-                low = mid;
-              } else {
-                high = mid;
-              }
+          for (let i = 0; i < 6; i++) {
+            const mid = (low + high) / 2;
+            tempPlan.expenses.discretionaryMonthly = Math.floor(originalDisc * mid);
+            ledger = calculateLedger(tempPlan);
+            // if ledger failed validation
+            if (!ledger || !ledger.length) {
+              low = mid;
+              continue;
             }
-            safeRecFactor = bestFactor;
-            successFound = true;
+
+            res = await runProb(ledger, `stage1 - ${i} `, 1000);
+            if (res.successRate >= TARGET_SUCCESS) {
+              bestFactor = mid;
+              low = mid; // Try spending more
+            } else {
+              high = mid; // Spend less
+            }
+          }
+          safeDisc = Math.floor(originalDisc * bestFactor);
+          successFound = true;
+        } else {
+          // Stage 1 failed even at $0. Lock Disc at $0 and move to Stage 2.
+          safeDisc = 0;
+        }
+
+        // --- STAGE 2: Recurring ---
+        if (!successFound) {
+          console.log('Optimizing: Stage 2 (Recurring)');
+          if (originalRec.length === 0) {
+            // Skip if no recurring
           } else {
-            // Stage 2 failed. Lock Rec at 0.
-            safeRecFactor = 0.0;
+            // Check if 0% Recurring works?
+            tempPlan.expenses.discretionaryMonthly = 0;
+            tempPlan.expenses.recurring = originalRec.map((r) => ({ ...r, amount: 0 }));
+            ledger = calculateLedger(tempPlan);
+            res = await runProb(ledger, 'stage2-check', 500);
+
+            if (res.successRate >= TARGET_SUCCESS) {
+              // Success possible in Recurring! Find factor.
+              let low = 0.0;
+              let high = 1.0;
+              let bestFactor = 0.0;
+
+              for (let i = 0; i < 6; i++) {
+                const mid = (low + high) / 2;
+                tempPlan.expenses.recurring = originalRec.map((r) => ({
+                  ...r,
+                  amount: Math.floor(r.amount * mid),
+                }));
+                ledger = calculateLedger(tempPlan);
+                res = await runProb(ledger, `stage2 - ${i} `, 1000);
+                if (res.successRate >= TARGET_SUCCESS) {
+                  bestFactor = mid;
+                  low = mid;
+                } else {
+                  high = mid;
+                }
+              }
+              safeRecFactor = bestFactor;
+              successFound = true;
+            } else {
+              // Stage 2 failed. Lock Rec at 0.
+              safeRecFactor = 0.0;
+            }
           }
         }
-      }
 
-      // --- STAGE 3 REMOVED ---
-      // User feedback: "Essential must be static"
+        // --- STAGE 3 REMOVED ---
+        // User feedback: "Essential must be static"
 
-      const resultObj = {
-        success: successFound,
-        original: { disc: originalDisc, rec: originalRec, ess: originalEss },
-        safe: {
-          disc: safeDisc,
-          recFactor: safeRecFactor,
-          ess: safeEss
-        },
-        cuts: {
-          disc: originalDisc - safeDisc,
-          recPercentage: (1.0 - safeRecFactor) * 100,
-          ess: 0 // No cuts to essential
+        const resultObj = {
+          success: successFound,
+          original: { disc: originalDisc, rec: originalRec, ess: originalEss },
+          safe: {
+            disc: safeDisc,
+            recFactor: safeRecFactor,
+            ess: safeEss,
+          },
+          cuts: {
+            disc: originalDisc - safeDisc,
+            recPercentage: (1.0 - safeRecFactor) * 100,
+            ess: 0, // No cuts to essential
+          },
+        };
+
+        setOptimizationResult(resultObj);
+
+        // Auto-apply if optimization found a solution
+        if (successFound && resultObj.cuts.disc > 0) {
+          // Construct updates
+          const updates = { expenses: { ...planData.expenses } };
+          updates.expenses.discretionaryMonthly = resultObj.safe.disc;
+
+          if (resultObj.safe.recFactor < 1.0 && resultObj.original.rec.length > 0) {
+            updates.expenses.recurring = resultObj.original.rec.map((r) => ({
+              ...r,
+              amount: Math.floor(r.amount * resultObj.safe.recFactor),
+            }));
+          }
+
+          updatePlan(updates);
+
+          // Show feedback
+          const cutAmount = resultObj.cuts.disc * 12;
+          console.log(
+            `✅ Optimizer: Reduce discretionary by $${cutAmount.toLocaleString()}/yr to reach target success rate.`
+          );
+          alert(
+            `Optimizer applied!\n\nReduced discretionary spending by $${cutAmount.toLocaleString()}/year.\n\nRefresh Monte Carlo to see updated success rate.`
+          );
+
+          // Re-run Monte Carlo after a short delay
+          setTimeout(() => runMonteCarloSim(), 1000);
+        } else if (!successFound) {
+          alert(
+            `Optimizer could not reach target success rate.\n\nEven with $0 discretionary spending, the plan has high risk.\n\nConsider:\n- Delaying retirement\n- Reducing essential expenses\n- Increasing income sources`
+          );
         }
-      };
-
-      setOptimizationResult(resultObj);
-
-      // Auto-apply if optimization found a solution
-      if (successFound && resultObj.cuts.disc > 0) {
-        // Construct updates
-        const updates = { expenses: { ...planData.expenses } };
-        updates.expenses.discretionaryMonthly = resultObj.safe.disc;
-
-        if (resultObj.safe.recFactor < 1.0 && resultObj.original.rec.length > 0) {
-          updates.expenses.recurring = resultObj.original.rec.map(r => ({
-            ...r,
-            amount: Math.floor(r.amount * resultObj.safe.recFactor)
-          }));
-        }
-
-        updatePlan(updates);
-
-        // Show feedback
-        const cutAmount = resultObj.cuts.disc * 12;
-        console.log(`✅ Optimizer: Reduce discretionary by $${cutAmount.toLocaleString()}/yr to reach target success rate.`);
-        alert(`Optimizer applied!\n\nReduced discretionary spending by $${cutAmount.toLocaleString()}/year.\n\nRefresh Monte Carlo to see updated success rate.`);
-
-        // Re-run Monte Carlo after a short delay
-        setTimeout(() => runMonteCarloSim(), 1000);
-      } else if (!successFound) {
-        alert(`Optimizer could not reach target success rate.\n\nEven with $0 discretionary spending, the plan has high risk.\n\nConsider:\n- Delaying retirement\n- Reducing essential expenses\n- Increasing income sources`);
+      } catch (e) {
+        console.error('Optimization failed:', e);
+        alert('Optimization failed. Check console for details.');
+      } finally {
+        setIsOptimizing(false);
       }
-
-    } catch (e) {
-      console.error("Optimization failed:", e);
-      alert("Optimization failed. Check console for details.");
-    } finally {
-      setIsOptimizing(false);
-    }
-  }, [planData, calculateLedger, isOptimizing, runMonteCarloSim, updatePlan, runProb]);
+    },
+    [planData, calculateLedger, isOptimizing, runMonteCarloSim, updatePlan, runProb]
+  );
 
   // Listen for optimizer trigger from MonteCarloStats component
   useEffect(() => {
     const handleOptimizerEvent = (e) => {
-      handleAutoOptimize(e.detail?.target || 0.90);
+      handleAutoOptimize(e.detail?.target || 0.9);
     };
     window.addEventListener('runSuccessOptimizer', handleOptimizerEvent);
     return () => window.removeEventListener('runSuccessOptimizer', handleOptimizerEvent);
@@ -645,9 +704,10 @@ function AppContent() {
 
       // Get original spending from current ledger (most accurate source)
       const currentLedgerSpending = ledger[0]?.expenses?.total || 0;
-      const originalSpending = currentLedgerSpending ||
+      const originalSpending =
+        currentLedgerSpending ||
         planData.spending?.fixedAmount ||
-        ((planData.expenses?.essential || 0) + (planData.expenses?.discretionary || 0)) ||
+        (planData.expenses?.essential || 0) + (planData.expenses?.discretionary || 0) ||
         100000; // Fallback to $100k if nothing found
 
       // Create a temporary modified plan with adjusted spending
@@ -662,24 +722,34 @@ function AppContent() {
 
       // SCALE ALL EXPENSE FIELDS: calculateExpenses prioritzes Monthly if present
       if (modifiedPlan.expenses.essentialMonthly !== undefined) {
-        modifiedPlan.expenses.essentialMonthly = Math.round(modifiedPlan.expenses.essentialMonthly * multiplier);
+        modifiedPlan.expenses.essentialMonthly = Math.round(
+          modifiedPlan.expenses.essentialMonthly * multiplier
+        );
       }
       if (modifiedPlan.expenses.discretionaryMonthly !== undefined) {
-        modifiedPlan.expenses.discretionaryMonthly = Math.round(modifiedPlan.expenses.discretionaryMonthly * multiplier);
+        modifiedPlan.expenses.discretionaryMonthly = Math.round(
+          modifiedPlan.expenses.discretionaryMonthly * multiplier
+        );
       }
       if (modifiedPlan.expenses.essential !== undefined) {
         modifiedPlan.expenses.essential = Math.round(modifiedPlan.expenses.essential * multiplier);
       }
       if (modifiedPlan.expenses.discretionary !== undefined) {
-        modifiedPlan.expenses.discretionary = Math.round(modifiedPlan.expenses.discretionary * multiplier);
+        modifiedPlan.expenses.discretionary = Math.round(
+          modifiedPlan.expenses.discretionary * multiplier
+        );
       }
       if (modifiedPlan.expenses.baseMonthly !== undefined) {
-        modifiedPlan.expenses.baseMonthly = Math.round(modifiedPlan.expenses.baseMonthly * multiplier);
+        modifiedPlan.expenses.baseMonthly = Math.round(
+          modifiedPlan.expenses.baseMonthly * multiplier
+        );
       }
 
       // Show feedback
       const pctText = (multiplier * 100).toFixed(0);
-      console.log(`📊 Simulating ${pctText}% spending: $${adjustedSpending.toLocaleString()}/year (original: $${originalSpending.toLocaleString()})`);
+      console.log(
+        `📊 Simulating ${pctText}% spending: $${adjustedSpending.toLocaleString()}/year (original: $${originalSpending.toLocaleString()})`
+      );
 
       // Run Monte Carlo with modified plan
       setIsCalculatingMC(true);
@@ -690,12 +760,16 @@ function AppContent() {
         const modifiedLedger = calculateLedger(modifiedPlan);
 
         // DIAGNOSTIC: Verify first year of modified ledger
-        console.log(`📊 Modified Ledger Y0: Total Expenses: $${modifiedLedger[0]?.expenses?.total?.toLocaleString()}, Net Worth: $${modifiedLedger[0]?.netWorth?.toLocaleString()}`);
+        console.log(
+          `📊 Modified Ledger Y0: Total Expenses: $${modifiedLedger[0]?.expenses?.total?.toLocaleString()}, Net Worth: $${modifiedLedger[0]?.netWorth?.toLocaleString()}`
+        );
 
         const client = modifiedPlan.people?.[0] || { age: 50, lifeExpectancy: 90 };
         const spouse = modifiedPlan.people?.[1];
 
-        const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), { type: 'module' });
+        const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), {
+          type: 'module',
+        });
 
         worker.onmessage = (msg) => {
           const { type, progress, results } = msg.data;
@@ -705,14 +779,16 @@ function AppContent() {
             setMonteCarloResults({
               ...results,
               spendingMultiplier: multiplier,
-              adjustedSpending
+              adjustedSpending,
             });
             setIsCalculatingMC(false);
             setMcProgress(0);
             worker.terminate();
 
             // Results now show in page via MonteCarloStats component
-            console.log(`✅ ${pctText}% Spending Simulation Complete - Success Rate: ${(results.successRate * 100).toFixed(1)}%`);
+            console.log(
+              `✅ ${pctText}% Spending Simulation Complete - Success Rate: ${(results.successRate * 100).toFixed(1)}%`
+            );
           }
         };
 
@@ -734,7 +810,7 @@ function AppContent() {
           correlation: modifiedPlan.assumptions.correlation || 0.1,
           enableCAPE: modifiedPlan.assumptions.enableCAPE,
           spendingStrategy: modifiedPlan.assumptions.withdrawalStrategy || 'fixed',
-          ledger: modifiedLedger
+          ledger: modifiedLedger,
         });
       } catch (err) {
         console.error('Spending simulation error:', err);
@@ -759,12 +835,16 @@ function AppContent() {
 
       try {
         // DIAGNOSTIC: Verify first year of current ledger before passing to worker
-        console.log(`📊 Scenario Ledger Y0: Total Expenses: $${ledger[0]?.expenses?.total?.toLocaleString()}, Net Worth: $${ledger[0]?.netWorth?.toLocaleString()}`);
+        console.log(
+          `📊 Scenario Ledger Y0: Total Expenses: $${ledger[0]?.expenses?.total?.toLocaleString()}, Net Worth: $${ledger[0]?.netWorth?.toLocaleString()}`
+        );
 
         const client = planData.people?.[0] || { age: 50, lifeExpectancy: 90 };
         const spouse = planData.people?.[1];
 
-        const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), { type: 'module' });
+        const worker = new Worker(new URL('./workers/monteCarlo.worker.js', import.meta.url), {
+          type: 'module',
+        });
 
         worker.onmessage = (msg) => {
           const { type, progress, results } = msg.data;
@@ -773,12 +853,14 @@ function AppContent() {
           } else if (type === 'result') {
             setMonteCarloResults({
               ...results,
-              scenarioId
+              scenarioId,
             });
             setIsCalculatingMC(false);
             setMcProgress(0);
             worker.terminate();
-            console.log(`✅ Scenario "${scenarioId}" Complete - Success Rate: ${(results.successRate * 100).toFixed(1)}%`);
+            console.log(
+              `✅ Scenario "${scenarioId}" Complete - Success Rate: ${(results.successRate * 100).toFixed(1)}%`
+            );
           }
         };
 
@@ -801,7 +883,7 @@ function AppContent() {
           enableCAPE: planData.assumptions.enableCAPE,
           spendingStrategy: planData.assumptions.withdrawalStrategy || 'fixed',
           ledger,
-          scenarioId // Pass scenario to worker
+          scenarioId, // Pass scenario to worker
         });
       } catch (err) {
         console.error('Scenario simulation error:', err);
@@ -812,7 +894,6 @@ function AppContent() {
     window.addEventListener('runScenarioSimulation', handleScenarioSimulation);
     return () => window.removeEventListener('runScenarioSimulation', handleScenarioSimulation);
   }, [planData, ledger, setMonteCarloResults]);
-
 
   const applyOptimization = () => {
     if (!optimizationResult) return;
@@ -826,9 +907,9 @@ function AppContent() {
 
     // Apply Rec
     if (safe.recFactor < 1.0 && original.rec.length > 0) {
-      updates.expenses.recurring = original.rec.map(r => ({
+      updates.expenses.recurring = original.rec.map((r) => ({
         ...r,
-        amount: Math.floor(r.amount * safe.recFactor)
+        amount: Math.floor(r.amount * safe.recFactor),
       }));
     }
 
@@ -850,7 +931,7 @@ function AppContent() {
 
     try {
       // Run baseline Monte Carlo first
-      const baselineResults = monteCarloResults || await runMonteCarloSim();
+      const baselineResults = monteCarloResults || (await runMonteCarloSim());
 
       // Apply shocks to planData temporarily
       const stressedPlan = JSON.parse(JSON.stringify(planData));
@@ -864,16 +945,16 @@ function AppContent() {
       // Apply SS cut
       if (shocks.ssCut > 0 && stressedPlan.socialSecurity) {
         if (stressedPlan.socialSecurity.primary) {
-          stressedPlan.socialSecurity.primary.annualAmount *= (1 - shocks.ssCut / 100);
+          stressedPlan.socialSecurity.primary.annualAmount *= 1 - shocks.ssCut / 100;
         }
         if (stressedPlan.socialSecurity.spouse) {
-          stressedPlan.socialSecurity.spouse.annualAmount *= (1 - shocks.ssCut / 100);
+          stressedPlan.socialSecurity.spouse.annualAmount *= 1 - shocks.ssCut / 100;
         }
       }
 
       // Apply longevity extension
       if (shocks.longevityYears > 0 && stressedPlan.people) {
-        stressedPlan.people.forEach(person => {
+        stressedPlan.people.forEach((person) => {
           person.lifeExpectancy += shocks.longevityYears;
         });
       }
@@ -892,7 +973,7 @@ function AppContent() {
         baselineSuccessRate: baselineResults?.successRate || 0,
         endingWealth: stressedResults.finalBalances?.median || 0,
         baselineWealth: baselineResults?.finalBalances?.median || 0,
-        ledger: stressedLedger
+        ledger: stressedLedger,
       });
     } catch (error) {
       console.error('Stress test failed:', error);
@@ -901,11 +982,15 @@ function AppContent() {
     }
   };
 
-
-
   // Auto-run MC when tab is opened
   useEffect(() => {
-    if (activeTab === 'montecarlo' && !monteCarloResults && !isCalculatingMC && ledger && ledger.length > 0) {
+    if (
+      activeTab === 'montecarlo' &&
+      !monteCarloResults &&
+      !isCalculatingMC &&
+      ledger &&
+      ledger.length > 0
+    ) {
       runMonteCarloSim();
     }
   }, [activeTab, monteCarloResults, isCalculatingMC, runMonteCarloSim, ledger]);
@@ -927,7 +1012,9 @@ function AppContent() {
           <div className="flex-shrink-0 justify-self-start">
             <h1 className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
               <span className="text-2xl">🤖</span>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">The Architect</span>
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                The Architect
+              </span>
             </h1>
           </div>
 
@@ -935,7 +1022,11 @@ function AppContent() {
           <div className="flex flex-wrap items-center justify-center gap-3 bg-gray-50/50 dark:bg-gray-900/30 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800/50 justify-self-center">
             <button
               onClick={() => {
-                if (window.confirm("🧹 Clear all retirement plan data and restore defaults? This cannot be undone.")) {
+                if (
+                  window.confirm(
+                    '🧹 Clear all retirement plan data and restore defaults? This cannot be undone.'
+                  )
+                ) {
                   setCacheClearedStatus(true);
                   setTimeout(() => {
                     localStorage.clear();
@@ -943,51 +1034,70 @@ function AppContent() {
                   }, 800);
                 }
               }}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase transition-all flex items-center gap-2 rounded-lg shadow-sm active:scale-95 ${cacheClearedStatus
-                ? "bg-green-600 text-white border-green-700"
-                : "bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-                }`}
+              className={`px-3 py-1.5 text-[10px] font-bold uppercase transition-all flex items-center gap-2 rounded-lg shadow-sm active:scale-95 ${
+                cacheClearedStatus
+                  ? 'bg-green-600 text-white border-green-700'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
             >
-              <span className="text-xs">{cacheClearedStatus ? "✅" : "🧹"}</span>
-              {cacheClearedStatus ? "DATA WIPED!" : "CLEAR CACHE"}
+              <span className="text-xs">{cacheClearedStatus ? '✅' : '🧹'}</span>
+              {cacheClearedStatus ? 'DATA WIPED!' : 'CLEAR CACHE'}
             </button>
 
             <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1 hidden sm:block" />
 
             {/* Quick Strategy Selector */}
             <div className="flex items-center bg-white dark:bg-gray-800 rounded-lg px-3 py-1.5 border border-gray-200 dark:border-gray-700 shadow-sm transition-all hover:border-blue-400">
-              <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 mr-2">Method:</span>
+              <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 mr-2">
+                Method:
+              </span>
               <select
                 value={spendingStrategy}
                 onChange={(e) => setSpendingStrategy(e.target.value)}
                 className="bg-transparent text-xs font-bold text-gray-900 dark:text-gray-100 border-none focus:ring-0 p-0 cursor-pointer outline-none hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
-                <option value="fixed" className="dark:bg-gray-800">Fixed Dollar</option>
-                <option value="percentage" className="dark:bg-gray-800">Fixed %</option>
-                <option value="blanchett" className="dark:bg-gray-800">Blanchett Smile</option>
-                <option value="guardrails" className="dark:bg-gray-800">Guyton-Klinger</option>
-                <option value="floor-ceiling" className="dark:bg-gray-800">Floor & Ceiling</option>
-                <option value="max-spend" className="dark:bg-gray-800">Max Spending</option>
-                <option value="dynamic" className="dark:bg-gray-800">Actuarial (ARVA)</option>
+                <option value="fixed" className="dark:bg-gray-800">
+                  Fixed Dollar
+                </option>
+                <option value="percentage" className="dark:bg-gray-800">
+                  Fixed %
+                </option>
+                <option value="blanchett" className="dark:bg-gray-800">
+                  Blanchett Smile
+                </option>
+                <option value="guardrails" className="dark:bg-gray-800">
+                  Guyton-Klinger
+                </option>
+                <option value="floor-ceiling" className="dark:bg-gray-800">
+                  Floor & Ceiling
+                </option>
+                <option value="max-spend" className="dark:bg-gray-800">
+                  Max Spending
+                </option>
+                <option value="dynamic" className="dark:bg-gray-800">
+                  Actuarial (ARVA)
+                </option>
               </select>
             </div>
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleTabChange('montecarlo')}
-                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${activeTab === 'montecarlo'
-                  ? "bg-blue-600 text-white shadow-blue-500/20"
-                  : "bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-                  }`}
+                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${
+                  activeTab === 'montecarlo'
+                    ? 'bg-blue-600 text-white shadow-blue-500/20'
+                    : 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
               >
                 <span>🎲</span> Monte Carlo
               </button>
               <button
                 onClick={() => handleTabChange('cfo')}
-                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${activeTab === 'cfo'
-                  ? "bg-purple-600 text-white shadow-purple-500/20"
-                  : "bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
-                  }`}
+                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${
+                  activeTab === 'cfo'
+                    ? 'bg-purple-600 text-white shadow-purple-500/20'
+                    : 'bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                }`}
               >
                 <span>🤖</span> CFO Report
               </button>
@@ -999,7 +1109,7 @@ function AppContent() {
             <button
               onClick={() => setDarkMode(!darkMode)}
               className="p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm active:scale-90"
-              title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             >
               {darkMode ? '☀️' : '🌙'}
             </button>
@@ -1017,10 +1127,16 @@ function AppContent() {
                 {/* Compact Row 1: Filing & State */}
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[9px] text-gray-400 block uppercase">Filing Status</label>
+                    <label className="text-[9px] text-gray-400 block uppercase">
+                      Filing Status
+                    </label>
                     <select
                       value={planData.profile?.filingStatus || 'head'}
-                      onChange={(e) => updatePlan({ profile: { ...planData.profile, filingStatus: e.target.value } })}
+                      onChange={(e) =>
+                        updatePlan({
+                          profile: { ...planData.profile, filingStatus: e.target.value },
+                        })
+                      }
                       className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                     >
                       <option value="head">Head of Household</option>
@@ -1032,23 +1148,38 @@ function AppContent() {
                     <label className="text-[9px] text-gray-400 block uppercase">State of Res</label>
                     <select
                       value={planData.profile?.stateOfResidence || 'FL'}
-                      onChange={(e) => updatePlan({ profile: { ...planData.profile, stateOfResidence: e.target.value } })}
+                      onChange={(e) =>
+                        updatePlan({
+                          profile: { ...planData.profile, stateOfResidence: e.target.value },
+                        })
+                      }
                       className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                     >
-                      {Object.keys(STATE_BRACKETS).sort().map(state => (
-                        <option key={state} value={state}>{state}</option>
-                      ))}
+                      {Object.keys(STATE_BRACKETS)
+                        .sort()
+                        .map((state) => (
+                          <option key={state} value={state}>
+                            {state}
+                          </option>
+                        ))}
                     </select>
                   </div>
                 </div>
 
                 {planData.people?.map((person, idx) => (
-                  <div key={person.id} className="p-1.5 border border-gray-100 dark:border-gray-700 rounded-md space-y-1 bg-gray-50/50 dark:bg-gray-900/50">
-                    <div className="text-[9px] font-bold text-blue-600 uppercase mb-0.5">{person.name || person.id}</div>
+                  <div
+                    key={person.id}
+                    className="p-1.5 border border-gray-100 dark:border-gray-700 rounded-md space-y-1 bg-gray-50/50 dark:bg-gray-900/50"
+                  >
+                    <div className="text-[9px] font-bold text-blue-600 uppercase mb-0.5">
+                      {person.name || person.id}
+                    </div>
                     <div className="grid grid-cols-2 gap-2">
                       <div>
                         {/* DOB Logic: If birthDate exists, use it. Else fallback to age */}
-                        <label className="text-[9px] text-gray-400 block uppercase">Date of Birth</label>
+                        <label className="text-[9px] text-gray-400 block uppercase">
+                          Date of Birth
+                        </label>
                         <input
                           type="date"
                           value={person.birthDate || ''}
@@ -1067,12 +1198,12 @@ function AppContent() {
                           }}
                           className="w-full px-2 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                         />
-                        <div className="text-[9px] text-gray-500 mt-0.5">
-                          Age: {person.age}
-                        </div>
+                        <div className="text-[9px] text-gray-500 mt-0.5">Age: {person.age}</div>
                       </div>
                       <div>
-                        <label className="text-[9px] text-gray-400 block uppercase">Retires at</label>
+                        <label className="text-[9px] text-gray-400 block uppercase">
+                          Retires at
+                        </label>
                         <input
                           type="number"
                           value={person.retirementAge}
@@ -1089,7 +1220,9 @@ function AppContent() {
                     {/* Compact Row: Life Exp & Salary */}
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <label className="text-[9px] text-gray-400 block uppercase">Life Expectancy</label>
+                        <label className="text-[9px] text-gray-400 block uppercase">
+                          Life Expectancy
+                        </label>
                         <input
                           type="number"
                           value={person.lifeExpectancy}
@@ -1103,7 +1236,9 @@ function AppContent() {
                       </div>
                       {idx === 0 && (
                         <div>
-                          <label className="text-[9px] text-gray-400 block uppercase">Annual Salary</label>
+                          <label className="text-[9px] text-gray-400 block uppercase">
+                            Annual Salary
+                          </label>
                           <SmartInput
                             value={planData.salary || 0}
                             onChange={(val) => updatePlan({ salary: val })}
@@ -1119,29 +1254,45 @@ function AppContent() {
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-              <h2 className="text-[10px] font-bold mb-1 uppercase text-gray-400">2. Financial Accounts</h2>
-              <p className="text-[8px] text-gray-400 mb-1 italic">Real Estate has moved to Section 8</p>
+              <h2 className="text-[10px] font-bold mb-1 uppercase text-gray-400">
+                2. Financial Accounts
+              </h2>
+              <p className="text-[8px] text-gray-400 mb-1 italic">
+                Real Estate has moved to Section 8
+              </p>
               <AssetInputForm />
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-teal-500 dark:border-teal-600 shadow-sm">
-              <h2 className="text-[10px] font-bold mb-1 text-teal-600 dark:text-teal-400 uppercase">3. Contributions (Working Years)</h2>
+              <h2 className="text-[10px] font-bold mb-1 text-teal-600 dark:text-teal-400 uppercase">
+                3. Contributions (Working Years)
+              </h2>
               <div className="space-y-1">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Trad 401k (% of Salary)</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">
+                      Trad 401k (% of Salary)
+                    </label>
                     <SmartInput
                       value={planData.contributions?.traditional || 0}
-                      onChange={(val) => updatePlan({ contributions: { ...planData.contributions, traditional: val } })}
+                      onChange={(val) =>
+                        updatePlan({
+                          contributions: { ...planData.contributions, traditional: val },
+                        })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="1"
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Employer Match %</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">
+                      Employer Match %
+                    </label>
                     <SmartInput
                       value={planData.contributions?.match || 0}
-                      onChange={(val) => updatePlan({ contributions: { ...planData.contributions, match: val } })}
+                      onChange={(val) =>
+                        updatePlan({ contributions: { ...planData.contributions, match: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="0.5"
                     />
@@ -1149,10 +1300,14 @@ function AppContent() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">Roth IRA/Yr</label>
+                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">
+                      Roth IRA/Yr
+                    </label>
                     <SmartInput
                       value={planData.contributions?.roth || 0}
-                      onChange={(val) => updatePlan({ contributions: { ...planData.contributions, roth: val } })}
+                      onChange={(val) =>
+                        updatePlan({ contributions: { ...planData.contributions, roth: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="500"
                     />
@@ -1161,7 +1316,9 @@ function AppContent() {
                     <label className="block text-[10px] text-gray-500 mb-1 uppercase">HSA/Yr</label>
                     <SmartInput
                       value={planData.contributions?.hsa || 0}
-                      onChange={(val) => updatePlan({ contributions: { ...planData.contributions, hsa: val } })}
+                      onChange={(val) =>
+                        updatePlan({ contributions: { ...planData.contributions, hsa: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="100"
                     />
@@ -1169,9 +1326,6 @@ function AppContent() {
                 </div>
               </div>
             </div>
-
-
-
 
             <div className="bg-white dark:bg-gray-800 p-1.5 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
               <h2 className="text-[10px] font-bold mb-1 uppercase text-gray-500">5. Assumptions</h2>
@@ -1206,10 +1360,14 @@ function AppContent() {
                   </div>
 
                   <div>
-                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Inflation %</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">
+                      Inflation %
+                    </label>
                     <SmartInput
                       value={planData.assumptions?.inflation || 3}
-                      onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, inflation: val } })}
+                      onChange={(val) =>
+                        updatePlan({ assumptions: { ...planData.assumptions, inflation: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="0.1"
                     />
@@ -1218,19 +1376,27 @@ function AppContent() {
 
                 <div className="grid grid-cols-2 gap-2 pt-1 border-t border-gray-100 dark:border-gray-700">
                   <div>
-                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Stocks Ret %</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">
+                      Stocks Ret %
+                    </label>
                     <SmartInput
                       value={planData.assumptions.equityReturn}
-                      onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, equityReturn: val } })}
+                      onChange={(val) =>
+                        updatePlan({ assumptions: { ...planData.assumptions, equityReturn: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="0.1"
                     />
                   </div>
                   <div>
-                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Crypto Ret %</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">
+                      Crypto Ret %
+                    </label>
                     <SmartInput
                       value={planData.assumptions?.cryptoReturn || 10}
-                      onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, cryptoReturn: val } })}
+                      onChange={(val) =>
+                        updatePlan({ assumptions: { ...planData.assumptions, cryptoReturn: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="0.1"
                     />
@@ -1239,10 +1405,14 @@ function AppContent() {
 
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">Div Yield %</label>
+                    <label className="block text-[10px] text-gray-500 mb-1 uppercase">
+                      Div Yield %
+                    </label>
                     <SmartInput
                       value={planData.assumptions?.dividendYield || 2.0}
-                      onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, dividendYield: val } })}
+                      onChange={(val) =>
+                        updatePlan({ assumptions: { ...planData.assumptions, dividendYield: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="0.1"
                     />
@@ -1251,12 +1421,17 @@ function AppContent() {
                     <label className="block text-[10px] text-gray-500 mb-1 uppercase group relative cursor-help">
                       Qual Ratio %
                       <span className="hidden group-hover:block absolute z-20 w-40 p-1.5 text-[10px] bg-gray-900/95 text-white rounded shadow-lg -left-10 -top-12 normal-case font-normal leading-tight backdrop-blur-sm border border-gray-700">
-                        % of dividends qualifies for lower tax rates (0/15/20%). Default 85% for common index funds.
+                        % of dividends qualifies for lower tax rates (0/15/20%). Default 85% for
+                        common index funds.
                       </span>
                     </label>
                     <SmartInput
                       value={planData.assumptions?.qualifiedRatio || 85.0}
-                      onChange={(val) => updatePlan({ assumptions: { ...planData.assumptions, qualifiedRatio: val } })}
+                      onChange={(val) =>
+                        updatePlan({
+                          assumptions: { ...planData.assumptions, qualifiedRatio: val },
+                        })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="1"
                     />
@@ -1264,19 +1439,16 @@ function AppContent() {
                 </div>
               </div>
             </div>
-
-
-
-
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-8 space-y-4">
-
             {/* Net Worth Trajectory Chart - Moved up */}
             {ledger && ledger.length > 0 && (
               <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700">
-                <h2 className="text-sm font-semibold mb-1 text-gray-900 dark:text-gray-100">Net Worth Trajectory</h2>
+                <h2 className="text-sm font-semibold mb-1 text-gray-900 dark:text-gray-100">
+                  Net Worth Trajectory
+                </h2>
                 <NetWorthChart ledger={ledger} darkMode={darkMode} />
               </div>
             )}
@@ -1287,41 +1459,48 @@ function AppContent() {
             </div>
 
             {/* Advanced Features Tabs */}
-            <div ref={tabsRef} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <div
+              ref={tabsRef}
+              className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
+            >
               <div className="flex flex-wrap justify-center border-b border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => handleTabChange('cashflow')}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'cashflow'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === 'cashflow'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
                 >
                   Cash Flow
                 </button>
                 <button
                   onClick={() => handleTabChange('tax')}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'tax'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === 'tax'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
                 >
                   Tax Summary
                 </button>
                 <button
                   onClick={() => handleTabChange('tax_efficiency')}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'tax_efficiency'
-                    ? 'border-b-2 border-emerald-600 text-emerald-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === 'tax_efficiency'
+                      ? 'border-b-2 border-emerald-600 text-emerald-600'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
                 >
                   Efficiency Dashboard
                 </button>
                 <button
                   onClick={() => handleTabChange('networth')}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'networth'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === 'networth'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
                 >
                   Net Worth
                 </button>
@@ -1330,6 +1509,12 @@ function AppContent() {
                   className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'scenarios' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
                 >
                   Scenarios
+                </button>
+                <button
+                  onClick={() => handleTabChange('graphs')}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'graphs' ? 'border-b-2 border-indigo-600 text-indigo-600' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'}`}
+                >
+                  📊 Graphs
                 </button>
                 <button
                   onClick={() => setActiveTab('details')}
@@ -1345,28 +1530,31 @@ function AppContent() {
                 </button>
                 <button
                   onClick={() => handleTabChange('montecarlo')}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'montecarlo'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === 'montecarlo'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
                 >
                   Monte Carlo
                 </button>
                 <button
                   onClick={() => handleTabChange('optimization')}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'optimization'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === 'optimization'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
                 >
                   Optimizations
                 </button>
                 <button
                   onClick={() => handleTabChange('cfo')}
-                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${activeTab === 'cfo'
-                    ? 'border-b-2 border-blue-600 text-blue-600'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                    }`}
+                  className={`px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${
+                    activeTab === 'cfo'
+                      ? 'border-b-2 border-blue-600 text-blue-600'
+                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                  }`}
                 >
                   CFO Report
                 </button>
@@ -1381,7 +1569,9 @@ function AppContent() {
                     </div>
 
                     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Cash Flow Analysis</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                        Cash Flow Analysis
+                      </h3>
                       <CashFlowChart ledger={ledger} darkMode={darkMode} />
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm relative overflow-hidden">
@@ -1405,18 +1595,34 @@ function AppContent() {
                           {ledger.map((year, idx) => (
                             <tr key={idx} className="border-b border-gray-100 dark:border-gray-800">
                               <td className="py-1.5">{year.age}</td>
-                              <td className="text-right py-1.5">{year.age >= (planData.people?.[0]?.retirementAge || 65) ? 'Retired' : 'Working'}</td>
                               <td className="text-right py-1.5">
-                                ${(year.expenses?.total || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                {year.age >= (planData.people?.[0]?.retirementAge || 65)
+                                  ? 'Retired'
+                                  : 'Working'}
                               </td>
                               <td className="text-right py-1.5">
-                                ${(year.income?.total || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                $
+                                {(year.expenses?.total || 0).toLocaleString(undefined, {
+                                  maximumFractionDigits: 0,
+                                })}
                               </td>
                               <td className="text-right py-1.5">
-                                ${(year.withdrawals?.total || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                $
+                                {(year.income?.total || 0).toLocaleString(undefined, {
+                                  maximumFractionDigits: 0,
+                                })}
+                              </td>
+                              <td className="text-right py-1.5">
+                                $
+                                {(year.withdrawals?.total || 0).toLocaleString(undefined, {
+                                  maximumFractionDigits: 0,
+                                })}
                               </td>
                               <td className="text-right py-1.5 font-semibold">
-                                ${(year.totalBalance || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                                $
+                                {(year.totalBalance || 0).toLocaleString(undefined, {
+                                  maximumFractionDigits: 0,
+                                })}
                               </td>
                             </tr>
                           ))}
@@ -1453,22 +1659,40 @@ function AppContent() {
                           <tr key={idx} className="border-b border-gray-100 dark:border-gray-800">
                             <td className="py-1.5">{year.age}</td>
                             <td className="text-right py-1.5">
-                              ${(year.balances?.traditional || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                              $
+                              {(year.balances?.traditional || 0).toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              })}
                             </td>
                             <td className="text-right py-1.5">
-                              ${(year.balances?.roth || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                              $
+                              {(year.balances?.roth || 0).toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              })}
                             </td>
                             <td className="text-right py-1.5">
-                              ${(year.balances?.hsa || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                              $
+                              {(year.balances?.hsa || 0).toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              })}
                             </td>
                             <td className="text-right py-1.5">
-                              ${(year.balances?.brokerage || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                              $
+                              {(year.balances?.brokerage || 0).toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              })}
                             </td>
                             <td className="text-right py-1.5">
-                              ${(year.balances?.crypto || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                              $
+                              {(year.balances?.crypto || 0).toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              })}
                             </td>
                             <td className="text-right py-1.5 font-semibold">
-                              ${(year.netWorth || 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                              $
+                              {(year.netWorth || 0).toLocaleString(undefined, {
+                                maximumFractionDigits: 0,
+                              })}
                             </td>
                           </tr>
                         ))}
@@ -1478,6 +1702,15 @@ function AppContent() {
                 )}
 
                 {activeTab === 'scenarios' && <ScenarioManager />}
+                {activeTab === 'graphs' && (
+                  <React.Suspense
+                    fallback={
+                      <div className="p-8 text-center text-gray-500">Loading Graphs...</div>
+                    }
+                  >
+                    <AllGraphsView darkMode={darkMode} />
+                  </React.Suspense>
+                )}
                 {activeTab === 'details' && <PlanDetailsTable />}
                 {activeTab === 'strategy' && (
                   <div className="space-y-2">
@@ -1487,14 +1720,24 @@ function AppContent() {
 
                     {/* Strategy Sub-Tabs */}
                     <div className="flex gap-2 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
-                      {['tax-free', 'tax', 'spending', 'expenses', 'cashflow-detail', 'comparison', 'stress', 'estate'].map(subTab => (
+                      {[
+                        'tax-free',
+                        'tax',
+                        'spending',
+                        'expenses',
+                        'cashflow-detail',
+                        'comparison',
+                        'stress',
+                        'estate',
+                      ].map((subTab) => (
                         <button
                           key={subTab}
                           onClick={() => setStrategySubTab(subTab)}
-                          className={`px-4 py-2 text-xs font-medium whitespace-nowrap transition-colors ${strategySubTab === subTab
-                            ? 'border-b-2 border-purple-600 text-purple-600 dark:text-purple-400'
-                            : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
-                            }`}
+                          className={`px-4 py-2 text-xs font-medium whitespace-nowrap transition-colors ${
+                            strategySubTab === subTab
+                              ? 'border-b-2 border-purple-600 text-purple-600 dark:text-purple-400'
+                              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                          }`}
                         >
                           {subTab === 'tax-free' && '🏆 Tax-Free Engine'}
                           {subTab === 'tax' && '🏛️ Optimization Settings'}
@@ -1510,14 +1753,18 @@ function AppContent() {
 
                     {/* Strategy Content */}
                     <div className="p-2">
-                      <React.Suspense fallback={
-                        <div className="flex items-center justify-center p-8 space-x-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-700">
-                          <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-75"></div>
-                          <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-150"></div>
-                          <span className="text-gray-500 text-xs font-mono ml-2">Loading Strategy Module...</span>
-                        </div>
-                      }>
+                      <React.Suspense
+                        fallback={
+                          <div className="flex items-center justify-center p-8 space-x-2 bg-gray-50 dark:bg-gray-800 rounded-lg border border-dashed border-gray-300 dark:border-gray-700">
+                            <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
+                            <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-75"></div>
+                            <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce delay-150"></div>
+                            <span className="text-gray-500 text-xs font-mono ml-2">
+                              Loading Strategy Module...
+                            </span>
+                          </div>
+                        }
+                      >
                         {strategySubTab === 'tax-free' && <TaxFreeDashboard />}
 
                         {strategySubTab === 'tax' && <TaxStrategyPanel />}
@@ -1537,17 +1784,11 @@ function AppContent() {
                         )}
 
                         {strategySubTab === 'cashflow-detail' && (
-                          <CashFlowWaterfall
-                            ledger={ledger}
-                            selectedYear={0}
-                            darkMode={darkMode}
-                          />
+                          <CashFlowWaterfall ledger={ledger} selectedYear={0} darkMode={darkMode} />
                         )}
 
                         {strategySubTab === 'comparison' && (
-                          <ScenarioComparisonChart
-                            darkMode={darkMode}
-                          />
+                          <ScenarioComparisonChart darkMode={darkMode} />
                         )}
 
                         {strategySubTab === 'stress' && (
@@ -1558,13 +1799,9 @@ function AppContent() {
                           />
                         )}
 
-                        {strategySubTab === 'estate' && (
-                          <EstateSettings />
-                        )}
+                        {strategySubTab === 'estate' && <EstateSettings />}
 
-                        {strategySubTab === 'expenses' && (
-                          <ExpenseManagement />
-                        )}
+                        {strategySubTab === 'expenses' && <ExpenseManagement />}
                       </React.Suspense>
                     </div>
                   </div>
@@ -1573,17 +1810,37 @@ function AppContent() {
                 {activeTab === 'montecarlo' && (
                   <div className="space-y-4 min-h-[600px]">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Monte Carlo Simulation</h3>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        Monte Carlo Simulation
+                      </h3>
                       <button
                         onClick={runMonteCarloSim}
-                        disabled={isCalculating || isCalculatingMC || !ledger || ledger.length === 0}
+                        disabled={
+                          isCalculating || isCalculatingMC || !ledger || ledger.length === 0
+                        }
                         className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs flex items-center gap-2"
                       >
                         {isCalculatingMC ? (
                           <>
-                            <svg className="animate-spin h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <svg
+                              className="animate-spin h-3 w-3 text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
                             </svg>
                             Calculating...
                           </>
@@ -1598,7 +1855,6 @@ function AppContent() {
                       >
                         {isOptimizing ? '✨ Optimizing...' : '✨ Auto-Optimize'}
                       </button>
-
                     </div>
 
                     {optimizationResult && (
@@ -1608,22 +1864,35 @@ function AppContent() {
                             <span className="text-2xl">⚡</span>
                           </div>
                           <div className="flex-grow">
-                            <h4 className="text-sm font-bold text-purple-900 dark:text-purple-100">Solvency Solution Found!</h4>
+                            <h4 className="text-sm font-bold text-purple-900 dark:text-purple-100">
+                              Solvency Solution Found!
+                            </h4>
                             <p className="text-xs text-purple-800 dark:text-purple-200 mt-1 mb-3">
-                              To achieve a <strong className="text-green-600 dark:text-green-400">Safe Success Probability (&gt;95%)</strong>,
-                              the model recommends:
+                              To achieve a{' '}
+                              <strong className="text-green-600 dark:text-green-400">
+                                Safe Success Probability (&gt;95%)
+                              </strong>
+                              , the model recommends:
                             </p>
 
                             <div className="space-y-2 bg-white dark:bg-gray-800 p-3 rounded-md border border-purple-100 dark:border-purple-800/50">
                               {/* Discretionary Step */}
                               {optimizationResult.cuts.disc > 0 && (
                                 <div className="flex justify-between items-center text-xs">
-                                  <span className="text-gray-600 dark:text-gray-400">1. Discretionary Spending</span>
+                                  <span className="text-gray-600 dark:text-gray-400">
+                                    1. Discretionary Spending
+                                  </span>
                                   <div className="flex items-center gap-2">
-                                    <span className="line-through text-gray-400 decoration-red-400">${optimizationResult.original.disc.toLocaleString()}</span>
+                                    <span className="line-through text-gray-400 decoration-red-400">
+                                      ${optimizationResult.original.disc.toLocaleString()}
+                                    </span>
                                     <span>→</span>
-                                    <span className="font-bold text-red-500">${optimizationResult.safe.disc.toLocaleString()}</span>
-                                    <span className="text-[10px] text-red-500 bg-red-50 dark:bg-red-900/20 px-1 rounded">(Cut 100%)</span>
+                                    <span className="font-bold text-red-500">
+                                      ${optimizationResult.safe.disc.toLocaleString()}
+                                    </span>
+                                    <span className="text-[10px] text-red-500 bg-red-50 dark:bg-red-900/20 px-1 rounded">
+                                      (Cut 100%)
+                                    </span>
                                   </div>
                                 </div>
                               )}
@@ -1631,19 +1900,25 @@ function AppContent() {
                               {/* Recurring Step */}
                               {optimizationResult.cuts.recPercentage > 0 && (
                                 <div className="flex justify-between items-center text-xs pt-2 border-t border-dashed border-gray-200 dark:border-gray-700">
-                                  <span className="text-gray-600 dark:text-gray-400">2. Recurring Expenses</span>
+                                  <span className="text-gray-600 dark:text-gray-400">
+                                    2. Recurring Expenses
+                                  </span>
                                   <div className="flex items-center gap-2">
-                                    <span className="font-bold text-orange-500">Reduce All by {optimizationResult.cuts.recPercentage.toFixed(0)}%</span>
+                                    <span className="font-bold text-orange-500">
+                                      Reduce All by{' '}
+                                      {optimizationResult.cuts.recPercentage.toFixed(0)}%
+                                    </span>
                                   </div>
                                 </div>
                               )}
 
-
-                              {optimizationResult.cuts.disc === 0 && optimizationResult.cuts.recPercentage === 0 && optimizationResult.cuts.ess === 0 && (
-                                <div className="text-green-600 font-bold text-xs">
-                                  No changes needed! You are already 100% safe.
-                                </div>
-                              )}
+                              {optimizationResult.cuts.disc === 0 &&
+                                optimizationResult.cuts.recPercentage === 0 &&
+                                optimizationResult.cuts.ess === 0 && (
+                                  <div className="text-green-600 font-bold text-xs">
+                                    No changes needed! You are already 100% safe.
+                                  </div>
+                                )}
                             </div>
 
                             <div className="mt-4 flex gap-3">
@@ -1712,30 +1987,44 @@ function AppContent() {
 
                 {activeTab === 'optimization' && (
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Tax Optimization Strategies</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      Tax Optimization Strategies
+                    </h3>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <h4 className="text-xs font-semibold text-blue-900 dark:text-blue-100 mb-2">Roth Conversion Ladder</h4>
+                        <h4 className="text-xs font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                          Roth Conversion Ladder
+                        </h4>
                         <p className="text-xs text-gray-700 dark:text-gray-300">
-                          Consider converting $50k-$100k annually from Traditional to Roth between ages 53-72 to fill lower tax brackets.
+                          Consider converting $50k-$100k annually from Traditional to Roth between
+                          ages 53-72 to fill lower tax brackets.
                         </p>
                       </div>
                       <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">
-                        <h4 className="text-xs font-semibold text-green-900 dark:text-green-100 mb-2">Tax-Loss Harvesting</h4>
+                        <h4 className="text-xs font-semibold text-green-900 dark:text-green-100 mb-2">
+                          Tax-Loss Harvesting
+                        </h4>
                         <p className="text-xs text-gray-700 dark:text-gray-300">
-                          Currently harvesting $55k annually. This reduces taxable income and can offset capital gains.
+                          Currently harvesting $55k annually. This reduces taxable income and can
+                          offset capital gains.
                         </p>
                       </div>
                       <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
-                        <h4 className="text-xs font-semibold text-purple-900 dark:text-purple-100 mb-2">Withdrawal Order</h4>
+                        <h4 className="text-xs font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                          Withdrawal Order
+                        </h4>
                         <p className="text-xs text-gray-700 dark:text-gray-300">
-                          Optimal: Brokerage → Traditional (fill brackets) → Roth → Crypto. This minimizes lifetime taxes.
+                          Optimal: Brokerage → Traditional (fill brackets) → Roth → Crypto. This
+                          minimizes lifetime taxes.
                         </p>
                       </div>
                       <div className="bg-amber-50 dark:bg-amber-900/20 p-3 rounded-lg border border-amber-200 dark:border-amber-800">
-                        <h4 className="text-xs font-semibold text-amber-900 dark:text-amber-100 mb-2">QCD Strategy</h4>
+                        <h4 className="text-xs font-semibold text-amber-900 dark:text-amber-100 mb-2">
+                          QCD Strategy
+                        </h4>
                         <p className="text-xs text-gray-700 dark:text-gray-300">
-                          At age 70.5+, consider Qualified Charitable Distributions to reduce RMD tax impact.
+                          At age 70.5+, consider Qualified Charitable Distributions to reduce RMD
+                          tax impact.
                         </p>
                       </div>
                     </div>
@@ -1744,7 +2033,9 @@ function AppContent() {
 
                 {activeTab === 'cfo' && (
                   <div className="space-y-4">
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">🤖 CFO Automated Recommendations</h3>
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      🤖 CFO Automated Recommendations
+                    </h3>
                     <CFORecommendations
                       ledger={ledger}
                       planData={planData}
@@ -1775,7 +2066,10 @@ function AppContent() {
 
               <div className="space-y-3">
                 {(planData.realEstate || []).map((re, idx) => (
-                  <div key={re.id || idx} className="p-2 border border-emerald-100 dark:border-emerald-800/50 rounded-lg space-y-2 bg-emerald-50/10 dark:bg-emerald-900/5 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors">
+                  <div
+                    key={re.id || idx}
+                    className="p-2 border border-emerald-100 dark:border-emerald-800/50 rounded-lg space-y-2 bg-emerald-50/10 dark:bg-emerald-900/5 hover:border-emerald-300 dark:hover:border-emerald-700 transition-colors"
+                  >
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
                         <input
@@ -1799,7 +2093,11 @@ function AppContent() {
                           </button>
                           {re.lastUpdated && (
                             <span className="text-[7px] text-gray-400 italic">
-                              Updated {new Date(re.lastUpdated).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                              Updated{' '}
+                              {new Date(re.lastUpdated).toLocaleDateString([], {
+                                month: 'short',
+                                day: 'numeric',
+                              })}
                             </span>
                           )}
                         </div>
@@ -1817,7 +2115,9 @@ function AppContent() {
 
                     <div className="grid grid-cols-1 gap-1.5 p-1.5 bg-white/50 dark:bg-gray-800/50 rounded border border-emerald-100/50 dark:border-emerald-800/30">
                       <div>
-                        <label className="text-[8px] text-gray-400 block uppercase font-bold">Current Mkt Value (or Zestimate)</label>
+                        <label className="text-[8px] text-gray-400 block uppercase font-bold">
+                          Current Mkt Value (or Zestimate)
+                        </label>
                         <SmartInput
                           value={re.currentValue || 0}
                           onChange={(val) => {
@@ -1830,7 +2130,9 @@ function AppContent() {
                       </div>
                       <div className="grid grid-cols-2 gap-1.5">
                         <div>
-                          <label className="text-[8px] text-gray-400 block uppercase">Apprec %</label>
+                          <label className="text-[8px] text-gray-400 block uppercase">
+                            Apprec %
+                          </label>
                           <SmartInput
                             value={re.appreciationRate || 0}
                             onChange={(val) => {
@@ -1842,7 +2144,9 @@ function AppContent() {
                           />
                         </div>
                         <div>
-                          <label className="text-[8px] text-gray-400 block uppercase">Tax/Ins/Yr</label>
+                          <label className="text-[8px] text-gray-400 block uppercase">
+                            Tax/Ins/Yr
+                          </label>
                           <SmartInput
                             value={re.propertyTax || 0}
                             onChange={(val) => {
@@ -1858,18 +2162,23 @@ function AppContent() {
 
                     <div className="pt-1 border-t border-emerald-100 dark:border-emerald-800/30">
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-[8px] text-emerald-600 dark:text-emerald-500 font-bold uppercase">Debt Detail</span>
+                        <span className="text-[8px] text-emerald-600 dark:text-emerald-500 font-bold uppercase">
+                          Debt Detail
+                        </span>
                       </div>
                       <div className="grid grid-cols-4 gap-1">
                         <div>
-                          <label className="text-[7px] text-gray-400 block uppercase">Balance</label>
+                          <label className="text-[7px] text-gray-400 block uppercase">
+                            Balance
+                          </label>
                           <SmartInput
                             value={re.mortgage?.balance || 0}
                             onChange={(val) => {
                               const newRE = [...planData.realEstate];
                               newRE[idx].mortgage = { ...newRE[idx].mortgage, balance: val };
                               const updates = { realEstate: newRE };
-                              if (idx === 0) updates.mortgage = { ...(planData.mortgage || {}), balance: val };
+                              if (idx === 0)
+                                updates.mortgage = { ...(planData.mortgage || {}), balance: val };
                               updatePlan(updates);
                             }}
                             className="w-full px-1 py-0.5 text-[10px] border border-gray-200 dark:border-gray-700 rounded font-bold"
@@ -1883,28 +2192,34 @@ function AppContent() {
                               const newRE = [...planData.realEstate];
                               newRE[idx].mortgage = { ...newRE[idx].mortgage, rate: val };
                               const updates = { realEstate: newRE };
-                              if (idx === 0) updates.mortgage = { ...(planData.mortgage || {}), rate: val };
+                              if (idx === 0)
+                                updates.mortgage = { ...(planData.mortgage || {}), rate: val };
                               updatePlan(updates);
                             }}
                             className="w-full px-1 py-0.5 text-[10px] border border-gray-200 dark:border-gray-700 rounded"
                           />
                         </div>
                         <div>
-                          <label className="text-[7px] text-gray-400 block uppercase">P&I /Mo</label>
+                          <label className="text-[7px] text-gray-400 block uppercase">
+                            P&I /Mo
+                          </label>
                           <SmartInput
                             value={re.mortgage?.paymentPI || 0}
                             onChange={(val) => {
                               const newRE = [...planData.realEstate];
                               newRE[idx].mortgage = { ...newRE[idx].mortgage, paymentPI: val };
                               const updates = { realEstate: newRE };
-                              if (idx === 0) updates.mortgage = { ...(planData.mortgage || {}), paymentPI: val };
+                              if (idx === 0)
+                                updates.mortgage = { ...(planData.mortgage || {}), paymentPI: val };
                               updatePlan(updates);
                             }}
                             className="w-full px-1 py-0.5 text-[10px] border border-gray-200 dark:border-gray-700 rounded"
                           />
                         </div>
                         <div>
-                          <label className="text-[7px] text-gray-400 block uppercase">Payoff Age</label>
+                          <label className="text-[7px] text-gray-400 block uppercase">
+                            Payoff Age
+                          </label>
                           <SmartInput
                             value={re.mortgage?.targetAge || 0}
                             onChange={(val) => {
@@ -1923,17 +2238,20 @@ function AppContent() {
 
                 <button
                   onClick={() => {
-                    const newRE = [...(planData.realEstate || []), {
-                      id: Date.now().toString(),
-                      name: 'New Property',
-                      address: '',
-                      currentValue: 0,
-                      appreciationRate: 2.5,
-                      mortgage: { balance: 0, rate: 4.5, paymentPI: 0 },
-                      propertyTax: 0,
-                      insurance: 0,
-                      maintenance: 0
-                    }];
+                    const newRE = [
+                      ...(planData.realEstate || []),
+                      {
+                        id: Date.now().toString(),
+                        name: 'New Property',
+                        address: '',
+                        currentValue: 0,
+                        appreciationRate: 2.5,
+                        mortgage: { balance: 0, rate: 4.5, paymentPI: 0 },
+                        propertyTax: 0,
+                        insurance: 0,
+                        maintenance: 0,
+                      },
+                    ];
                     updatePlan({ realEstate: newRE });
                   }}
                   className="w-full py-2 text-[9px] font-bold uppercase text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg hover:bg-emerald-100 transition-colors"
@@ -1944,7 +2262,9 @@ function AppContent() {
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-yellow-500 dark:border-yellow-600 shadow-sm">
-              <h2 className="text-xs font-bold mb-2 text-yellow-600 dark:text-yellow-400 uppercase">9. Goals</h2>
+              <h2 className="text-xs font-bold mb-2 text-yellow-600 dark:text-yellow-400 uppercase">
+                9. Goals
+              </h2>
               <div className="space-y-2">
                 {planData.goals?.map((goal, idx) => (
                   <div key={idx} className="grid grid-cols-[40px_1fr_20px] gap-1 items-center">
@@ -1967,11 +2287,20 @@ function AppContent() {
                       className="w-full px-1 py-0.5 text-[11px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                       step="10000"
                     />
-                    <button onClick={() => updatePlan({ goals: planData.goals.filter((_, i) => i !== idx) })} className="text-red-500 text-xs">×</button>
+                    <button
+                      onClick={() =>
+                        updatePlan({ goals: planData.goals.filter((_, i) => i !== idx) })
+                      }
+                      className="text-red-500 text-xs"
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
                 <button
-                  onClick={() => updatePlan({ goals: [...(planData.goals || []), { age: 75, amount: 1000000 }] })}
+                  onClick={() =>
+                    updatePlan({ goals: [...(planData.goals || []), { age: 75, amount: 1000000 }] })
+                  }
                   className="w-full py-1 bg-yellow-600/10 text-yellow-700 dark:text-yellow-400 border border-yellow-600/20 rounded text-[10px] font-bold uppercase"
                 >
                   + Add Goal
@@ -1980,7 +2309,9 @@ function AppContent() {
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-indigo-500 dark:border-indigo-600 shadow-sm">
-              <h2 className="text-[10px] font-bold mb-1 text-indigo-600 dark:text-indigo-400 uppercase">4. Income & SS</h2>
+              <h2 className="text-[10px] font-bold mb-1 text-indigo-600 dark:text-indigo-400 uppercase">
+                4. Income & SS
+              </h2>
               <div className="space-y-1">
                 {/* Primary SS */}
                 <div>
@@ -1990,12 +2321,17 @@ function AppContent() {
                       <input
                         type="number"
                         value={planData.socialSecurity?.primary?.annualAmount || 0}
-                        onChange={(e) => updatePlan({
-                          socialSecurity: {
-                            ...planData.socialSecurity,
-                            primary: { ...planData.socialSecurity?.primary, annualAmount: parseFloat(e.target.value) }
-                          }
-                        })}
+                        onChange={(e) =>
+                          updatePlan({
+                            socialSecurity: {
+                              ...planData.socialSecurity,
+                              primary: {
+                                ...planData.socialSecurity?.primary,
+                                annualAmount: parseFloat(e.target.value),
+                              },
+                            },
+                          })
+                        }
                         className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                         step="1000"
                       />
@@ -2005,30 +2341,45 @@ function AppContent() {
                       <input
                         type="number"
                         value={planData.socialSecurity?.primary?.startAge || 62}
-                        onChange={(e) => updatePlan({
-                          socialSecurity: {
-                            ...planData.socialSecurity,
-                            primary: { ...planData.socialSecurity?.primary, startAge: parseInt(e.target.value) }
-                          }
-                        })}
+                        onChange={(e) =>
+                          updatePlan({
+                            socialSecurity: {
+                              ...planData.socialSecurity,
+                              primary: {
+                                ...planData.socialSecurity?.primary,
+                                startAge: parseInt(e.target.value),
+                              },
+                            },
+                          })
+                        }
                         className="w-full px-1.5 py-1 text-xs border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                       />
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-purple-500 dark:border-purple-600 shadow-sm">
-              <h2 className="text-[10px] font-bold mb-1 text-purple-600 dark:text-purple-400 uppercase">6. Optimization</h2>
+              <h2 className="text-[10px] font-bold mb-1 text-purple-600 dark:text-purple-400 uppercase">
+                6. Optimization
+              </h2>
               <div className="space-y-1">
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">Roth Strategy</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">
+                      Roth Strategy
+                    </label>
                     <select
                       value={planData.taxOptimization?.rothStrategy || 'manual'}
-                      onChange={(e) => updatePlan({ taxOptimization: { ...planData.taxOptimization, rothStrategy: e.target.value } })}
+                      onChange={(e) =>
+                        updatePlan({
+                          taxOptimization: {
+                            ...planData.taxOptimization,
+                            rothStrategy: e.target.value,
+                          },
+                        })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                     >
                       <option value="manual">Manual Only</option>
@@ -2038,15 +2389,22 @@ function AppContent() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">TLH (Brokerage/Yr)</label>
+                    <label className="block text-[9px] text-gray-500 mb-1 uppercase">
+                      TLH (Brokerage/Yr)
+                    </label>
                     <SmartInput
                       value={planData.taxOptimization?.taxLossHarvesting?.brokerage || 0}
-                      onChange={(val) => updatePlan({
-                        taxOptimization: {
-                          ...planData.taxOptimization,
-                          taxLossHarvesting: { ...planData.taxOptimization?.taxLossHarvesting, brokerage: val }
-                        }
-                      })}
+                      onChange={(val) =>
+                        updatePlan({
+                          taxOptimization: {
+                            ...planData.taxOptimization,
+                            taxLossHarvesting: {
+                              ...planData.taxOptimization?.taxLossHarvesting,
+                              brokerage: val,
+                            },
+                          },
+                        })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800"
                       step="1000"
                     />
@@ -2061,19 +2419,29 @@ function AppContent() {
                 {/* Monthly Spending */}
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="block text-[10px] text-blue-600 dark:text-blue-400 uppercase font-bold">Monthly Essential</label>
+                    <label className="block text-[10px] text-blue-600 dark:text-blue-400 uppercase font-bold">
+                      Monthly Essential
+                    </label>
                     <SmartInput
                       value={planData.expenses?.essentialMonthly || 4500}
-                      onChange={(val) => updatePlan({ expenses: { ...planData.expenses, essentialMonthly: val } })}
+                      onChange={(val) =>
+                        updatePlan({ expenses: { ...planData.expenses, essentialMonthly: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-blue-300 dark:border-blue-600 rounded bg-blue-50 dark:bg-gray-800"
                       step="100"
                     />
                   </div>
                   <div>
-                    <label className="block text-[10px] text-blue-600 dark:text-blue-400 uppercase font-bold">Monthly Fun/Misc</label>
+                    <label className="block text-[10px] text-blue-600 dark:text-blue-400 uppercase font-bold">
+                      Monthly Fun/Misc
+                    </label>
                     <SmartInput
                       value={planData.expenses?.discretionaryMonthly || 1500}
-                      onChange={(val) => updatePlan({ expenses: { ...planData.expenses, discretionaryMonthly: val } })}
+                      onChange={(val) =>
+                        updatePlan({
+                          expenses: { ...planData.expenses, discretionaryMonthly: val },
+                        })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-blue-300 dark:border-blue-600 rounded bg-blue-50 dark:bg-gray-800"
                       step="100"
                     />
@@ -2082,16 +2450,22 @@ function AppContent() {
 
                 {/* Health Costs */}
                 <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <h3 className="text-[10px] font-bold text-gray-400 uppercase mb-1">Health (Pre/Post 65)</h3>
+                  <h3 className="text-[10px] font-bold text-gray-400 uppercase mb-1">
+                    Health (Pre/Post 65)
+                  </h3>
                   <div className="grid grid-cols-2 gap-2">
                     <SmartInput
                       value={planData.expenses?.medicarePre65 || 200}
-                      onChange={(val) => updatePlan({ expenses: { ...planData.expenses, medicarePre65: val } })}
+                      onChange={(val) =>
+                        updatePlan({ expenses: { ...planData.expenses, medicarePre65: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                     />
                     <SmartInput
                       value={planData.expenses?.medicarePost65 || 200}
-                      onChange={(val) => updatePlan({ expenses: { ...planData.expenses, medicarePost65: val } })}
+                      onChange={(val) =>
+                        updatePlan({ expenses: { ...planData.expenses, medicarePost65: val } })
+                      }
                       className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                     />
                   </div>
@@ -2099,31 +2473,55 @@ function AppContent() {
 
                 {/* Guardrails */}
                 <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <h3 className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase mb-1">Guardrails</h3>
+                  <h3 className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase mb-1">
+                    Guardrails
+                  </h3>
                   <div className="flex items-center gap-1.5">
                     <input
                       type="checkbox"
                       id="flexEnabled"
                       checked={planData.expenses?.flexibility?.enabled || false}
-                      onChange={(e) => updatePlan({ expenses: { ...planData.expenses, flexibility: { ...planData.expenses.flexibility, enabled: e.target.checked } } })}
+                      onChange={(e) =>
+                        updatePlan({
+                          expenses: {
+                            ...planData.expenses,
+                            flexibility: {
+                              ...planData.expenses.flexibility,
+                              enabled: e.target.checked,
+                            },
+                          },
+                        })
+                      }
                       className="h-3 w-3 text-blue-600 rounded border-gray-300"
                     />
-                    <label htmlFor="flexEnabled" className="text-[10px] text-gray-600 dark:text-gray-400">Enable Spending Cuts</label>
+                    <label
+                      htmlFor="flexEnabled"
+                      className="text-[10px] text-gray-600 dark:text-gray-400"
+                    >
+                      Enable Spending Cuts
+                    </label>
                   </div>
                 </div>
 
                 {/* One-Time Expenses */}
                 <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <h3 className="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase mb-1">One-Time</h3>
+                  <h3 className="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase mb-1">
+                    One-Time
+                  </h3>
                   <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                     {planData.expenses?.oneTime?.map((exp, idx) => (
-                      <div key={idx} className="grid grid-cols-[35px_1fr_60px_15px] gap-1 items-center">
+                      <div
+                        key={idx}
+                        className="grid grid-cols-[35px_1fr_60px_15px] gap-1 items-center"
+                      >
                         <SmartInput
                           value={exp.age}
                           onChange={(val) => {
                             const newExpenses = [...(planData.expenses?.oneTime || [])];
                             newExpenses[idx].age = val;
-                            updatePlan({ expenses: { ...planData.expenses, oneTime: newExpenses } });
+                            updatePlan({
+                              expenses: { ...planData.expenses, oneTime: newExpenses },
+                            });
                           }}
                           className="w-full px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                         />
@@ -2133,17 +2531,41 @@ function AppContent() {
                           onChange={(val) => {
                             const newExpenses = [...(planData.expenses?.oneTime || [])];
                             newExpenses[idx].amount = val;
-                            updatePlan({ expenses: { ...planData.expenses, oneTime: newExpenses } });
+                            updatePlan({
+                              expenses: { ...planData.expenses, oneTime: newExpenses },
+                            });
                           }}
                           className="w-full px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-right"
                           step="1000"
                         />
-                        <button onClick={() => updatePlan({ expenses: { ...planData.expenses, oneTime: planData.expenses.oneTime.filter((_, i) => i !== idx) } })} className="text-red-500 text-[10px]">×</button>
+                        <button
+                          onClick={() =>
+                            updatePlan({
+                              expenses: {
+                                ...planData.expenses,
+                                oneTime: planData.expenses.oneTime.filter((_, i) => i !== idx),
+                              },
+                            })
+                          }
+                          className="text-red-500 text-[10px]"
+                        >
+                          ×
+                        </button>
                       </div>
                     ))}
                   </div>
                   <button
-                    onClick={() => updatePlan({ expenses: { ...planData.expenses, oneTime: [...(planData.expenses?.oneTime || []), { age: 60, name: 'Expense', amount: 50000 }] } })}
+                    onClick={() =>
+                      updatePlan({
+                        expenses: {
+                          ...planData.expenses,
+                          oneTime: [
+                            ...(planData.expenses?.oneTime || []),
+                            { age: 60, name: 'Expense', amount: 50000 },
+                          ],
+                        },
+                      })
+                    }
                     className="w-full mt-1 py-1 bg-green-600/10 text-green-700 dark:text-green-400 border border-green-600/20 rounded text-[10px] font-bold uppercase"
                   >
                     + Add One-Time
@@ -2152,16 +2574,23 @@ function AppContent() {
 
                 {/* Recurring Expenses */}
                 <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <h3 className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Recurring</h3>
+                  <h3 className="text-[10px] font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">
+                    Recurring
+                  </h3>
                   <div className="space-y-1.5 max-h-32 overflow-y-auto pr-1">
                     {planData.expenses?.recurring?.map((exp, idx) => (
-                      <div key={idx} className="grid grid-cols-[38px_38px_1fr_55px_15px] gap-1 items-center">
+                      <div
+                        key={idx}
+                        className="grid grid-cols-[38px_38px_1fr_55px_15px] gap-1 items-center"
+                      >
                         <SmartInput
                           value={exp.startAge}
                           onChange={(val) => {
                             const newExpenses = [...(planData.expenses?.recurring || [])];
                             newExpenses[idx].startAge = val;
-                            updatePlan({ expenses: { ...planData.expenses, recurring: newExpenses } });
+                            updatePlan({
+                              expenses: { ...planData.expenses, recurring: newExpenses },
+                            });
                           }}
                           className="w-full px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                         />
@@ -2170,7 +2599,9 @@ function AppContent() {
                           onChange={(val) => {
                             const newExpenses = [...(planData.expenses?.recurring || [])];
                             newExpenses[idx].endAge = val;
-                            updatePlan({ expenses: { ...planData.expenses, recurring: newExpenses } });
+                            updatePlan({
+                              expenses: { ...planData.expenses, recurring: newExpenses },
+                            });
                           }}
                           className="w-full px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                         />
@@ -2180,17 +2611,41 @@ function AppContent() {
                           onChange={(val) => {
                             const newExpenses = [...(planData.expenses?.recurring || [])];
                             newExpenses[idx].amount = val;
-                            updatePlan({ expenses: { ...planData.expenses, recurring: newExpenses } });
+                            updatePlan({
+                              expenses: { ...planData.expenses, recurring: newExpenses },
+                            });
                           }}
                           className="w-full px-1 py-0.5 text-[10px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-right"
                           step="1000"
                         />
-                        <button onClick={() => updatePlan({ expenses: { ...planData.expenses, recurring: planData.expenses.recurring.filter((_, i) => i !== idx) } })} className="text-red-500 text-[10px]">×</button>
+                        <button
+                          onClick={() =>
+                            updatePlan({
+                              expenses: {
+                                ...planData.expenses,
+                                recurring: planData.expenses.recurring.filter((_, i) => i !== idx),
+                              },
+                            })
+                          }
+                          className="text-red-500 text-[10px]"
+                        >
+                          ×
+                        </button>
                       </div>
                     ))}
                   </div>
                   <button
-                    onClick={() => updatePlan({ expenses: { ...planData.expenses, recurring: [...(planData.expenses?.recurring || []), { startAge: 55, endAge: 65, name: 'Travel', amount: 20000 }] } })}
+                    onClick={() =>
+                      updatePlan({
+                        expenses: {
+                          ...planData.expenses,
+                          recurring: [
+                            ...(planData.expenses?.recurring || []),
+                            { startAge: 55, endAge: 65, name: 'Travel', amount: 20000 },
+                          ],
+                        },
+                      })
+                    }
                     className="w-full mt-1 py-1 bg-amber-600/10 text-amber-700 dark:text-amber-400 border border-amber-600/20 rounded text-[10px] font-bold uppercase"
                   >
                     + Add Booster
@@ -2199,7 +2654,6 @@ function AppContent() {
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>

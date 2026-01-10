@@ -93,3 +93,26 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 - **CI/CD**: All tests, financial invariants, linting
 - **Invariant Tests**: Balance equality, tax totals, no NaN, RMDs, SS bounds
 - **Tolerance Management**: Prevents test weakening via `validateToleranceNotWeakened()`
+
+## 8. Standalone Deployment (Phase 11 - New!)
+
+The app can be deployed to a static web host (no Node.js required):
+
+### Deployment Command
+
+```bash
+node scripts/deploy.js           # Full deploy to bmwseals.com/retirecalc
+node scripts/deploy.js --dry-run # Test connection only
+```
+
+### Credentials
+
+Populate `src/.credentials` with either:
+
+- **Plain text**: Line 1 = username, Line 2 = password
+- **JSON**: `{ "ftp": { "host": "...", "user": "...", "password": "..." }, "remotePath": "/..." }`
+
+### Limitations
+
+> [!IMPORTANT]
+> The **Zillow Zestimate** feature requires the local Node.js scraper (`server.js`). On the remote static host, users will be redirected to manual entry on Zillow.com.
