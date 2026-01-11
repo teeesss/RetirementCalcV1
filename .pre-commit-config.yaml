@@ -42,10 +42,10 @@ repos:
     hooks:
       - id: eslint
         name: ESLint
-        entry: bash -c 'npm run lint -- --fix || exit 0'
+        entry: npx eslint --fix
         language: system
         files: \.(js|jsx)$
-        pass_filenames: false
+        pass_filenames: true
 
       # PRE-PUSH TESTS DISABLED: WSL uses Linux node_modules but we install for Windows
       # To run tests before push, run: npm test -- --run
