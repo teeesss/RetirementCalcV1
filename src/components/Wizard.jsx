@@ -828,7 +828,7 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                 )}
 
                 {/* VISUALIZATION */}
-                <div className="h-40 w-full mb-4 bg-white dark:bg-gray-800 rounded-xl p-2 border border-gray-100 dark:border-gray-700">
+                <div className="h-64 w-full mb-8 bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-100 dark:border-gray-700">
                   <NetWorthChart
                     ledger={simulationResult?.ledger}
                     darkMode={false}

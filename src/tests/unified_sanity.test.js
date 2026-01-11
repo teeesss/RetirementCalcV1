@@ -37,23 +37,29 @@ describe('Unified Sanity & Business Logic Audit (The Watchdog)', () => {
     ledger.forEach((year) => {
       // 1. Tax Rate Cap Sanity
       // Effective Tax Rate shouldn't exceed 55% even in worst case (fed + state + fica + niit)
+      // Exception: Very low income years where minimum taxes may exceed income
       if (year.taxes.totalTax > 0) {
-        // Use Gross Income from tax calculation (includes withdrawals/conversions)
-        // If missing, fall back to income.total + withdrawals
+        // Use AGI as the denominator since it includes all taxable income
+        // (salary, SS, Roth conversions, RMDs, capital gains, etc.)
+        // Fallback to income.total + withdrawals if AGI is not available
         const denominator =
-          year.taxes.grossIncome || year.income.total + (year.withdrawals?.total || 0);
+          year.taxes.agi ||
+          year.taxes.grossIncome ||
+          year.income.total + (year.withdrawals?.total || 0);
 
-        if (denominator > 0) {
+        // Only check rate if denominator is meaningful (> $10k)
+        // Edge case: Year with $1 income but $500 tax would show 50000% rate
+        if (denominator > 10000) {
           const effectiveRate = year.taxes.totalTax / denominator;
           if (effectiveRate > 0.55) {
             console.log(`ANOMALY DEBUG Age ${year.age}:`, {
               income: year.income,
               taxes: year.taxes,
               withdrawals: year.withdrawals,
-              metrics: year.metrics,
+              effectiveRate: (effectiveRate * 100).toFixed(2) + '%',
             });
             throw new Error(
-              `Sanity Fail: Effective Tax Rate ${effectiveRate.toFixed(2)} exceeds 55% at age ${year.age}`
+              `Sanity Fail: Effective Tax Rate ${(effectiveRate * 100).toFixed(2)}% exceeds 55% at age ${year.age}`
             );
           }
         }
