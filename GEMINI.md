@@ -33,35 +33,24 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 
 ## 2. Current State (Jan 2026)
 
-- **Status**: Maintenance Mode (v2.0.3) - CI/CD & Logic Hardening.
-- **Core Systems**: Fully functional with comprehensive quality gates.
-  - **Ledger**: Precise monthly calculations for SS and RMDs.
+- **Status**: Stable & Verified (v2.2) - Wizard Import & Reporting Enhancements.
+- **Core Systems**: Fully functional.
+  - **Ledger**: Precise monthly calculations.
   - **Tax Engine**: 2025 Standard deductions, brackets, NIIT, LTCG.
-  - **Simulation**: 10k-iteration Monte Carlo with Web Workers.
-  - **Test Infrastructure**: Financial invariants, CI/CD, automated quality checks.
+  - **Simulation**: 10k-iteration Monte Carlo.
+  - **Testing**: 100% Pass Rate (226 Tests).
 
-## 3. Recent Major Changes (v2.0.3)
+## 3. Recent Major Changes (v2.2)
 
-- **CI/CD Hardening**: Optimized workflows, fixed test data dependencies, ensuring reliable remote checks.
-- **Wizard UI Fix**: Resolved chart cut-off regression.
-- **Test Infrastructure**: Comprehensive financial invariant testing
-  - Created test helpers: `tolerance.js`, `anomalyReporter.js`, `financialAsserts.js`
-  - 11 core financial invariants (balance equality, tax totals, RMDs, etc.)
-  - **Found and fixed 2 bugs**: NaN from undefined inflationRate, withdrawal mismatch
-- **CI/CD Pipeline**: GitHub Actions automated testing
-  - Runs on push to RetirementCalcV1/main branches
-  - Matrix testing (Node 18 + 20)
-  - Explicit financial invariants + golden master validation
-- **Centralized Constants**: Single authoritative source
-  - `src/lib/constants/taxBrackets.js` - Tax brackets, LTCG, deductions
-  - `src/lib/constants/rmdTable.js` - RMD tables (age 73-120)
-  - `src/lib/constants/irmaaTiers.js` - IRMAA Medicare surcharges
-  - `src/lib/constants/fpl.js` - Federal Poverty Level for ACA
-- **Pre-Commit Hooks**: Automated code quality
-  - Prettier - Auto-formats code
-  - ESLint - Auto-fixes linting errors
-  - Security scanning (Checkov, Gitleaks)
-  - JSON/YAML validation, trailing whitespace removal
+- **Wizard Features**:
+  - **Import Profile**: Added JSON import capability to Step 1.
+  - **Enhanced Reporting**: "Financial Vital Signs" (Legacy, Budget, Withdrawal Rate) in Success visual.
+- **Visuals**:
+  - **Chart Clean-up**: Fixed outlier expense spikes (phantom data) and legend clutter.
+  - **Graph Scale**: Increased Wizard chart height (`h-96`) for readability.
+- **Quality Assurance**:
+  - **Pre-Commit Optimization**: ESLint now only checks changed files (fast commits).
+  - **Spike Detection**: Added `sanity_spikes.test.js` to prevent expense regression.
 
 ## 4. Active Context & Watchlist
 
