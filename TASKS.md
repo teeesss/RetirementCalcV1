@@ -153,3 +153,15 @@
   - [x] Corrected `unified_sanity.test.js` Effective Tax Rate calculation (using AGI denominator).
   - [x] Updated Golden Master snapshots for accurate regression testing.
 - [x] **Wizard Chart UI**: Fixed Net Worth chart cut-off issue in the Wizard.
+
+## ✨ v2.2 - Wizard & Reporting (Jan 10, 2026)
+
+- [x] **Wizard Profile Import**: Added JSON file import to Step 1.
+- [x] **Financial Vital Signs**:
+  - [x] Pass/Fail Heuristics.
+  - [x] Detailed Expense Breakdown (Age-labeled, Split Tax/Health).
+  - [x] Withdrawal Rate with Dollar Amount.
+- [x] **Graph Polish**:
+  - [x] NetWorthChart Legend compacted to single line.
+  - [x] Tooltips enhanced with expense breakdown sections.
+- [x] **Performance**: Optimized Pre-commit hooks for speed.
