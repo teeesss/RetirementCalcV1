@@ -187,16 +187,18 @@ export function calculateItemizedDeduction(
  * @param {number} magi - Modified Adjusted Gross Income
  * @param {number} householdSize - Number of people in household
  * @param {number} benchmarkPremium - Monthly benchmark premium
- * @param {number} povertyLine - Federal Poverty Level base (default 15060)
+ * @param {number} povertyLine - Optional override (defaults to TAX_DATA.fpl.base)
  * @returns {Object} { subsidy, maxPremium, fplPercent, benchmarkAnnual }
  */
-export function calculateACASubsidy(magi, householdSize, benchmarkPremium, povertyLine = 15060) {
+export function calculateACASubsidy(
+  magi,
+  householdSize,
+  benchmarkPremium,
+  povertyLine = TAX_DATA.fpl.base
+) {
   // 1. Determine FPL %
-  // 2024 Poverty Guidelines (approx)
-  // Household 1: $15,060
-  // Household 2: $20,440
-  // Each extra: $5,380
-  const fplBase = povertyLine + (householdSize - 1) * 5380;
+  // Uses 2025 Poverty Guidelines from TAX_DATA
+  const fplBase = povertyLine + (householdSize - 1) * TAX_DATA.fpl.per_person;
   const fplPercent = (magi / fplBase) * 100;
 
   // 2. Determine Expected Contribution % (Sliding Scale)

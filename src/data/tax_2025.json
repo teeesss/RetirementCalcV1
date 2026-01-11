@@ -420,5 +420,17 @@
         }
       ]
     }
+  },
+  "fpl": {
+    "base": 15060,
+    "per_person": 5380,
+    "alaska": {
+      "base": 18830,
+      "per_person": 6730
+    },
+    "hawaii": {
+      "base": 17310,
+      "per_person": 6190
+    }
   }
 }
