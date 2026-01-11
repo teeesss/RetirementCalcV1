@@ -33,15 +33,17 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 
 ## 2. Current State (Jan 2026)
 
-- **Status**: Phase 10 Complete - Production-Ready Test Infrastructure.
+- **Status**: Maintenance Mode (v2.0.3) - CI/CD & Logic Hardening.
 - **Core Systems**: Fully functional with comprehensive quality gates.
   - **Ledger**: Precise monthly calculations for SS and RMDs.
   - **Tax Engine**: 2025 Standard deductions, brackets, NIIT, LTCG.
   - **Simulation**: 10k-iteration Monte Carlo with Web Workers.
   - **Test Infrastructure**: Financial invariants, CI/CD, automated quality checks.
 
-## 3. Recent Major Changes (Phase 10)
+## 3. Recent Major Changes (v2.0.3)
 
+- **CI/CD Hardening**: Optimized workflows, fixed test data dependencies, ensuring reliable remote checks.
+- **Wizard UI Fix**: Resolved chart cut-off regression.
 - **Test Infrastructure**: Comprehensive financial invariant testing
   - Created test helpers: `tolerance.js`, `anomalyReporter.js`, `financialAsserts.js`
   - 11 core financial invariants (balance equality, tax totals, RMDs, etc.)
