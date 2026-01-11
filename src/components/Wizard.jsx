@@ -1,5 +1,4 @@
-// Wizard v3.2 - Married SS + SOL + Skip + Clean Auto-Calc
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { generateLedger } from '../lib/ledgerLogic';
 import NetWorthChart from './NetWorthChart';
 
@@ -7,6 +6,36 @@ export default function Wizard({ onComplete, onClose, initialData }) {
   const [step, setStep] = useState(1);
   const [data, setData] = useState(initialData);
   const [useAutoSS, setUseAutoSS] = useState(true);
+  const fileInputRef = useRef(null);
+
+  const handleImportProfile = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        // Basic Validation
+        if (!imported.people || !imported.assets || !imported.expenses) {
+          alert('Invalid profile format. JSON must contain people, assets, and expenses.');
+          return;
+        }
+
+        // Data Migration/Cleanup (Ensure compatibility)
+        // Similar to PlanContext migration but lightweight
+        if (!imported.liabilities) imported.liabilities = { mortgage: 0 };
+        if (!imported.assets.realEstate) imported.assets.realEstate = 0;
+
+        setData({ ...initialData, ...imported }); // Merge with clean slate to ensure missing fields exist
+        alert('Profile imported successfully!');
+      } catch (err) {
+        console.error('Import failed', err);
+        alert('Failed to parse JSON file.');
+      }
+    };
+    reader.readAsText(file);
+  };
 
   const nextStep = () => setStep((s) => s + 1);
   const prevStep = () => setStep((s) => s - 1);
@@ -258,9 +287,34 @@ export default function Wizard({ onComplete, onClose, initialData }) {
 
           {step === 1 && (
             <div className="space-y-6">
-              <p className="text-gray-600 dark:text-gray-400 -mt-4 mb-4">
-                Let&apos;s build your retirement master plan. Start with the basics.
-              </p>
+              <div className="flex justify-between items-start -mt-4 mb-4">
+                <p className="text-gray-600 dark:text-gray-400">
+                  Let&apos;s build your retirement master plan. Start with the basics.
+                </p>
+                <div>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:underline uppercase flex items-center gap-1"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                      />
+                    </svg>
+                    Import Profile
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImportProfile}
+                    className="hidden"
+                    accept=".json"
+                  />
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-[10px] uppercase font-black text-gray-400 mb-1">
