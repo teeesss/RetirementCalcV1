@@ -92,6 +92,8 @@
   "expenses": {
     "essentialMonthly": 0,
     "discretionaryMonthly": 0,
+    "medicarePre65": 0,
+    "medicarePost65": 0,
     "charity": 0,
     "growthRate": 3.0,
     "spendingPhases": {

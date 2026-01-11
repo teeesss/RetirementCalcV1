@@ -95,8 +95,10 @@ export function PlanProvider({ children }) {
               parsed.expenses.discretionaryMonthly = 0;
             }
 
-            if (medicarePre65 === 200) parsed.expenses.medicarePre65 = 0;
-            if (medicarePost65 === 200) parsed.expenses.medicarePost65 = 0;
+            if (medicarePre65 === 200 || medicarePre65 === undefined)
+              parsed.expenses.medicarePre65 = 0;
+            if (medicarePost65 === 200 || medicarePost65 === undefined)
+              parsed.expenses.medicarePost65 = 0;
 
             // Remove legacy default recurring expense "Travel" $40k
             if (recurring && Array.isArray(recurring)) {
