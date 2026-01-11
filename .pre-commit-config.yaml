@@ -46,3 +46,12 @@ repos:
         language: system
         files: \.(js|jsx)$
         pass_filenames: false
+
+      # Pre-push: Run tests before pushing (catches CI failures early)
+      - id: npm-test
+        name: Run Tests
+        entry: npm test -- --run
+        language: system
+        stages: [push]
+        pass_filenames: false
+        always_run: true
