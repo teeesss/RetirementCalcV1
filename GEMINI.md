@@ -42,6 +42,7 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 
 ## 3. Recent Major Changes (v2.2)
 
+- **State Taxes**: Implemented progressive brackets for CA/NY and residency selector (v2.3).
 - **Wizard Features**:
   - **Import Profile**: Added JSON import capability to Step 1.
   - **Enhanced Reporting**: "Financial Vital Signs" (Legacy, Budget, Withdrawal Rate) in Success visual.
@@ -64,7 +65,6 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 
 ## 5. Next Steps
 
-- **State-Specific Tax Brackets**: Currently uses flat rate. Need bracket models for CA, NY, etc. ("Phase 7").
 - **Annuity Modeling**: SPIA/DIA product support.
 - **UI Refinement**: Enhance mobile responsiveness for complex charts.
 

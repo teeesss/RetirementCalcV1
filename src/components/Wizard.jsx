@@ -154,6 +154,31 @@ export default function Wizard({ onComplete, onClose, initialData }) {
     });
   };
 
+  const handleAddAnnuity = () => {
+    setData((prev) => ({
+      ...prev,
+      annuities: [
+        ...(prev.annuities || []),
+        { name: 'Fixed Annuity', monthlyPayout: 1000, startAge: 65, inflationAdjusted: false },
+      ],
+    }));
+  };
+
+  const handleRemoveAnnuity = (index) => {
+    setData((prev) => ({
+      ...prev,
+      annuities: (prev.annuities || []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleAnnuityUpdate = (index, field, value) => {
+    setData((prev) => {
+      const newAnnuities = [...(prev.annuities || [])];
+      newAnnuities[index] = { ...newAnnuities[index], [field]: value };
+      return { ...prev, annuities: newAnnuities };
+    });
+  };
+
   const handleFinish = () => {
     const finalData = JSON.parse(JSON.stringify(data));
     if (finalData.people[0]) {
@@ -707,6 +732,92 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="bg-purple-500/5 dark:bg-purple-500/10 p-4 rounded-2xl border border-purple-500/20 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-black text-purple-600 uppercase tracking-tighter">
+                      Annuities & Pensions
+                    </span>
+                    <button
+                      onClick={handleAddAnnuity}
+                      className="text-[9px] font-bold text-purple-600 bg-purple-100 dark:bg-purple-900/30 px-2 py-1 rounded hover:bg-purple-200 dark:hover:bg-purple-900/50"
+                    >
+                      + Add New
+                    </button>
+                  </div>
+
+                  {(!data.annuities || data.annuities.length === 0) && (
+                    <div className="text-[10px] text-gray-400 font-bold text-center py-2">
+                      No annuities added.
+                    </div>
+                  )}
+
+                  <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
+                    {data.annuities?.map((ann, idx) => (
+                      <div
+                        key={idx}
+                        className="bg-white dark:bg-gray-800 p-3 rounded-xl border border-purple-100 dark:border-purple-900/30 space-y-3"
+                      >
+                        <div className="flex justify-between items-start">
+                          <input
+                            type="text"
+                            placeholder="Name"
+                            value={ann.name || ''}
+                            onChange={(e) => handleAnnuityUpdate(idx, 'name', e.target.value)}
+                            className="bg-transparent text-xs font-bold text-gray-700 dark:text-gray-200 w-full outline-none"
+                          />
+                          <button
+                            onClick={() => handleRemoveAnnuity(idx)}
+                            className="text-gray-400 hover:text-red-500"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="text-[8px] uppercase font-bold text-gray-400">
+                              Monthly ($)
+                            </label>
+                            <input
+                              type="number"
+                              value={ann.monthlyPayout || ''}
+                              onChange={(e) =>
+                                handleAnnuityUpdate(idx, 'monthlyPayout', Number(e.target.value))
+                              }
+                              className="w-full bg-gray-50 dark:bg-gray-900 rounded px-2 py-1 text-xs font-bold"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-[8px] uppercase font-bold text-gray-400">
+                              Start Age
+                            </label>
+                            <input
+                              type="number"
+                              value={ann.startAge || 65}
+                              onChange={(e) =>
+                                handleAnnuityUpdate(idx, 'startAge', Number(e.target.value))
+                              }
+                              className="w-full bg-gray-50 dark:bg-gray-900 rounded px-2 py-1 text-xs font-bold"
+                            />
+                          </div>
+                        </div>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={ann.inflationAdjusted || false}
+                            onChange={(e) =>
+                              handleAnnuityUpdate(idx, 'inflationAdjusted', e.target.checked)
+                            }
+                            className="rounded border-gray-300 text-purple-600 w-3 h-3"
+                          />
+                          <span className="text-[9px] font-bold text-gray-500">
+                            Inflation Adjusted (COLA)
+                          </span>
+                        </label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="md:col-span-2 grid grid-cols-2 gap-4 pt-2">

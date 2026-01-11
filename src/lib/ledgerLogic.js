@@ -512,7 +512,76 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
     // Pension Logic
     const pension = currentData.pension || currentData.income?.pension || 0;
 
-    const income = salary + ss + pension;
+    // Annuity Logic (Phase 1 MVP)
+    const annuities = currentData.annuities || [];
+    let annuityIncome = 0;
+    let annuityPurchaseCost = 0;
+
+    annuities.forEach((ann) => {
+      // 1. Expense/Purchase Logic
+      // If purchaseYear is defined and matches current, we assume a lump sum outflow.
+      if (ann.purchaseYear === currentYear && ann.purchaseAmount > 0) {
+        annuityPurchaseCost += ann.purchaseAmount;
+      }
+
+      // 2. Income Logic
+      // If current age >= start age
+      // 2. Income Logic
+      // Refactored to use getMonthsEligible for precise partial year calculations
+      const startAge = ann.startAge || 65;
+      const monthsEligible = getMonthsEligible(birthDate, startAge, currentYear);
+
+      if (monthsEligible > 0) {
+        let monthlyPayout = Number(ann.monthlyPayout) || 0;
+
+        // COLA / Inflation
+        if (ann.inflationAdjusted) {
+          // Calculate integer years passed since Start Year
+          const startYearOfAnnuity = birthDate.getFullYear() + Math.floor(startAge);
+          const yearsPassed = currentYear - startYearOfAnnuity;
+
+          if (yearsPassed > 0) {
+            const growthRate = (ann.growthRate ?? assumptions.inflation ?? 2.5) / 100;
+            monthlyPayout = monthlyPayout * Math.pow(1 + growthRate, yearsPassed);
+          }
+        }
+
+        annuityIncome += monthlyPayout * monthsEligible;
+      }
+    });
+
+    // Apply Annuity Purchase (Deduct from Assets immediately)
+    // Priority: Cash -> Brokerage -> Crypto (Unlikely) -> Error/Debt
+    if (annuityPurchaseCost > 0) {
+      console.log(`[Annuity] Year ${currentYear}: Purchasing annuity for $${annuityPurchaseCost}`);
+      let remainingCost = annuityPurchaseCost;
+
+      // 1. Cash
+      if (balances.cash > 0) {
+        const take = Math.min(balances.cash, remainingCost);
+        balances.cash -= take;
+        remainingCost -= take;
+      }
+
+      // 2. Brokerage (Taxable Event? No, just basis shuffle or cash out?
+      // Theoretically requires selling assets -> Realized Gains.
+      // MVP: Assume cash drag or "Magic Swap" for now to avoid calc loop complexity.
+      // Better: Reduce Brokerage and Basis proportionally.)
+      if (remainingCost > 0 && balances.brokerage > 0) {
+        const take = Math.min(balances.brokerage, remainingCost);
+
+        // Reduce Basis Proportional
+        const ratio = take / balances.brokerage;
+        brokerageBasis = Math.max(0, brokerageBasis * (1 - ratio));
+
+        balances.brokerage -= take;
+        remainingCost -= take;
+      }
+
+      // If still remaining, we assume debt or failed purchase (ignore for now)
+    }
+
+    const income = salary + ss + pension + annuityIncome;
 
     // Legacy Survivor Logic Removed (Consolidated at top of loop)
 
@@ -1232,10 +1301,10 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
     });
 
     // Crypto has its own return rate
-    balances.crypto *= 1 + (assumptions.cryptoReturn || assumptions.growthRate || 7) / 100;
+    balances.crypto *= 1 + (assumptions.cryptoReturn ?? assumptions.growthRate ?? 7) / 100;
 
     // Cash has its own return rate
-    balances.cash *= 1 + (assumptions.cashReturn || 2) / 100;
+    balances.cash *= 1 + (assumptions.cashReturn ?? 2) / 100;
 
     // --- RIGOROUS VALIDATION: TLH Cost (Basis Reduction) ---
     // You cannot harvest losses forever without reducing basis.
@@ -1463,6 +1532,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
             salary: salary,
             socialSecurity: ss,
             pension: pension,
+            annuity: annuityIncome,
             rmd: rmdIncome,
             other: 0,
           },

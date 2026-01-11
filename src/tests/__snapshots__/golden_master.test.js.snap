@@ -75,6 +75,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -212,6 +213,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -349,6 +351,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -486,6 +489,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -623,6 +627,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 13647.499614290205,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -760,6 +765,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 22500,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -897,6 +903,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 22500,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1034,6 +1041,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 22500,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1171,6 +1179,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 22500,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1308,6 +1317,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 22500,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1445,6 +1455,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 3189.456718770628,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1582,6 +1593,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 2079.8409453712875,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1719,6 +1731,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1856,6 +1869,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -1993,6 +2007,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -2130,6 +2145,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -2267,6 +2283,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -2404,6 +2421,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -2541,6 +2559,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -2678,6 +2697,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -2815,6 +2835,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -2952,6 +2973,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -3089,6 +3111,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -3226,6 +3249,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 283129.5075870812,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -3363,6 +3387,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 302948.57311817695,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -3500,6 +3525,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 309713.80382926,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 322837.27009321173,
@@ -3637,6 +3663,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 330031.98378077586,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 344570.83769182325,
@@ -3774,6 +3801,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 350161.0277137263,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 366150.1157371841,
@@ -3911,6 +3939,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 373014.8423788125,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 390777.4539206607,
@@ -4048,6 +4077,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 397285.51743522193,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 417050.96606383997,
@@ -4185,6 +4215,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 423048.60263115994,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 445082.3840181995,
@@ -4322,6 +4353,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 448185.81952841446,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 472543.7445027848,
@@ -4459,6 +4491,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 477038.199784177,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 504297.52548613,
@@ -4596,6 +4629,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 504914.66482148226,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 535149.075888637,
@@ -4733,6 +4767,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 537131.124500267,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 571126.7652914231,
@@ -4870,6 +4905,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 567881.5095505861,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 605740.2768539585,
@@ -5007,6 +5043,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 600023.7734080381,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 642278.9687184633,
@@ -5144,6 +5181,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 633553.2219803844,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 680833.3131729505,
@@ -5281,6 +5319,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 663952.2474372241,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 716231.9519598403,
@@ -5418,6 +5457,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 699999.4100135539,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 758822.8898466255,
@@ -5555,6 +5595,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 731795.0105763966,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 797133.850806432,
@@ -5692,6 +5733,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 764000.2161410918,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 836762.1414878624,
@@ -5829,6 +5871,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 796407.7813222252,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 877673.8814571461,
@@ -5966,6 +6009,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 828754.1587858681,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 919826.0443667326,
@@ -6103,6 +6147,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 852711.8166021984,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 953030.8538495159,
@@ -6240,6 +6285,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 875189.2461351625,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 985972.6950130312,
@@ -6382,6 +6428,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 30000,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -6519,6 +6566,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 30000,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -6656,6 +6704,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 53125.996984758196,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -6793,6 +6842,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 3.892637323588133e-12,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -6930,6 +6980,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -7067,6 +7118,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -7204,6 +7256,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -7341,6 +7394,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -7478,6 +7532,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -7615,6 +7670,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -7752,6 +7808,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -7889,6 +7946,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8026,6 +8084,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8163,6 +8222,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8300,6 +8360,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8437,6 +8498,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8574,6 +8636,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8711,6 +8774,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8848,6 +8912,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -8985,6 +9050,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -9122,6 +9188,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -9259,6 +9326,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -9396,6 +9464,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -9533,6 +9602,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -9670,6 +9740,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -9807,6 +9878,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -9944,6 +10016,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -10081,6 +10154,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -10218,6 +10292,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -10355,6 +10430,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -10492,6 +10568,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -10629,6 +10706,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -10766,6 +10844,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -10903,6 +10982,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11040,6 +11120,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11177,6 +11258,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11314,6 +11396,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11451,6 +11534,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11588,6 +11672,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11725,6 +11810,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11862,6 +11948,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -11999,6 +12086,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
@@ -12136,6 +12224,7 @@ exports[`Golden Master Logic Verification > should match the regression snapshot
           "traditional": 0,
         },
         "inflows": {
+          "annuity": 0,
           "other": 0,
           "pension": 0,
           "rmd": 0,
