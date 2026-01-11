@@ -1,4 +1,3 @@
-import NetWorthChart from '../NetWorthChart';
 import CashFlowChart from '../CashFlowChart';
 import DetailedCashFlowChart from './DetailedCashFlowChart';
 import GrowthDrawdownChart from './GrowthDrawdownChart';

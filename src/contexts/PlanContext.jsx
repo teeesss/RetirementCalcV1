@@ -93,6 +93,9 @@ export function PlanProvider({ children }) {
             if (isLegacyMonthly) {
               parsed.expenses.essentialMonthly = 0;
               parsed.expenses.discretionaryMonthly = 0;
+              parsed.expenses.oneTime = []; // Clear Rogue Spikes
+              parsed.expenses.recurring = [];
+              parsed.goals = []; // Clear Rogue Goals
             }
 
             if (medicarePre65 === 200 || medicarePre65 === undefined)
