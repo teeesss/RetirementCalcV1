@@ -51,6 +51,8 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 - **Quality Assurance**:
   - **Pre-Commit Optimization**: ESLint now only checks changed files (fast commits).
   - **Spike Detection**: Added `sanity_spikes.test.js` to prevent expense regression.
+  - **Tax Data Externalization**: Consolidated all constants to `src/data/tax_2025.json` and removed legacy `src/lib/constants`.
+  - **Monte Carlo Determinism**: Implemented seeded RNG (`seedrandom`) for repeatable simulations and tests.
 
 ## 4. Active Context & Watchlist
 
@@ -63,8 +65,6 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 ## 5. Next Steps
 
 - **Fix Remaining ESLint Errors**: 46 errors currently block commits (unused vars, HTML entities)
-- **Migrate to Centralized Constants**: Update existing code to use `src/lib/constants/`
-- **Make Monte Carlo Deterministic**: Add seeded RNG for repeatable test results
 
 ## 6. Git Workflow
 

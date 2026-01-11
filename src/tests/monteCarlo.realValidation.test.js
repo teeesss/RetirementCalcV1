@@ -12,11 +12,13 @@
 
 import { describe, it, expect } from 'vitest';
 import { generateLedger } from '../lib/ledgerLogic';
+import SeedRandom from 'seedrandom';
 
 // Helper to run Monte Carlo simulation (simplified for testing)
 // In real app, this would use the worker
 const runSimplifiedMC = (ledger, iterations = 100) => {
   const finalBalances = [];
+  const rng = new SeedRandom('test-seed-v1');
 
   for (let iter = 0; iter < iterations; iter++) {
     let balance = ledger[0].totalBalance || 0;
@@ -33,7 +35,7 @@ const runSimplifiedMC = (ledger, iterations = 100) => {
       // Apply random return (simplified: use average with some variance)
       const avgReturn = 0.07; // 7%
       const volatility = 0.18; // 18%
-      const randomReturn = avgReturn + (Math.random() - 0.5) * volatility * 2;
+      const randomReturn = avgReturn + (rng() - 0.5) * volatility * 2;
       balance *= 1 + randomReturn;
 
       // Check for ruin

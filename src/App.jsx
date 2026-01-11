@@ -421,6 +421,7 @@ function AppContent() {
       },
       ledger,
       initialBalances: ledger.initialBalances, // Explicit pass to survive serialization
+      seed: 'stable-seed-v1', // Deterministic RNG
     });
   }, [planData, ledger, setMonteCarloResults]);
 
@@ -515,6 +516,7 @@ function AppContent() {
           ledger: ledgerToUse,
           initialBalances: ledgerToUse.initialBalances,
           requestId,
+          seed: 'stable-seed-v1', // Deterministic RNG
         });
       });
     },
@@ -817,6 +819,7 @@ function AppContent() {
           enableCAPE: modifiedPlan.assumptions.enableCAPE,
           spendingStrategy: modifiedPlan.assumptions.withdrawalStrategy || 'fixed',
           ledger: modifiedLedger,
+          seed: 'stable-seed-v1', // Deterministic RNG
         });
       } catch (err) {
         console.error('Spending simulation error:', err);
@@ -890,6 +893,7 @@ function AppContent() {
           spendingStrategy: planData.assumptions.withdrawalStrategy || 'fixed',
           ledger,
           scenarioId, // Pass scenario to worker
+          seed: 'stable-seed-v1', // Deterministic RNG
         });
       } catch (err) {
         console.error('Scenario simulation error:', err);
