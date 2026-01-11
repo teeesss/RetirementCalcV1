@@ -844,30 +844,56 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                           </p>
                         </div>
 
-                        {/* 2. MONTHLY SPEND BREAKDOWN */}
+                        {/* 2. YEAR 1 EXPENSE BREAKDOWN */}
                         <div>
-                          <p className="text-[10px] font-bold text-green-800 dark:text-green-200 uppercase opacity-60">
-                            Monthly Budget
+                          <p className="text-[10px] font-bold text-green-800 dark:text-green-200 uppercase opacity-60 mb-1">
+                            Year 1 Expenses
                           </p>
-                          <p className="text-lg font-black text-green-700 dark:text-green-300">
-                            {new Intl.NumberFormat('en-US', {
-                              style: 'currency',
-                              currency: 'USD',
-                              maximumFractionDigits: 0,
-                            }).format(simulationResult.ledger[0].expenses.total / 12)}
-                          </p>
-                          <p className="text-[9px] text-green-600 dark:text-green-400">
-                            <span className="font-bold">
-                              {new Intl.NumberFormat('en-US', {
-                                style: 'currency',
-                                currency: 'USD',
-                                notation: 'compact',
-                              }).format(
-                                data.expenses.essentialMonthly + data.expenses.discretionaryMonthly
-                              )}
-                            </span>{' '}
-                            Base + Taxes
-                          </p>
+                          <div className="space-y-0.5 text-[10px] font-medium text-green-800 dark:text-green-100">
+                            <div className="flex justify-between">
+                              <span>Essential</span>
+                              <span className="font-bold">
+                                {new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: 'USD',
+                                  notation: 'compact',
+                                }).format(simulationResult.ledger[0].expenses.essential)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Discret.</span>
+                              <span className="font-bold">
+                                {new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: 'USD',
+                                  notation: 'compact',
+                                }).format(simulationResult.ledger[0].expenses.discretionary)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-green-600 dark:text-green-400">
+                              <span>Tax/Health</span>
+                              <span className="font-bold">
+                                {new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: 'USD',
+                                  notation: 'compact',
+                                }).format(
+                                  (simulationResult.ledger[0].expenses.taxes || 0) +
+                                    (simulationResult.ledger[0].expenses.healthcare || 0)
+                                )}
+                              </span>
+                            </div>
+                            <div className="border-t border-green-200 dark:border-green-700 pt-0.5 mt-0.5 flex justify-between font-black text-xs">
+                              <span>Total</span>
+                              <span>
+                                {new Intl.NumberFormat('en-US', {
+                                  style: 'currency',
+                                  currency: 'USD',
+                                  maximumFractionDigits: 0,
+                                }).format(simulationResult.ledger[0].expenses.total)}
+                              </span>
+                            </div>
+                          </div>
                         </div>
 
                         {/* 3. WITHDRAWAL RATE */}

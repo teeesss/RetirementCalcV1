@@ -171,10 +171,11 @@ export default function NetWorthChart({ ledger, darkMode = false, showFITarget =
         labels: {
           color: darkMode ? '#e5e7eb' : '#374151',
           usePointStyle: true,
-          boxWidth: 8, // Smaller box
-          padding: 10, // Tighter padding
+          boxWidth: 6, // Compact box
+          padding: 8, // Compact padding
           font: {
-            size: 10, // Smaller font to fit single line
+            size: 9, // Small font to force single line
+            weight: 'bold',
           },
         },
       },
