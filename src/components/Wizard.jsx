@@ -844,10 +844,10 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                           </p>
                         </div>
 
-                        {/* 2. YEAR 1 EXPENSE BREAKDOWN */}
+                        {/* 2. EXPENSE BREAKDOWN (Explicit Age) */}
                         <div>
                           <p className="text-[10px] font-bold text-green-800 dark:text-green-200 uppercase opacity-60 mb-1">
-                            Year 1 Expenses
+                            Age {simulationResult.ledger[0].age} Expenses
                           </p>
                           <div className="space-y-0.5 text-[10px] font-medium text-green-800 dark:text-green-100">
                             <div className="flex justify-between">
@@ -870,19 +870,31 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                                 }).format(simulationResult.ledger[0].expenses.discretionary)}
                               </span>
                             </div>
-                            <div className="flex justify-between text-green-600 dark:text-green-400">
-                              <span>Tax/Health</span>
-                              <span className="font-bold">
-                                {new Intl.NumberFormat('en-US', {
-                                  style: 'currency',
-                                  currency: 'USD',
-                                  notation: 'compact',
-                                }).format(
-                                  (simulationResult.ledger[0].expenses.taxes || 0) +
-                                    (simulationResult.ledger[0].expenses.healthcare || 0)
-                                )}
-                              </span>
-                            </div>
+                            {/* Explicit Split: Taxes vs Healthcare */}
+                            {(simulationResult.ledger[0].expenses.taxes || 0) > 0 && (
+                              <div className="flex justify-between text-orange-600 dark:text-orange-400">
+                                <span>Taxes</span>
+                                <span className="font-bold">
+                                  {new Intl.NumberFormat('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    notation: 'compact',
+                                  }).format(simulationResult.ledger[0].expenses.taxes)}
+                                </span>
+                              </div>
+                            )}
+                            {(simulationResult.ledger[0].expenses.healthcare || 0) > 0 && (
+                              <div className="flex justify-between text-blue-600 dark:text-blue-400">
+                                <span>Health</span>
+                                <span className="font-bold">
+                                  {new Intl.NumberFormat('en-US', {
+                                    style: 'currency',
+                                    currency: 'USD',
+                                    notation: 'compact',
+                                  }).format(simulationResult.ledger[0].expenses.healthcare)}
+                                </span>
+                              </div>
+                            )}
                             <div className="border-t border-green-200 dark:border-green-700 pt-0.5 mt-0.5 flex justify-between font-black text-xs">
                               <span>Total</span>
                               <span>
@@ -897,19 +909,27 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                         </div>
 
                         {/* 3. WITHDRAWAL RATE */}
-                        <div>
+                        <div className="text-right">
                           <p className="text-[10px] font-bold text-green-800 dark:text-green-200 uppercase opacity-60">
                             Withdrawal Rate
                           </p>
                           <p className="text-lg font-black text-green-700 dark:text-green-300">
                             {(
                               (simulationResult.ledger[0].expenses.total /
-                                (simulationResult.ledger[0].netWorth + 1)) * // Avoid div/0
+                                (simulationResult.ledger[0].netWorth + 1)) *
                               100
                             ).toFixed(1)}
                             %
                           </p>
                           <p className="text-[9px] text-green-600 dark:text-green-400">
+                            {new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: 'USD',
+                              notation: 'compact',
+                            }).format(simulationResult.ledger[0].expenses.total)}
+                            /yr
+                          </p>
+                          <p className="text-[8px] text-green-800/50 dark:text-green-200/50 italic mt-1">
                             Year 1 Stress Test
                           </p>
                         </div>

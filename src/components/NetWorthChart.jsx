@@ -242,6 +242,24 @@ export default function NetWorthChart({ ledger, darkMode = false, showFITarget =
             const mortgageDisplay =
               mortgageBalance > 0 ? `-${formatCurrency(mortgageBalance)}` : '$0';
 
+            // Expense Breakdown (Tooltip Only)
+            const expEssential = yearData.expenses?.essential || 0;
+            const expDiscret = yearData.expenses?.discretionary || 0;
+            const expTax = yearData.expenses?.taxes || 0;
+            const expHealth = yearData.expenses?.healthcare || 0;
+
+            const expenseSection =
+              expEssential > 0
+                ? [
+                    '───── Expenses ─────',
+                    `🔥 Essential: ${formatCurrency(expEssential)}`,
+                    `🛍️ Discretionary: ${formatCurrency(expDiscret)}`,
+                    `🏥 Health: ${formatCurrency(expHealth)}`,
+                    `🏛️ Taxes: ${formatCurrency(expTax)}`,
+                    `📉 Total Annual: ${formatCurrency(yearData.expenses?.total || 0)}`,
+                  ]
+                : [];
+
             return [
               '─────────────────────────',
               `💰 Financial: ${formatCurrency(financialAssets)}`,
@@ -250,6 +268,7 @@ export default function NetWorthChart({ ledger, darkMode = false, showFITarget =
               '─────────────────────────',
               ...(showFITarget ? [`🎯 FI Target: ${formatCurrency(fiTarget)}`] : []),
               `📊 Net Worth: ${formatCurrency(netWorth)}`,
+              ...expenseSection,
             ];
           },
           footer: function () {
