@@ -703,11 +703,26 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
       if (lookbackIndex >= 0) {
         priorMAGI = ledger[lookbackIndex].taxes.agi;
       }
-      const premiums = calculateMedicarePremiums(priorMAGI, currentFilingStatus);
-      healthcareCost =
-        (isPrimaryMedEligible ? premiums.totalAnnual : 0) +
-        (isSpouseMedEligible ? premiums.totalAnnual : 0);
-      medicareData = { ...premiums, total: healthcareCost };
+
+      // Feature: If user has minimal income (Blank Slate) and hasn't set explicit Post-65 expenses, suppress the auto-calc to avoid confusion.
+      // A truly blank profile has 0 income and 0 expense.
+      // But standard Medicare logic kicks in based on MAGI.
+      // Heuristic: If expenses.medicarePost65 is specifically 0, we assume "Manual Mode" or "Blank Canvas".
+      // If expenses.medicarePost65 is undefined or > 0, we behave normally.
+
+      const isManualZero = expenses.medicarePost65 === 0;
+
+      if (!isManualZero) {
+        const premiums = calculateMedicarePremiums(priorMAGI, currentFilingStatus);
+        healthcareCost =
+          (isPrimaryMedEligible ? premiums.totalAnnual : 0) +
+          (isSpouseMedEligible ? premiums.totalAnnual : 0);
+        medicareData = { ...premiums, total: healthcareCost };
+      } else {
+        // User explicitly set 0. We respect it.
+        healthcareCost = 0;
+        medicareData = { total: 0 };
+      }
     }
 
     if ((clientAlive && clientAge < 65) || (spouseAlive && spouseAge < 65)) {
