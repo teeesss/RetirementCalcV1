@@ -172,4 +172,5 @@
 - [x] **Zero Return Bug Fix**: Fixed `||` to `??` for `cashReturn` and `cryptoReturn`.
 - [x] **Golden Master Snapshots**: Updated for new `annuity` field in detailed cash flow.
 - [x] **Arkansas State Tax Tests**: Skipped pending state data implementation.
-- [x] **Test Suite**: 249 tests passing (5 skipped).
+- [x] **Test Suite**: 252 tests passing (5 skipped).
+- [x] **Monte Carlo Spending Simulation Fix**: Added missing `initialBalances` to worker.postMessage in spending/scenario handlers.

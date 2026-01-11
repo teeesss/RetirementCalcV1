@@ -122,7 +122,8 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 - ✅ **Zero Return Bug**: Fixed falsy defaults for `cashReturn`/`cryptoReturn` (0% now respected).
 - ✅ **Golden Master Snapshots**: Updated to track annuity field in detailed cash flow.
 - ✅ **Arkansas State Tax**: Tests skipped (state not yet implemented).
-- ✅ **Test Count**: 249 tests passing (5 skipped).
+- ✅ **Test Count**: 252 tests passing (5 skipped).
+- ✅ **Monte Carlo Spending Simulation**: Fixed missing `initialBalances` causing blank graphs.
 
 ---
 

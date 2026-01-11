@@ -38,7 +38,7 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
   - **Ledger**: Precise monthly calculations with partial-year annuity support.
   - **Tax Engine**: 2025 Standard deductions, brackets, NIIT, LTCG.
   - **Simulation**: 10k-iteration Monte Carlo.
-  - **Testing**: 100% Pass Rate (249 Tests).
+  - **Testing**: 100% Pass Rate (252 Tests).
 
 ## 3. Recent Major Changes (v2.2)
 
@@ -70,6 +70,7 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 - **Import Safety**: We successfully fixed a "White Screen" caused by a named export mismatch (`calculateStateTaxModel`). _Always verify exports._
 - **Invariant Testing**: 12/12 tests passing - NaN detection, balance continuity, tax totals, withdrawals identity
 - **Annuity Precision**: Partial year logic validated with 4 passing tests. Purchase cost deduction verified.
+- **Worker Data Serialization**: Monte Carlo worker requires `initialBalances` to be passed explicitly. Arrays attached to objects (like `ledger.initialBalances`) don't survive Web Worker serialization automatically.
 
 ## 5. Next Steps
 

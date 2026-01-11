@@ -819,6 +819,7 @@ function AppContent() {
           enableCAPE: modifiedPlan.assumptions.enableCAPE,
           spendingStrategy: modifiedPlan.assumptions.withdrawalStrategy || 'fixed',
           ledger: modifiedLedger,
+          initialBalances: modifiedLedger.initialBalances, // CRITICAL: Pass to worker
           seed: 'stable-seed-v1', // Deterministic RNG
         });
       } catch (err) {
@@ -892,6 +893,7 @@ function AppContent() {
           enableCAPE: planData.assumptions.enableCAPE,
           spendingStrategy: planData.assumptions.withdrawalStrategy || 'fixed',
           ledger,
+          initialBalances: ledger.initialBalances, // CRITICAL: Pass to worker
           scenarioId, // Pass scenario to worker
           seed: 'stable-seed-v1', // Deterministic RNG
         });
