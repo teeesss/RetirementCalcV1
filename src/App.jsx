@@ -29,6 +29,7 @@ import GrowthDrawdownChart from './components/strategy/GrowthDrawdownChart';
 import DetailedCashFlowChart from './components/strategy/DetailedCashFlowChart';
 import EfficiencyDashboard from './components/TaxEfficiency/EfficiencyDashboard';
 import Wizard from './components/Wizard';
+import AnnuityManager from './components/AnnuityManager';
 
 // DIAGNOSTIC: Robust Error Boundary
 class ErrorBoundary extends React.Component {
@@ -2505,6 +2506,15 @@ function AppContent() {
                       />
                     </div>
                   </div>
+                </div>
+
+                {/* Annuity Management UI (Phase 7) */}
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700/50">
+                  <AnnuityManager
+                    annuities={planData.annuities}
+                    updatePlan={updatePlan}
+                    currentAge={planData.people?.[0]?.age || 50}
+                  />
                 </div>
               </div>
             </div>

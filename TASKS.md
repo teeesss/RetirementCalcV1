@@ -173,4 +173,5 @@
 - [x] **Golden Master Snapshots**: Updated for new `annuity` field in detailed cash flow.
 - [x] **Arkansas State Tax Tests**: Skipped pending state data implementation.
 - [x] **Test Suite**: 252 tests passing (5 skipped).
-- [x] **Monte Carlo Spending Simulation Fix**: Added missing `initialBalances` to worker.postMessage in spending/scenario handlers.
+- [x] **Monte Carlo Spending Simulation Fix**: Resolved blank graphs by implementing ledger-based robust aging and scaling calculations for all spending assumptions.
+- [x] **Verification**: Deployed v2.4 to production and verified non-zero results on real profiles.

@@ -6,6 +6,8 @@ export default function Wizard({ onComplete, onClose, initialData }) {
   const [step, setStep] = useState(1);
   const [data, setData] = useState(initialData);
   const [useAutoSS, setUseAutoSS] = useState(true);
+  const [toast, setToast] = useState(null);
+  const [confirmReset, setConfirmReset] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleImportProfile = (event) => {
@@ -16,22 +18,23 @@ export default function Wizard({ onComplete, onClose, initialData }) {
     reader.onload = (e) => {
       try {
         const imported = JSON.parse(e.target.result);
-        // Basic Validation
-        if (!imported.people || !imported.assets || !imported.expenses) {
-          alert('Invalid profile format. JSON must contain people, assets, and expenses.');
-          return;
+        if (imported.people && imported.assets && imported.expenses) {
+          setData({
+            ...initialData,
+            ...imported,
+          });
+          setToast({ message: 'Profile imported successfully!', type: 'success' });
+          setTimeout(() => setToast(null), 3000);
+        } else {
+          setToast({
+            message: 'Invalid profile format. JSON must contain people, assets, and expenses.',
+            type: 'error',
+          });
+          setTimeout(() => setToast(null), 5000);
         }
-
-        // Data Migration/Cleanup (Ensure compatibility)
-        // Similar to PlanContext migration but lightweight
-        if (!imported.liabilities) imported.liabilities = { mortgage: 0 };
-        if (!imported.assets.realEstate) imported.assets.realEstate = 0;
-
-        setData({ ...initialData, ...imported }); // Merge with clean slate to ensure missing fields exist
-        alert('Profile imported successfully!');
       } catch (err) {
-        console.error('Import failed', err);
-        alert('Failed to parse JSON file.');
+        setToast({ message: 'Failed to parse JSON file.', type: 'error' });
+        setTimeout(() => setToast(null), 5000);
       }
     };
     reader.readAsText(file);
@@ -72,10 +75,14 @@ export default function Wizard({ onComplete, onClose, initialData }) {
   }, []);
 
   const handleReset = () => {
-    if (confirm('Reset all wizard inputs to blank?')) {
-      setData(initialData);
-      setStep(1);
+    if (!confirmReset) {
+      setConfirmReset(true);
+      setTimeout(() => setConfirmReset(false), 3000);
+      return;
     }
+    setData(initialData);
+    setStep(1);
+    setConfirmReset(false);
   };
 
   // SS Estimation Logic (Simplified for Wizard)
@@ -274,16 +281,18 @@ export default function Wizard({ onComplete, onClose, initialData }) {
       id="wizard-v3-container"
       className="fixed inset-0 z-[100] bg-gray-900/90 backdrop-blur-md flex items-center justify-center p-4"
     >
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-gray-200 dark:border-gray-700 animate-in fade-in zoom-in duration-300">
-        <div className="h-1.5 bg-gray-200 dark:bg-gray-700">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[min(90vh,850px)] flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700 animate-in fade-in zoom-in duration-300">
+        {/* Progress Bar */}
+        <div className="h-1.5 bg-gray-200 dark:bg-gray-700 shrink-0">
           <div
             className="h-full bg-blue-600 transition-all duration-500 ease-out"
             style={{ width: `${(step / 4) * 100}%` }}
           />
         </div>
 
-        <div className="relative p-8">
-          <div className="flex justify-between items-center mb-6">
+        {/* Fixed Header */}
+        <div className="px-8 py-6 border-b border-gray-100 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-800 z-10">
+          <div className="flex justify-between items-center">
             <h2 className="text-2xl font-black text-gray-900 dark:text-white">
               {step === 1 && 'Welcome'}
               {step === 2 && 'Assets & Real Estate'}
@@ -291,6 +300,16 @@ export default function Wizard({ onComplete, onClose, initialData }) {
               {step === 4 && 'Finalize'}
             </h2>
             <div className="flex items-center gap-2">
+              {toast && (
+                <div
+                  className={`px-4 py-2 rounded-xl shadow-lg font-bold text-xs flex items-center gap-2 animate-in slide-in-from-right-4 duration-300 ${
+                    toast.type === 'error' ? 'bg-red-600 text-white' : 'bg-green-600 text-white'
+                  }`}
+                >
+                  <span>{toast.type === 'error' ? '❌' : '✅'}</span>
+                  {toast.message}
+                </div>
+              )}
               <button
                 onClick={onClose}
                 className="px-3 py-1.5 text-[10px] font-black text-gray-400 hover:text-blue-600 uppercase tracking-widest border border-gray-200 dark:border-gray-700 rounded-lg transition-all"
@@ -309,7 +328,10 @@ export default function Wizard({ onComplete, onClose, initialData }) {
               </button>
             </div>
           </div>
+        </div>
 
+        {/* Scrollable Content Body */}
+        <div className="relative p-8 overflow-y-auto flex-1 min-h-0 custom-scrollbar">
           {step === 1 && (
             <div className="space-y-6">
               <div className="flex justify-between items-start -mt-4 mb-4">
@@ -1138,47 +1160,52 @@ export default function Wizard({ onComplete, onClose, initialData }) {
               </div>
             </div>
           )}
+        </div>
 
-          <div className="mt-10 flex justify-between gap-4">
-            {step > 1 ? (
+        {/* Fixed Footer */}
+        <div className="mt-auto flex justify-between gap-4 px-8 py-6 border-t border-gray-100 dark:border-gray-800 shrink-0 bg-white dark:bg-gray-800 z-10">
+          {step > 1 ? (
+            <button
+              onClick={prevStep}
+              className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-2xl font-black uppercase text-xs hover:bg-gray-200 transition-all"
+            >
+              Back
+            </button>
+          ) : (
+            <button
+              onClick={handleReset}
+              className={`px-6 py-3 rounded-2xl font-black uppercase text-[10px] transition-all ${
+                confirmReset
+                  ? 'bg-red-600 text-white animate-pulse'
+                  : 'bg-red-50 text-red-500 hover:bg-red-100'
+              }`}
+            >
+              {confirmReset ? 'Confirm Reset?' : 'Reset'}
+            </button>
+          )}
+          {step < 4 ? (
+            <button
+              onClick={nextStep}
+              className="px-10 py-3 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs hover:bg-blue-700 shadow-xl shadow-blue-500/30 transition-all active:scale-95"
+            >
+              Continue
+            </button>
+          ) : (
+            <div className="flex gap-2">
               <button
-                onClick={prevStep}
+                onClick={() => setStep(1)}
                 className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-2xl font-black uppercase text-xs hover:bg-gray-200 transition-all"
               >
-                Back
+                Review Inputs
               </button>
-            ) : (
               <button
-                onClick={handleReset}
-                className="px-6 py-3 bg-red-50 text-red-500 rounded-2xl font-black uppercase text-[10px] hover:bg-red-100 transition-all"
+                onClick={handleFinish}
+                className="px-8 py-3 bg-green-600 text-white rounded-2xl font-black uppercase text-xs hover:bg-green-700 shadow-xl shadow-green-500/30 transition-all active:scale-95"
               >
-                Reset
+                Launch Planner
               </button>
-            )}
-            {step < 4 ? (
-              <button
-                onClick={nextStep}
-                className="px-10 py-3 bg-blue-600 text-white rounded-2xl font-black uppercase text-xs hover:bg-blue-700 shadow-xl shadow-blue-500/30 transition-all active:scale-95"
-              >
-                Continue
-              </button>
-            ) : (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setStep(1)}
-                  className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-2xl font-black uppercase text-xs hover:bg-gray-200 transition-all"
-                >
-                  Review Inputs
-                </button>
-                <button
-                  onClick={handleFinish}
-                  className="px-8 py-3 bg-green-600 text-white rounded-2xl font-black uppercase text-xs hover:bg-green-700 shadow-xl shadow-green-500/30 transition-all active:scale-95"
-                >
-                  Launch Planner
-                </button>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

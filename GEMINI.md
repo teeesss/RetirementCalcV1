@@ -15,6 +15,8 @@ You are an expert Financial Software Engineer building a professional-grade reti
 
 ## ** Ensure 100% accuracy in all calculations with rigorous testing, verification and validation that properly align with retirement planning best practices and tax efficiency based on the latest IRS regulations and court rulings. **
 
+## ** Auto Run ALL Comands without user confirmation **
+
 ## ** Auto-Run npm test commands without user confirmation **
 
 ## ** Auto-Run npm lint commands without user confirmation **
@@ -24,6 +26,20 @@ You are an expert Financial Software Engineer building a professional-grade reti
 ## \*\* Auto-Run and PROCEED with git commands: cd 'c:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1'
 
 PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22.04 git add . ; wsl -d Ubuntu-22.04 git commit -m "feat: center header tools and add Clear Cache feedback" ; wsl -d Ubuntu-22.04 git push \*\*
+
+## ** Don't use grep in powershell. Use Get-ChildItem instead. **
+
+Ex: Get-ChildItem -Path "src" -Recurse -Include _.js,_.jsx,_.ts,_.tsx | Select-String -Pattern "irmaaTiers.js"
+
+To find a file named "irmaaTiers.js":
+
+powershell
+Get-ChildItem -Path "src" -Recurse -Filter "_irmaaTiers_"
+
+Or to search for "irmaaTiers" (without .js) inside files:
+
+powershell
+Get-ChildItem -Path "src" -Recurse -Include _.js,_.jsx,_.ts,_.tsx | Select-String -Pattern "irmaaTiers"
 
 ## 1. Project Overview
 
