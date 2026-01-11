@@ -59,6 +59,7 @@ export default function NetWorthChart({ ledger, darkMode = false, showFITarget =
   const chartData = {
     labels,
     datasets: [
+      // Always include Expenses line if available
       ...(ledger[0]?.expenses
         ? [
             {
@@ -70,11 +71,12 @@ export default function NetWorthChart({ ledger, darkMode = false, showFITarget =
               pointRadius: 0,
               fill: false,
               tension: 0.4,
-              yAxisID: 'y1', // Explicitly map to right axis
+              yAxisID: 'y1',
               order: 0,
             },
           ]
         : []),
+      // FI Target (Optional)
       ...(showFITarget
         ? [
             {
@@ -83,86 +85,68 @@ export default function NetWorthChart({ ledger, darkMode = false, showFITarget =
               data: ledger.map((y) => (y.expenses?.total || 0) * 25),
               borderColor: 'rgba(59, 130, 246, 0.9)', // Blue
               borderWidth: 2,
-              borderDash: [5, 5], // Dashed line
+              borderDash: [5, 5],
               pointRadius: 0,
               fill: false,
               tension: 0.4,
-              order: 0, // Draw on top
+              order: 0,
             },
           ]
         : []),
-      {
-        type: 'bar',
-        label: 'Mortgage',
-        data: ledger.map((y) => -(y.balances?.mortgageBalance || 0)),
-        backgroundColor: colors.mortgage || 'rgba(220, 38, 38, 0.8)',
-        borderColor: colors.mortgage || 'rgba(220, 38, 38, 1)',
-        borderWidth: 1,
-        order: 1,
-      },
-      {
-        type: 'bar',
-        label: 'Brokerage',
-        data: ledger.map((y) => y.balances?.brokerage || 0),
-        backgroundColor: colors.brokerage,
-        borderColor: colors.brokerage,
-        borderWidth: 1,
-        order: 1,
-      },
-      {
-        type: 'bar',
-        label: 'HSA',
-        data: ledger.map((y) => y.balances?.hsa || 0),
-        backgroundColor: colors.hsa,
-        borderColor: colors.hsa,
-        borderWidth: 1,
-        order: 1,
-      },
-      {
-        type: 'bar',
-        label: 'Roth',
-        data: ledger.map((y) => y.balances?.roth || 0),
-        backgroundColor: colors.roth,
-        borderColor: colors.roth,
-        borderWidth: 1,
-        order: 1,
-      },
-      {
-        type: 'bar',
-        label: 'Traditional',
-        data: ledger.map((y) => y.balances?.traditional || 0),
-        backgroundColor: colors.traditional,
-        borderColor: colors.traditional,
-        borderWidth: 1,
-        order: 1,
-      },
-      {
-        type: 'bar',
-        label: 'Crypto',
-        data: ledger.map((y) => y.balances?.crypto || 0),
-        backgroundColor: colors.crypto,
-        borderColor: colors.crypto,
-        borderWidth: 1,
-        order: 1,
-      },
-      {
-        type: 'bar',
-        label: 'Cash',
-        data: ledger.map((y) => y.balances?.cash || 0),
-        backgroundColor: colors.cash,
-        borderColor: colors.cash,
-        borderWidth: 1,
-        order: 1,
-      },
-      {
-        type: 'bar',
-        label: 'Real Estate',
-        data: ledger.map((y) => y.balances?.realEstate || 0),
-        backgroundColor: colors.realEstate,
-        borderColor: colors.realEstate,
-        borderWidth: 1,
-        order: 1,
-      },
+      // Asset Bars - FILTERED
+      ...[
+        {
+          label: 'Mortgage',
+          data: ledger.map((y) => -(y.balances?.mortgageBalance || 0)),
+          color: colors.mortgage || 'rgba(220, 38, 38, 0.8)',
+        },
+        {
+          label: 'Brokerage',
+          data: ledger.map((y) => y.balances?.brokerage || 0),
+          color: colors.brokerage,
+        },
+        {
+          label: 'HSA',
+          data: ledger.map((y) => y.balances?.hsa || 0),
+          color: colors.hsa,
+        },
+        {
+          label: 'Roth',
+          data: ledger.map((y) => y.balances?.roth || 0),
+          color: colors.roth,
+        },
+        {
+          label: 'Traditional',
+          data: ledger.map((y) => y.balances?.traditional || 0),
+          color: colors.traditional,
+        },
+        {
+          label: 'Crypto',
+          data: ledger.map((y) => y.balances?.crypto || 0),
+          color: colors.crypto,
+        },
+        {
+          label: 'Cash',
+          data: ledger.map((y) => y.balances?.cash || 0),
+          color: colors.cash,
+        },
+        {
+          label: 'Real Estate',
+          data: ledger.map((y) => y.balances?.realEstate || 0),
+          color: colors.realEstate,
+        },
+      ]
+        .filter((ds) => ds.data.some((val) => Math.abs(val) > 1)) // Filter out empty datasets
+        .map((ds) => ({
+          type: 'bar',
+          label: ds.label,
+          data: ds.data,
+          backgroundColor: ds.color,
+          borderColor: ds.color,
+          borderWidth: 1,
+          order: 1,
+          stack: 'stack1', // Stack them!
+        })),
     ],
   };
 

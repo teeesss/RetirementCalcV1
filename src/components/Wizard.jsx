@@ -760,12 +760,81 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                         <h4 className="text-sm font-black text-green-700 dark:text-green-400 uppercase">
                           Plan Looks Healthy!
                         </h4>
-                        <p className="text-[10px] text-green-600 dark:text-green-300 font-medium">
+                        <p className="text-[10px] text-green-600 dark:text-green-300 font-medium max-w-sm">
                           Your money is projected to last through age{' '}
                           <span className="font-bold">{simulationResult.lifeExpectancy}</span>.
+                          Based on your inputs, here is your financial outlook:
                         </p>
                       </div>
                     </div>
+
+                    {/* KEY METRICS GRID */}
+                    {simulationResult?.ledger && simulationResult.ledger.length > 0 && (
+                      <div className="mt-4 grid grid-cols-3 gap-4 border-t border-green-200 dark:border-green-800 pt-4">
+                        {/* 1. PROJECTED LEGACY */}
+                        <div>
+                          <p className="text-[10px] font-bold text-green-800 dark:text-green-200 uppercase opacity-60">
+                            Projected Legacy
+                          </p>
+                          <p className="text-lg font-black text-green-700 dark:text-green-300">
+                            {new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: 'USD',
+                              notation: 'compact',
+                            }).format(
+                              simulationResult.ledger[simulationResult.ledger.length - 1].netWorth
+                            )}
+                          </p>
+                          <p className="text-[9px] text-green-600 dark:text-green-400">
+                            at age {simulationResult.lifeExpectancy}
+                          </p>
+                        </div>
+
+                        {/* 2. MONTHLY SPEND BREAKDOWN */}
+                        <div>
+                          <p className="text-[10px] font-bold text-green-800 dark:text-green-200 uppercase opacity-60">
+                            Monthly Budget
+                          </p>
+                          <p className="text-lg font-black text-green-700 dark:text-green-300">
+                            {new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: 'USD',
+                              maximumFractionDigits: 0,
+                            }).format(simulationResult.ledger[0].expenses.total / 12)}
+                          </p>
+                          <p className="text-[9px] text-green-600 dark:text-green-400">
+                            <span className="font-bold">
+                              {new Intl.NumberFormat('en-US', {
+                                style: 'currency',
+                                currency: 'USD',
+                                notation: 'compact',
+                              }).format(
+                                data.expenses.essentialMonthly + data.expenses.discretionaryMonthly
+                              )}
+                            </span>{' '}
+                            Base + Taxes
+                          </p>
+                        </div>
+
+                        {/* 3. WITHDRAWAL RATE */}
+                        <div>
+                          <p className="text-[10px] font-bold text-green-800 dark:text-green-200 uppercase opacity-60">
+                            Withdrawal Rate
+                          </p>
+                          <p className="text-lg font-black text-green-700 dark:text-green-300">
+                            {(
+                              (simulationResult.ledger[0].expenses.total /
+                                (simulationResult.ledger[0].netWorth + 1)) * // Avoid div/0
+                              100
+                            ).toFixed(1)}
+                            %
+                          </p>
+                          <p className="text-[9px] text-green-600 dark:text-green-400">
+                            Year 1 Stress Test
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </>
                 ) : (
                   <>
