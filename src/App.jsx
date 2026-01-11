@@ -752,6 +752,16 @@ function AppContent() {
           modifiedPlan.expenses.baseMonthly * multiplier
         );
       }
+      if (modifiedPlan.assumptions?.withdrawalAmount !== undefined) {
+        modifiedPlan.assumptions.withdrawalAmount = Math.round(
+          modifiedPlan.assumptions.withdrawalAmount * multiplier
+        );
+      }
+      if (modifiedPlan.spending?.fixedAmount !== undefined) {
+        modifiedPlan.spending.fixedAmount = Math.round(
+          modifiedPlan.spending.fixedAmount * multiplier
+        );
+      }
 
       // Show feedback
       const pctText = (multiplier * 100).toFixed(0);
@@ -808,8 +818,11 @@ function AppContent() {
         };
 
         worker.postMessage({
-          startAge: client.age,
-          endAge: Math.max(client.lifeExpectancy || 90, spouse?.lifeExpectancy || 0),
+          startAge: modifiedLedger[0]?.age || client.age || 50,
+          endAge: Math.max(
+            modifiedLedger[modifiedLedger.length - 1]?.age || client.lifeExpectancy || 90,
+            spouse?.lifeExpectancy || 0
+          ),
           iterations: modifiedPlan.monteCarlo?.iterations || 10000,
           equityReturn: modifiedPlan.assumptions.equityReturn / 100,
           equityVolatility: modifiedPlan.assumptions.equityVolatility / 100,
@@ -818,8 +831,12 @@ function AppContent() {
           correlation: modifiedPlan.assumptions.correlation || 0.1,
           enableCAPE: modifiedPlan.assumptions.enableCAPE,
           spendingStrategy: modifiedPlan.assumptions.withdrawalStrategy || 'fixed',
+          spendingParams: {
+            guytonKlinger: modifiedPlan.assumptions.guytonKlinger,
+            guardrails: modifiedPlan.assumptions.guardrails,
+          },
           ledger: modifiedLedger,
-          initialBalances: modifiedLedger.initialBalances, // CRITICAL: Pass to worker
+          initialBalances: modifiedLedger.initialBalances || modifiedLedger[0]?.balances,
           seed: 'stable-seed-v1', // Deterministic RNG
         });
       } catch (err) {
@@ -882,8 +899,11 @@ function AppContent() {
         };
 
         worker.postMessage({
-          startAge: client.age,
-          endAge: Math.max(client.lifeExpectancy || 90, spouse?.lifeExpectancy || 0),
+          startAge: ledger[0]?.age || client.age || 50,
+          endAge: Math.max(
+            ledger[ledger.length - 1]?.age || client.lifeExpectancy || 90,
+            spouse?.lifeExpectancy || 0
+          ),
           iterations: planData.monteCarlo?.iterations || 10000,
           equityReturn: planData.assumptions.equityReturn / 100,
           equityVolatility: planData.assumptions.equityVolatility / 100,
@@ -892,8 +912,12 @@ function AppContent() {
           correlation: planData.assumptions.correlation || 0.1,
           enableCAPE: planData.assumptions.enableCAPE,
           spendingStrategy: planData.assumptions.withdrawalStrategy || 'fixed',
+          spendingParams: {
+            guytonKlinger: planData.assumptions.guytonKlinger,
+            guardrails: planData.assumptions.guardrails,
+          },
           ledger,
-          initialBalances: ledger.initialBalances, // CRITICAL: Pass to worker
+          initialBalances: ledger.initialBalances || ledger[0]?.balances,
           scenarioId, // Pass scenario to worker
           seed: 'stable-seed-v1', // Deterministic RNG
         });

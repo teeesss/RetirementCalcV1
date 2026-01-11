@@ -59,8 +59,8 @@ describe('Monte Carlo Spending Simulation', () => {
 
     // This simulates what the fixed handler should do
     const workerParams = {
-      startAge: 60,
-      endAge: 90,
+      startAge: modifiedLedger[0]?.age || 60,
+      endAge: modifiedLedger[modifiedLedger.length - 1]?.age || 90,
       iterations: 1000,
       equityReturn: 0.07,
       equityVolatility: 0.15,
@@ -69,8 +69,12 @@ describe('Monte Carlo Spending Simulation', () => {
       correlation: 0.1,
       enableCAPE: false,
       spendingStrategy: 'fixed',
+      spendingParams: {
+        guytonKlinger: undefined,
+        guardrails: undefined,
+      },
       ledger: modifiedLedger,
-      initialBalances: modifiedLedger.initialBalances, // CRITICAL
+      initialBalances: modifiedLedger.initialBalances || modifiedLedger[0]?.balances, // Robust
       seed: 'stable-seed-v1',
     };
 
@@ -93,11 +97,15 @@ describe('Monte Carlo Spending Simulation', () => {
 
     // This simulates what the fixed handler should do
     const workerParams = {
-      startAge: 65,
-      endAge: 90,
+      startAge: ledger[0]?.age || 65,
+      endAge: ledger[ledger.length - 1]?.age || 90,
       iterations: 10000,
+      spendingParams: {
+        guytonKlinger: undefined,
+        guardrails: undefined,
+      },
       ledger,
-      initialBalances: ledger.initialBalances, // CRITICAL
+      initialBalances: ledger.initialBalances || ledger[0]?.balances, // Robust
       scenarioId: 'financialCrisis2008',
       seed: 'stable-seed-v1',
     };
