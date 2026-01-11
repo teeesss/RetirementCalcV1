@@ -86,39 +86,22 @@ export default function Wizard({ onComplete, onClose, initialData }) {
     isMarried,
   ]);
 
-  // Default Expenses Initialization
-  useEffect(() => {
-    // Default to $5k/mo if 0 to provide realistic baseline (User requested)
-    if (data.expenses.essentialMonthly === 0 && data.expenses.discretionaryMonthly === 0) {
-      setData((prev) => ({
-        ...prev,
-        expenses: {
-          ...prev.expenses,
-          essentialMonthly: 5000,
-        },
-      }));
-    }
-  }, []);
+  // REMOVED: Default Expenses Initialization
+  // Previously forced $5k/mo even for blank profiles. Now respects user's 0 input.
+  // useEffect(() => {
+  //   if (data.expenses.essentialMonthly === 0 && data.expenses.discretionaryMonthly === 0) {
+  //     setData((prev) => ({
+  //       ...prev,
+  //       expenses: { ...prev.expenses, essentialMonthly: 5000 },
+  //     }));
+  //   }
+  // }, []);
 
-  // Default Goals Initialization
-  useEffect(() => {
-    if (!data.goals || data.goals.length === 0) {
-      const retAge = data.people[0].retirementAge || 65;
-      const defaultGoals = [
-        { type: 'net_worth_at_age', amount: 1000000, age: retAge },
-        { type: 'net_worth_at_age', amount: 1000000, age: 70 },
-        { type: 'net_worth_at_age', amount: 1000000, age: 80 },
-        { type: 'net_worth_at_age', amount: 1000000, age: 95 },
-      ];
-      // Only set if we haven't touched goals yet to avoid overwrite loops
-      // utilizing a ref or just checking once might be better, but for wizard this is okay
-      // We'll trust the initialData check mainly, but let's do it safe:
-      setData((prev) => {
-        if (prev.goals && prev.goals.length > 0) return prev;
-        return { ...prev, goals: defaultGoals };
-      });
-    }
-  }, []); // Run once on mount
+  // REMOVED: Default Goals Initialization
+  // Previously created phantom $1M goals that inflated expense totals.
+  // useEffect(() => {
+  //   if (!data.goals || data.goals.length === 0) { ... }
+  // }, []);
 
   const handleAddGoal = () => {
     setData((prev) => ({
@@ -814,7 +797,7 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                           <span>
                             • ⚠️ Expenses Too Low? You entered $
                             {Math.round(simulationResult.totalAnnualExpense / 12)}/mo. This might
-                            generate a false "Pass".
+                            generate a false &quot;Pass&quot;.
                           </span>
                         </div>
                       )}
@@ -902,13 +885,3 @@ export default function Wizard({ onComplete, onClose, initialData }) {
     </div>
   );
 }
-
-// Helper for currency formatting in this file where utility isn't imported
-const formatCompactCurrency = (number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    notation: 'compact',
-    maximumFractionDigits: 1,
-  }).format(number);
-};
