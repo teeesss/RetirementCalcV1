@@ -1,0 +1,424 @@
+{
+  "meta": {
+    "year": 2025,
+    "source": "IRS Rev. Proc. 2024-40, Notice 2024-80, SSA Fact Sheet 2025"
+  },
+  "brackets": {
+    "single": [
+      {
+        "rate": 0.1,
+        "limit": 11925
+      },
+      {
+        "rate": 0.12,
+        "limit": 48475
+      },
+      {
+        "rate": 0.22,
+        "limit": 103350
+      },
+      {
+        "rate": 0.24,
+        "limit": 197300
+      },
+      {
+        "rate": 0.32,
+        "limit": 250525
+      },
+      {
+        "rate": 0.35,
+        "limit": 626350
+      },
+      {
+        "rate": 0.37,
+        "limit": null
+      }
+    ],
+    "head": [
+      {
+        "rate": 0.1,
+        "limit": 17000
+      },
+      {
+        "rate": 0.12,
+        "limit": 64850
+      },
+      {
+        "rate": 0.22,
+        "limit": 103350
+      },
+      {
+        "rate": 0.24,
+        "limit": 197300
+      },
+      {
+        "rate": 0.32,
+        "limit": 250500
+      },
+      {
+        "rate": 0.35,
+        "limit": 626350
+      },
+      {
+        "rate": 0.37,
+        "limit": null
+      }
+    ],
+    "married": [
+      {
+        "rate": 0.1,
+        "limit": 23850
+      },
+      {
+        "rate": 0.12,
+        "limit": 96950
+      },
+      {
+        "rate": 0.22,
+        "limit": 206700
+      },
+      {
+        "rate": 0.24,
+        "limit": 394600
+      },
+      {
+        "rate": 0.32,
+        "limit": 501050
+      },
+      {
+        "rate": 0.35,
+        "limit": 751600
+      },
+      {
+        "rate": 0.37,
+        "limit": null
+      }
+    ],
+    "married_separate": [
+      {
+        "rate": 0.1,
+        "limit": 11925
+      },
+      {
+        "rate": 0.12,
+        "limit": 48475
+      },
+      {
+        "rate": 0.22,
+        "limit": 103350
+      },
+      {
+        "rate": 0.24,
+        "limit": 197300
+      },
+      {
+        "rate": 0.32,
+        "limit": 250525
+      },
+      {
+        "rate": 0.35,
+        "limit": 375800
+      },
+      {
+        "rate": 0.37,
+        "limit": null
+      }
+    ]
+  },
+  "capital_gains": {
+    "single": [
+      {
+        "rate": 0.0,
+        "limit": 48350
+      },
+      {
+        "rate": 0.15,
+        "limit": 533400
+      },
+      {
+        "rate": 0.2,
+        "limit": null
+      }
+    ],
+    "head": [
+      {
+        "rate": 0.0,
+        "limit": 64750
+      },
+      {
+        "rate": 0.15,
+        "limit": 566700
+      },
+      {
+        "rate": 0.2,
+        "limit": null
+      }
+    ],
+    "married": [
+      {
+        "rate": 0.0,
+        "limit": 96700
+      },
+      {
+        "rate": 0.15,
+        "limit": 600050
+      },
+      {
+        "rate": 0.2,
+        "limit": null
+      }
+    ]
+  },
+  "standard_deduction": {
+    "single": 15000,
+    "head": 22500,
+    "married": 30000,
+    "married_separate": 15000
+  },
+  "age_65_deduction": 1950,
+  "fica": {
+    "ss_wage_base": 176100,
+    "ss_rate": 0.062,
+    "medicare_rate": 0.0145
+  },
+  "niit": {
+    "thresholds": {
+      "single": 200000,
+      "head": 200000,
+      "married": 250000
+    },
+    "rate": 0.038
+  },
+  "limits": {
+    "401k": 23500,
+    "401k_catchup": 7500,
+    "ira": 7000,
+    "ira_catchup": 1000,
+    "hsa_self": 4300,
+    "hsa_family": 8550,
+    "hsa_catchup": 1000,
+    "qcd": 105000,
+    "total_dc_limit": 70000
+  },
+  "rmd": {
+    "secure_2_0_thresholds": {
+      "1951_1959": 73,
+      "1960_plus": 75
+    }
+  },
+  "sunset_brackets": {
+    "single": [
+      {
+        "rate": 0.1,
+        "limit": 11600
+      },
+      {
+        "rate": 0.15,
+        "limit": 47150
+      },
+      {
+        "rate": 0.25,
+        "limit": 100525
+      },
+      {
+        "rate": 0.28,
+        "limit": 191950
+      },
+      {
+        "rate": 0.33,
+        "limit": 243725
+      },
+      {
+        "rate": 0.35,
+        "limit": 609350
+      },
+      {
+        "rate": 0.396,
+        "limit": null
+      }
+    ],
+    "married": [
+      {
+        "rate": 0.1,
+        "limit": 23200
+      },
+      {
+        "rate": 0.15,
+        "limit": 94300
+      },
+      {
+        "rate": 0.25,
+        "limit": 201050
+      },
+      {
+        "rate": 0.28,
+        "limit": 383900
+      },
+      {
+        "rate": 0.33,
+        "limit": 487450
+      },
+      {
+        "rate": 0.35,
+        "limit": 731200
+      },
+      {
+        "rate": 0.396,
+        "limit": null
+      }
+    ],
+    "head": [
+      {
+        "rate": 0.1,
+        "limit": 16550
+      },
+      {
+        "rate": 0.15,
+        "limit": 63100
+      },
+      {
+        "rate": 0.25,
+        "limit": 100500
+      },
+      {
+        "rate": 0.28,
+        "limit": 191950
+      },
+      {
+        "rate": 0.33,
+        "limit": 243700
+      },
+      {
+        "rate": 0.35,
+        "limit": 609350
+      },
+      {
+        "rate": 0.396,
+        "limit": null
+      }
+    ]
+  },
+  "sunset_standard_deduction": {
+    "single": 7500,
+    "head": 11000,
+    "married": 15000,
+    "married_separate": 7500
+  },
+  "ss_taxability_thresholds": {
+    "single": [25000, 34000],
+    "head": [25000, 34000],
+    "married": [32000, 44000],
+    "married_separate": [0, 0]
+  },
+  "additional_medicare_tax": {
+    "rate": 0.009,
+    "thresholds": {
+      "single": 200000,
+      "head": 200000,
+      "married": 250000,
+      "married_separate": 125000
+    }
+  },
+  "medicare_premiums": {
+    "part_b_base": 185.0,
+    "part_d_base": 53.95,
+    "irmaa_brackets": {
+      "single": [
+        {
+          "limit": 106000,
+          "part_b_surcharge": 0,
+          "part_d_surcharge": 0
+        },
+        {
+          "limit": 133000,
+          "part_b_surcharge": 74.0,
+          "part_d_surcharge": 13.7
+        },
+        {
+          "limit": 161000,
+          "part_b_surcharge": 185.0,
+          "part_d_surcharge": 35.3
+        },
+        {
+          "limit": 193000,
+          "part_b_surcharge": 296.0,
+          "part_d_surcharge": 57.0
+        },
+        {
+          "limit": 500000,
+          "part_b_surcharge": 407.0,
+          "part_d_surcharge": 78.9
+        },
+        {
+          "limit": null,
+          "part_b_surcharge": 444.0,
+          "part_d_surcharge": 87.4
+        }
+      ],
+      "married": [
+        {
+          "limit": 212000,
+          "part_b_surcharge": 0,
+          "part_d_surcharge": 0
+        },
+        {
+          "limit": 266000,
+          "part_b_surcharge": 74.0,
+          "part_d_surcharge": 13.7
+        },
+        {
+          "limit": 322000,
+          "part_b_surcharge": 185.0,
+          "part_d_surcharge": 35.3
+        },
+        {
+          "limit": 386000,
+          "part_b_surcharge": 296.0,
+          "part_d_surcharge": 57.0
+        },
+        {
+          "limit": 750000,
+          "part_b_surcharge": 407.0,
+          "part_d_surcharge": 78.9
+        },
+        {
+          "limit": null,
+          "part_b_surcharge": 444.0,
+          "part_d_surcharge": 87.4
+        }
+      ],
+      "head": [
+        {
+          "limit": 106000,
+          "part_b_surcharge": 0,
+          "part_d_surcharge": 0
+        },
+        {
+          "limit": 133000,
+          "part_b_surcharge": 74.0,
+          "part_d_surcharge": 13.7
+        },
+        {
+          "limit": 161000,
+          "part_b_surcharge": 185.0,
+          "part_d_surcharge": 35.3
+        },
+        {
+          "limit": 193000,
+          "part_b_surcharge": 296.0,
+          "part_d_surcharge": 57.0
+        },
+        {
+          "limit": 500000,
+          "part_b_surcharge": 407.0,
+          "part_d_surcharge": 78.9
+        },
+        {
+          "limit": null,
+          "part_b_surcharge": 444.0,
+          "part_d_surcharge": 87.4
+        }
+      ]
+    }
+  }
+}

@@ -4,6 +4,7 @@ import {
   calculateACASubsidy,
   calculateMedicarePremiums,
 } from './taxEngine';
+import TAX_DATA from '../data/tax_2025.json';
 import { optimizeWithdrawals } from './withdrawalOptimizer';
 import { calculateSSBenefit } from './ssOptimizer';
 import { growHECM, calculateInitialPrincipalLimit } from './reverseMortgage';
@@ -368,9 +369,16 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
       const inflationRate = (assumptions.inflation || 2.5) / 100;
       const inflationFactor = Math.pow(1 + inflationRate, i);
 
-      const trad401kMax = (clientAge >= 50 ? 30500 : 23000) * inflationFactor;
-      const rothIRAMax = (clientAge >= 50 ? 8000 : 7000) * inflationFactor;
-      const hsaMax = 8300 * inflationFactor;
+      // AUDIT FIX: Use 2025 Limits from TAX_DATA
+      const limit401k = TAX_DATA.limits['401k'];
+      const catchup401k = TAX_DATA.limits['401k_catchup'];
+      const limitIRA = TAX_DATA.limits.ira;
+      const catchupIRA = TAX_DATA.limits.ira_catchup;
+      const limitHSA = TAX_DATA.limits.hsa_family; // Default to family for safety/max? Or check status? Assuming Family for now as conservative max.
+
+      const trad401kMax = (clientAge >= 50 ? limit401k + catchup401k : limit401k) * inflationFactor;
+      const rothIRAMax = (clientAge >= 50 ? limitIRA + catchupIRA : limitIRA) * inflationFactor;
+      const hsaMax = limitHSA * inflationFactor;
 
       const trad401kPercent = (currentData.contributions?.traditional || 0) / 100;
       const matchPercent = (currentData.contributions?.match || 0) / 100;
@@ -380,15 +388,15 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
       remainingSalary -= contributions.traditional;
 
       contributions.hsa = Math.min(hsaMax, currentData.contributions?.hsa || 0);
-      if ((currentData.contributions?.hsa || 0) >= 8300) contributions.hsa = hsaMax;
+      if ((currentData.contributions?.hsa || 0) >= limitHSA) contributions.hsa = hsaMax;
       if (contributions.hsa > remainingSalary) contributions.hsa = remainingSalary;
       remainingSalary -= contributions.hsa;
 
       contributions.match = (currentData.salary || 0) * matchPercent;
 
       // Phase 7: Mega-Backdoor Roth (After-Tax 401k)
-      // Limit: $69,000 (2024) - Traditional - Match
-      const total401kLimit = 69000 * inflationFactor;
+      // Limit: 415(c) limit ($70,000 for 2025)
+      const total401kLimit = TAX_DATA.limits.total_dc_limit * inflationFactor;
       const used401kSpace = contributions.traditional + contributions.match;
       const remaining401kSpace = Math.max(0, total401kLimit - used401kSpace);
 
@@ -402,7 +410,7 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
       salary = salary - contributions.traditional - contributions.hsa - contributions.aftertax; // Deduct from Paycheck
 
       contributions.roth = Math.min(rothIRAMax, currentData.contributions?.roth || 0);
-      if ((currentData.contributions?.roth || 0) >= 7000) contributions.roth = rothIRAMax;
+      if ((currentData.contributions?.roth || 0) >= limitIRA) contributions.roth = rothIRAMax;
     }
 
     // Social Security Logic (Precise Monthly)
@@ -783,8 +791,15 @@ export function generateLedger(currentData, spendingStrategy = 'fixed', guardrai
     }
 
     // RMDs
-    let rmdClient = calculateRMD(balances.traditionalClient, clientAge);
-    let rmdSpouse = calculateRMD(balances.traditionalSpouse, spouseAge);
+    let clientBirthYear = birthDate ? birthDate.getFullYear() : null;
+    let spouseBirthYear = null;
+    if (people[1] && people[1].birthDate) {
+      const [sY] = people[1].birthDate.split('-').map(Number);
+      spouseBirthYear = sY;
+    }
+
+    let rmdClient = calculateRMD(balances.traditionalClient, clientAge, clientBirthYear);
+    let rmdSpouse = calculateRMD(balances.traditionalSpouse, spouseAge, spouseBirthYear);
 
     // QCD & DAF Logic
     let totalQCD = 0;
