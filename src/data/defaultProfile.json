@@ -51,7 +51,7 @@
     },
     "cryptoLOC": {
       "ltv": 0.4,
-      "rate": 0.10,
+      "rate": 0.1,
       "currentBalance": 0
     },
     "reverseMortgage": {
@@ -135,8 +135,8 @@
   "expenses": {
     "essential": 0,
     "discretionary": 0,
-    "essentialMonthly": 4500,
-    "discretionaryMonthly": 1500,
+    "essentialMonthly": 0,
+    "discretionaryMonthly": 0,
     "charity": 0,
     "growthRate": 3.0,
     "spendingPhases": {
@@ -151,21 +151,10 @@
       "portfolioDropThreshold": 0.1,
       "discretionaryCut": 0.3
     },
-    "recurring": [
-      {
-        "startAge": 53,
-        "endAge": 65,
-        "name": "Travel",
-        "amount": 40000
-      }
-    ],
-    "oneTime": [
-      {
-        "age": 58,
-        "name": "New Car",
-        "amount": 60000
-      }
-    ]
+    "recurring": [],
+    "oneTime": [],
+    "medicarePre65": 0,
+    "medicarePost65": 0
   },
   "assumptions": {
     "growthRate": 7,

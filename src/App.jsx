@@ -110,9 +110,10 @@ function AppContent() {
 
   const [fetchingRE, setFetchingRE] = useState(null); // idx of fetching property
   const [darkMode, setDarkMode] = useState(false);
-  const [activeTab, setActiveTab] = useState('cashflow');
+  const [activeTab, setActiveTab] = useState('summary');
+  const [showWizard, setShowWizard] = useState(false);
   const [mcProgress, setMcProgress] = useState(0);
-  const [cacheClearedStatus, setCacheClearedStatus] = useState(false);
+  const [isCalculatingMC, setIsCalculatingMC] = useState(false);
 
   // Strategy feature states
   const [strategySubTab, setStrategySubTab] = useState('tax');
@@ -243,7 +244,6 @@ function AppContent() {
   }, [planData, updatePlan]);
 
   // Run Monte Carlo when ledger is ready
-  const [isCalculatingMC, setIsCalculatingMC] = useState(false);
 
   // --- Real Estate Fetch ---
   const fetchRealEstateValue = useCallback(
@@ -256,9 +256,11 @@ function AppContent() {
 
       // Month-level caching check for auto-fetches
       const now = new Date();
-      const currentMonthKey = `${now.getFullYear()}-${now.getMonth()}`;
+      const currentMonthKey = now.getFullYear() + '-' + now.getMonth();
       const lastUpdateKey = property.lastUpdated
-        ? `${new Date(property.lastUpdated).getFullYear()}-${new Date(property.lastUpdated).getMonth()}`
+        ? new Date(property.lastUpdated).getFullYear() +
+          '-' +
+          new Date(property.lastUpdated).getMonth()
         : null;
 
       if (!manual && lastUpdateKey === currentMonthKey) {
@@ -1009,123 +1011,157 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      {planData.people[0]?.isNewProfile && (
-        <Wizard initialData={planData} onComplete={(finalData) => updatePlan(finalData)} />
+      {showWizard && (
+        <Wizard
+          initialData={planData}
+          onComplete={(finalData) => {
+            updatePlan(finalData);
+            setShowWizard(false);
+          }}
+          onClose={() => {
+            setShowWizard(false);
+          }}
+        />
       )}
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 sticky top-0 z-50">
-        <div className="grid grid-cols-1 md:grid-cols-3 items-center gap-4 max-w-[1920px] mx-auto">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-4 max-w-[1920px] mx-auto">
           {/* Brand/Title (Left) */}
-          <div className="flex-shrink-0 justify-self-start">
-            <h1 className="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
-              <span className="text-2xl">🤖</span>
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <div className="flex items-center gap-4 min-w-[300px]">
+            <h1 className="text-2xl font-black tracking-tighter text-gray-900 dark:text-white flex items-center gap-2 group cursor-default">
+              <span className="text-3xl transition-transform group-hover:rotate-12">🤖</span>
+              <span className="bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 The Architect
               </span>
             </h1>
+
+            {planData.people[0]?.isNewProfile && (
+              <div className="hidden 2xl:flex items-center gap-2 px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full animate-pulse">
+                <span className="text-[10px] font-black text-blue-600 dark:text-blue-400 uppercase tracking-widest">
+                  New? Start Wizard →
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Centered Toolbelt (Center) */}
-          <div className="flex flex-wrap items-center justify-center gap-3 bg-gray-50/50 dark:bg-gray-900/30 p-1.5 rounded-xl border border-gray-100 dark:border-gray-800/50 justify-self-center">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 bg-white/50 dark:bg-gray-900/40 p-1.5 rounded-2xl border border-gray-200/50 dark:border-gray-700/50 flex-1 max-w-4xl shadow-sm backdrop-blur-sm">
+            {/* Primary Action */}
             <button
-              onClick={() => {
-                if (
-                  window.confirm(
-                    '🧹 Clear all retirement plan data and restore defaults? This cannot be undone.'
-                  )
-                ) {
-                  setCacheClearedStatus(true);
-                  setTimeout(() => {
-                    localStorage.clear();
-                    window.location.reload();
-                  }, 800);
-                }
-              }}
-              className={`px-3 py-1.5 text-[10px] font-bold uppercase transition-all flex items-center gap-2 rounded-lg shadow-sm active:scale-95 ${
-                cacheClearedStatus
-                  ? 'bg-green-600 text-white border-green-700'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
+              onClick={() => setShowWizard(true)}
+              className="px-5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[11px] font-black uppercase rounded-xl shadow-lg shadow-blue-500/20 transition-all active:scale-95 flex items-center gap-2 group"
             >
-              <span className="text-xs">{cacheClearedStatus ? '✅' : '🧹'}</span>
-              {cacheClearedStatus ? 'DATA WIPED!' : 'CLEAR CACHE'}
+              <span className="text-sm group-hover:animate-bounce">🪄</span>
+              <span>Start Wizard</span>
             </button>
 
-            <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-1 hidden sm:block" />
+            <div className="h-6 w-px bg-gray-300/50 dark:bg-gray-600/50 mx-1" />
 
             {/* Quick Strategy Selector */}
-            <div className="flex items-center bg-white dark:bg-gray-800 rounded-lg px-3 py-1.5 border border-gray-200 dark:border-gray-700 shadow-sm transition-all hover:border-blue-400">
-              <span className="text-[10px] uppercase font-bold text-gray-400 dark:text-gray-500 mr-2">
-                Method:
+            <div className="flex items-center bg-gray-100/50 dark:bg-gray-800/50 rounded-xl px-3 py-1.5 border border-transparent hover:border-blue-500/30 transition-all">
+              <span className="text-[10px] uppercase font-black text-gray-400 dark:text-gray-500 mr-2">
+                Spend:
               </span>
               <select
                 value={spendingStrategy}
                 onChange={(e) => setSpendingStrategy(e.target.value)}
-                className="bg-transparent text-xs font-bold text-gray-900 dark:text-gray-100 border-none focus:ring-0 p-0 cursor-pointer outline-none hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                className="bg-transparent text-[11px] font-black text-gray-900 dark:text-gray-100 border-none focus:ring-0 p-0 cursor-pointer outline-none hover:text-blue-600 transition-colors"
               >
-                <option value="fixed" className="dark:bg-gray-800">
-                  Fixed Dollar
-                </option>
-                <option value="percentage" className="dark:bg-gray-800">
-                  Fixed %
-                </option>
-                <option value="blanchett" className="dark:bg-gray-800">
-                  Blanchett Smile
-                </option>
-                <option value="guardrails" className="dark:bg-gray-800">
-                  Guyton-Klinger
-                </option>
-                <option value="floor-ceiling" className="dark:bg-gray-800">
-                  Floor & Ceiling
-                </option>
-                <option value="max-spend" className="dark:bg-gray-800">
-                  Max Spending
-                </option>
-                <option value="dynamic" className="dark:bg-gray-800">
-                  Actuarial (ARVA)
-                </option>
+                <option value="fixed">Fixed $</option>
+                <option value="percentage">Fixed %</option>
+                <option value="blanchett">Blanchett</option>
+                <option value="guardrails">Guyton</option>
+                <option value="floor-ceiling">F & C</option>
+                <option value="max-spend">Max Out</option>
+                <option value="dynamic">ARVA</option>
               </select>
             </div>
+
+            <div className="h-6 w-px bg-gray-300/50 dark:bg-gray-600/50 mx-1 hidden sm:block" />
 
             <div className="flex items-center gap-2">
               <button
                 onClick={() => handleTabChange('montecarlo')}
-                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${
+                className={`px-4 py-2 rounded-xl transition-all text-[11px] font-black uppercase flex items-center gap-2 shadow-sm active:scale-95 border ${
                   activeTab === 'montecarlo'
-                    ? 'bg-blue-600 text-white shadow-blue-500/20'
-                    : 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'bg-indigo-600 text-white border-indigo-700 shadow-indigo-500/20'
+                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50'
                 }`}
               >
                 <span>🎲</span> Monte Carlo
               </button>
               <button
                 onClick={() => handleTabChange('cfo')}
-                className={`px-4 py-1.5 rounded-lg transition-all text-xs font-bold flex items-center gap-1.5 shadow-sm active:scale-95 ${
+                className={`px-4 py-2 rounded-xl transition-all text-[11px] font-black uppercase flex items-center gap-2 shadow-sm active:scale-95 border ${
                   activeTab === 'cfo'
-                    ? 'bg-purple-600 text-white shadow-purple-500/20'
-                    : 'bg-white dark:bg-gray-800 text-purple-600 dark:text-purple-400 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    ? 'bg-purple-600 text-white border-purple-700 shadow-purple-500/20'
+                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span>🤖</span> CFO Report
+                <span>🤖</span> Report
+              </button>
+              <button
+                onClick={() => {
+                  if (window.confirm('Clear local cache and reload?')) {
+                    localStorage.clear();
+                    window.location.reload();
+                  }
+                }}
+                className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-red-600 hover:bg-red-50 text-[10px] font-bold uppercase rounded-xl transition-all border border-gray-200 dark:border-gray-700 shadow-sm ml-0"
+                title="Clear Local Storage"
+              >
+                Clear Cache
               </button>
             </div>
           </div>
 
           {/* User Controls (Right) */}
-          <div className="flex items-center gap-3 justify-self-end">
-            <button
-              onClick={() => {
-                if (confirm('Clear all data and start fresh?')) {
-                  localStorage.removeItem('retirement_planData');
-                  localStorage.removeItem('retirecalc_is_ray');
-                  window.location.href = window.location.pathname;
+          <div className="flex items-center gap-2 min-w-[320px] justify-end">
+            <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-2 py-1 border border-gray-200 dark:border-gray-700 shadow-inner">
+              <span className="text-[9px] font-black text-gray-400 uppercase ml-1 mr-1">
+                Profile
+              </span>
+              <select
+                className="bg-transparent text-[10px] font-black outline-none cursor-pointer focus:ring-0 px-1 py-1"
+                onChange={(e) => {
+                  if (e.target.value === 'ray') window.location.href = '?profile=ray';
+                  if (e.target.value === 'local') window.location.href = window.location.pathname;
+                }}
+                value={
+                  new URLSearchParams(window.location.search).get('profile') === 'ray'
+                    ? 'ray'
+                    : 'local'
                 }
-              }}
-              className="px-3 py-1.5 bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 text-xs font-bold rounded-xl border border-red-200 dark:border-red-900/30 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all shadow-sm active:scale-95"
-              title="Reset All Data"
-            >
-              🗑️ Reset
-            </button>
+              >
+                <option value="local">Local Draft</option>
+                {new URLSearchParams(window.location.search).get('profile') === 'ray' && (
+                  <option value="ray">Ray (Template)</option>
+                )}
+              </select>
+
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm('🧹 CLEAR ALL DATA and reset everything? This cannot be undone.')
+                  ) {
+                    localStorage.clear();
+                    window.location.reload();
+                  }
+                }}
+                className="ml-1 p-1 text-gray-400 hover:text-red-500 transition-colors"
+                title="Reset/Delete All Data"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+
             <button
               onClick={() => {
                 const input = document.createElement('input');
@@ -1151,6 +1187,22 @@ function AppContent() {
               title="Import Plan from JSON"
             >
               📥 Import
+            </button>
+            <button
+              onClick={() => {
+                if (
+                  window.confirm(
+                    '🧹 PERMANENTLY WIPE EVERYTHING? All local drafts, settings, and scenarios will be deleted.'
+                  )
+                ) {
+                  localStorage.clear();
+                  window.location.reload();
+                }
+              }}
+              className="px-3 py-1.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-[10px] font-black uppercase rounded-xl border border-red-200 dark:border-red-900/30 hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95 flex items-center gap-1.5"
+              title="Reset Everything"
+            >
+              <span>🗑️</span> RESET
             </button>
             <button
               onClick={() => {
@@ -2490,7 +2542,7 @@ function AppContent() {
                       Monthly Essential
                     </label>
                     <SmartInput
-                      value={planData.expenses?.essentialMonthly || 4500}
+                      value={planData.expenses?.essentialMonthly ?? 0}
                       onChange={(val) =>
                         updatePlan({ expenses: { ...planData.expenses, essentialMonthly: val } })
                       }
@@ -2503,7 +2555,7 @@ function AppContent() {
                       Monthly Fun/Misc
                     </label>
                     <SmartInput
-                      value={planData.expenses?.discretionaryMonthly || 1500}
+                      value={planData.expenses?.discretionaryMonthly ?? 0}
                       onChange={(val) =>
                         updatePlan({
                           expenses: { ...planData.expenses, discretionaryMonthly: val },
@@ -2517,24 +2569,31 @@ function AppContent() {
 
                 {/* Health Costs */}
                 <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
-                  <h3 className="text-[10px] font-bold text-gray-400 uppercase mb-1">
-                    Health (Pre/Post 65)
-                  </h3>
                   <div className="grid grid-cols-2 gap-2">
-                    <SmartInput
-                      value={planData.expenses?.medicarePre65 || 200}
-                      onChange={(val) =>
-                        updatePlan({ expenses: { ...planData.expenses, medicarePre65: val } })
-                      }
-                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                    />
-                    <SmartInput
-                      value={planData.expenses?.medicarePost65 || 200}
-                      onChange={(val) =>
-                        updatePlan({ expenses: { ...planData.expenses, medicarePost65: val } })
-                      }
-                      className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                    />
+                    <div>
+                      <label className="block text-[10px] text-gray-400 uppercase font-bold mb-1">
+                        Health Pre-65
+                      </label>
+                      <SmartInput
+                        value={planData.expenses?.medicarePre65 ?? 0}
+                        onChange={(val) =>
+                          updatePlan({ expenses: { ...planData.expenses, medicarePre65: val } })
+                        }
+                        className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-400 uppercase font-bold mb-1">
+                        Health Post-65
+                      </label>
+                      <SmartInput
+                        value={planData.expenses?.medicarePost65 ?? 0}
+                        onChange={(val) =>
+                          updatePlan({ expenses: { ...planData.expenses, medicarePost65: val } })
+                        }
+                        className="w-full px-2 py-1 text-[11px] border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                      />
+                    </div>
                   </div>
                 </div>
 

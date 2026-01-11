@@ -90,8 +90,8 @@
     }
   },
   "expenses": {
-    "essentialMonthly": 5000,
-    "discretionaryMonthly": 2000,
+    "essentialMonthly": 0,
+    "discretionaryMonthly": 0,
     "charity": 0,
     "growthRate": 3.0,
     "spendingPhases": {

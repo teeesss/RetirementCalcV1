@@ -41,7 +41,7 @@ ChartJS.register(
  */
 import defaultProfile from '../data/defaultProfile.json';
 
-export default function NetWorthChart({ ledger, darkMode = false }) {
+export default function NetWorthChart({ ledger, darkMode = false, showFITarget = true }) {
   const chartRef = useRef(null);
   const colors = defaultProfile.uiTheme?.colors || {};
 
@@ -54,96 +54,116 @@ export default function NetWorthChart({ ledger, darkMode = false }) {
   }
 
   // Show all years
-  const labels = ledger.map(y => y.age);
+  const labels = ledger.map((y) => y.age);
 
   const chartData = {
     labels,
     datasets: [
-      {
-        type: 'line',
-        label: 'Financial Independence Target',
-        data: ledger.map(y => (y.expenses?.total || 0) * 25),
-        borderColor: colors.fiTarget || 'rgba(220, 38, 38, 0.9)',
-        borderWidth: 2,
-        borderDash: [],
-        pointRadius: 0,
-        fill: false,
-        tension: 0.4,
-        order: 0 // Draw on top
-      },
+      ...(ledger[0]?.expenses
+        ? [
+            {
+              type: 'line',
+              label: 'Annual Expenses',
+              data: ledger.map((y) => y.expenses.total),
+              borderColor: 'rgba(239, 68, 68, 0.8)', // Red
+              borderWidth: 2,
+              pointRadius: 0,
+              fill: false,
+              tension: 0.4,
+              yAxisID: 'y1', // Explicitly map to right axis
+              order: 0,
+            },
+          ]
+        : []),
+      ...(showFITarget
+        ? [
+            {
+              type: 'line',
+              label: 'Financial Independence Target',
+              data: ledger.map((y) => (y.expenses?.total || 0) * 25),
+              borderColor: 'rgba(59, 130, 246, 0.9)', // Blue
+              borderWidth: 2,
+              borderDash: [5, 5], // Dashed line
+              pointRadius: 0,
+              fill: false,
+              tension: 0.4,
+              order: 0, // Draw on top
+            },
+          ]
+        : []),
       {
         type: 'bar',
         label: 'Mortgage',
-        data: ledger.map(y => -(y.balances?.mortgageBalance || 0)),
+        data: ledger.map((y) => -(y.balances?.mortgageBalance || 0)),
         backgroundColor: colors.mortgage || 'rgba(220, 38, 38, 0.8)',
         borderColor: colors.mortgage || 'rgba(220, 38, 38, 1)',
         borderWidth: 1,
-        order: 1
+        order: 1,
       },
       {
         type: 'bar',
         label: 'Brokerage',
-        data: ledger.map(y => y.balances?.brokerage || 0),
+        data: ledger.map((y) => y.balances?.brokerage || 0),
         backgroundColor: colors.brokerage,
         borderColor: colors.brokerage,
         borderWidth: 1,
-        order: 1
+        order: 1,
       },
       {
         type: 'bar',
         label: 'HSA',
-        data: ledger.map(y => y.balances?.hsa || 0),
+        data: ledger.map((y) => y.balances?.hsa || 0),
         backgroundColor: colors.hsa,
         borderColor: colors.hsa,
         borderWidth: 1,
-        order: 1
+        order: 1,
       },
       {
         type: 'bar',
         label: 'Roth',
-        data: ledger.map(y => y.balances?.roth || 0),
+        data: ledger.map((y) => y.balances?.roth || 0),
         backgroundColor: colors.roth,
         borderColor: colors.roth,
         borderWidth: 1,
-        order: 1
+        order: 1,
       },
       {
         type: 'bar',
         label: 'Traditional',
-        data: ledger.map(y => y.balances?.traditional || 0),
+        data: ledger.map((y) => y.balances?.traditional || 0),
         backgroundColor: colors.traditional,
         borderColor: colors.traditional,
         borderWidth: 1,
-        order: 1
+        order: 1,
       },
       {
         type: 'bar',
         label: 'Crypto',
-        data: ledger.map(y => y.balances?.crypto || 0),
+        data: ledger.map((y) => y.balances?.crypto || 0),
         backgroundColor: colors.crypto,
         borderColor: colors.crypto,
         borderWidth: 1,
-        order: 1
+        order: 1,
       },
       {
         type: 'bar',
         label: 'Cash',
-        data: ledger.map(y => y.balances?.cash || 0),
+        data: ledger.map((y) => y.balances?.cash || 0),
         backgroundColor: colors.cash,
         borderColor: colors.cash,
         borderWidth: 1,
-        order: 1
+        order: 1,
       },
       {
         type: 'bar',
         label: 'Real Estate',
-        data: ledger.map(y => y.balances?.realEstate || 0),
+        data: ledger.map((y) => y.balances?.realEstate || 0),
         backgroundColor: colors.realEstate,
         borderColor: colors.realEstate,
         borderWidth: 1,
-        order: 1
-      }
-    ]
+        order: 1,
+      },
+    ],
   };
 
   const options = {
@@ -160,30 +180,39 @@ export default function NetWorthChart({ ledger, darkMode = false }) {
         align: 'center',
         color: darkMode ? '#d1d5db' : '#374151',
         font: { size: 16, weight: 'bold' },
-        padding: { top: 10, bottom: 20 }
+        padding: { top: 10, bottom: 20 },
       },
       legend: {
         position: 'bottom',
         labels: {
           color: darkMode ? '#e5e7eb' : '#374151',
           usePointStyle: true,
-          padding: 15,
+          boxWidth: 8, // Smaller box
+          padding: 10, // Tighter padding
           font: {
-            size: 11
-          }
-        }
+            size: 10, // Smaller font to fit single line
+          },
+        },
       },
       tooltip: {
-        backgroundColor: darkMode ? defaultProfile.uiTheme.tooltip.backgroundColor.dark : defaultProfile.uiTheme.tooltip.backgroundColor.light,
-        titleColor: darkMode ? defaultProfile.uiTheme.tooltip.titleColor.dark : defaultProfile.uiTheme.tooltip.titleColor.light,
-        bodyColor: darkMode ? defaultProfile.uiTheme.tooltip.bodyColor.dark : defaultProfile.uiTheme.tooltip.bodyColor.light,
-        borderColor: darkMode ? defaultProfile.uiTheme.tooltip.borderColor.dark : defaultProfile.uiTheme.tooltip.borderColor.light,
-        borderWidth: defaultProfile.uiTheme.tooltip.borderWidth,
-        padding: defaultProfile.uiTheme.tooltip.padding,
-        titleFont: defaultProfile.uiTheme.tooltip.titleFont,
-        bodyFont: defaultProfile.uiTheme.tooltip.bodyFont,
-        displayColors: defaultProfile.uiTheme.tooltip.displayColors,
-        boxPadding: defaultProfile.uiTheme.tooltip.boxPadding,
+        backgroundColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.backgroundColor?.dark || 'rgba(17, 24, 39, 0.98)'
+          : defaultProfile.uiTheme?.tooltip?.backgroundColor?.light || 'rgba(255, 255, 255, 0.98)',
+        titleColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.titleColor?.dark || '#f3f4f6'
+          : defaultProfile.uiTheme?.tooltip?.titleColor?.light || '#111827',
+        bodyColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.bodyColor?.dark || '#e5e7eb'
+          : defaultProfile.uiTheme?.tooltip?.bodyColor?.light || '#374151',
+        borderColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.borderColor?.dark || '#4b5563'
+          : defaultProfile.uiTheme?.tooltip?.borderColor?.light || '#d1d5db',
+        borderWidth: defaultProfile.uiTheme?.tooltip?.borderWidth ?? 2,
+        padding: defaultProfile.uiTheme?.tooltip?.padding ?? 16,
+        titleFont: defaultProfile.uiTheme?.tooltip?.titleFont || { size: 16, weight: 'bold' },
+        bodyFont: defaultProfile.uiTheme?.tooltip?.bodyFont || { size: 13 },
+        displayColors: defaultProfile.uiTheme?.tooltip?.displayColors ?? true,
+        boxPadding: defaultProfile.uiTheme?.tooltip?.boxPadding ?? 4,
         filter: function (tooltipItem) {
           // Only show items with non-zero values
           return Math.abs(tooltipItem.raw) > 0.01;
@@ -194,6 +223,7 @@ export default function NetWorthChart({ ledger, darkMode = false }) {
         },
         callbacks: {
           title: function (context) {
+            if (!context || !context[0]) return '';
             return `Age ${context[0].label}`;
           },
           label: function (context) {
@@ -205,6 +235,7 @@ export default function NetWorthChart({ ledger, darkMode = false }) {
             return `${label}: ${formattedValue}`;
           },
           afterBody: function (tooltipItems) {
+            if (!tooltipItems || !tooltipItems[0]) return '';
             const yearData = ledger[tooltipItems[0].dataIndex];
             if (!yearData) return '';
 
@@ -223,21 +254,24 @@ export default function NetWorthChart({ ledger, darkMode = false }) {
 
             const fiTarget = (yearData.expenses?.total || 0) * 25;
 
+            const mortgageDisplay =
+              mortgageBalance > 0 ? `-${formatCurrency(mortgageBalance)}` : '$0';
+
             return [
               '─────────────────────────',
               `💰 Financial: ${formatCurrency(financialAssets)}`,
               `🏠 Real Estate: ${formatCurrency(realEstate)}`,
-              `🏦 Mortgage: -${formatCurrency(mortgageBalance)}`,
+              `🏦 Mortgage: ${mortgageDisplay}`,
               '─────────────────────────',
-              `🎯 FI Target: ${formatCurrency(fiTarget)}`,
-              `📊 Net Worth: ${formatCurrency(netWorth)}`
+              ...(showFITarget ? [`🎯 FI Target: ${formatCurrency(fiTarget)}`] : []),
+              `📊 Net Worth: ${formatCurrency(netWorth)}`,
             ];
           },
           footer: function () {
             return '';
-          }
-        }
-      }
+          },
+        },
+      },
     },
     scales: {
       x: {
@@ -245,69 +279,60 @@ export default function NetWorthChart({ ledger, darkMode = false }) {
         title: {
           display: true,
           text: 'Age',
-          color: darkMode ? '#9ca3af' : '#6b7280'
+          color: darkMode ? '#9ca3af' : '#6b7280',
         },
         grid: {
-          color: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 0.5)'
+          color: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 0.5)',
         },
         ticks: {
-          color: darkMode ? '#9ca3af' : '#6b7280'
-        }
+          color: darkMode ? '#9ca3af' : '#6b7280',
+        },
       },
       y: {
         stacked: true,
         title: {
           display: true,
           text: 'Net Worth ($)',
-          color: darkMode ? '#9ca3af' : '#6b7280'
+          color: darkMode ? '#9ca3af' : '#6b7280',
         },
         grid: {
-          color: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 0.5)'
+          color: darkMode ? 'rgba(75, 85, 99, 0.3)' : 'rgba(229, 231, 235, 0.5)',
         },
         ticks: {
           color: darkMode ? '#9ca3af' : '#6b7280',
           callback: function (value) {
             return formatCompactCurrency(value);
-          }
-        }
+          },
+        },
       },
       y1: {
         type: 'linear',
         display: true,
         position: 'right',
-        stacked: true,
+        stacked: false,
         title: {
           display: true,
-          text: 'Net Worth ($)',
-          color: darkMode ? '#9ca3af' : '#6b7280'
+          text: 'Expenses ($)',
+          color: 'rgba(239, 68, 68, 0.8)',
         },
         ticks: {
-          color: darkMode ? '#9ca3af' : '#6b7280',
+          color: 'rgba(239, 68, 68, 0.8)',
           callback: function (value) {
             return formatCompactCurrency(value);
-          }
+          },
         },
         grid: {
-          drawOnChartArea: false
+          drawOnChartArea: false,
         },
-        // Link to y axis to mirror its scale
-        min: function (context) {
-          const yScale = context.chart.scales.y;
-          return yScale ? yScale.min : undefined;
-        },
-        max: function (context) {
-          const yScale = context.chart.scales.y;
-          return yScale ? yScale.max : undefined;
-        }
-      }
-    }
+      },
+    },
   };
 
   // Chart will be managed by react-chartjs-2
 
   return (
     <div className="h-96 w-full" role="img" aria-label="Net worth trajectory chart">
-      <Chart type='bar' ref={chartRef} data={chartData} options={options} />
+      <Chart type="bar" ref={chartRef} data={chartData} options={options} />
     </div>
   );
 }

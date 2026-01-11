@@ -27,28 +27,33 @@ export const PlanContext = createContext();
 // calculateACASubsidy is now imported from taxEngine
 
 export function PlanProvider({ children }) {
+  const [isRaySession] = useState(
+    () => new URLSearchParams(window.location.search).get('profile') === 'ray'
+  );
+  const storageKey = isRaySession ? 'retirement_planData_ray' : 'retirement_planData';
+
   const [planData, setPlanData] = useState(() => {
     try {
-      // 1. Check for URL profile key: ?profile=ray
-      const urlParams = new URLSearchParams(window.location.search);
-      const profileKey = urlParams.get('profile');
-      const isRay = profileKey === 'ray' || localStorage.getItem('retirecalc_is_ray') === 'true';
-
-      if (profileKey === 'ray') {
-        localStorage.setItem('retirecalc_is_ray', 'true');
-      }
-
-      const saved = localStorage.getItem('retirement_planData');
+      const saved = localStorage.getItem(storageKey);
       if (saved) {
-        const parsed = JSON.parse(saved);
-        // Basic schema check
+        let parsed = JSON.parse(saved);
+
+        // Anti-Leak: If we are in a normal session but the data is Ray's template, reset to blank.
+        if (!isRaySession) {
+          const isRayData =
+            parsed.people?.[0]?.name === 'Me' && parsed.people?.[0]?.birthDate === '1976-07-01';
+          if (isRayData) {
+            console.log('PlanContext: Sanitizing leaked Ray profile from local draft.');
+            parsed = JSON.parse(JSON.stringify(blankProfile));
+          }
+        }
+
         if (parsed.assets && parsed.people) {
-          // Migration: Ensure settings and apiKeys exist
+          // Migration & Sanitization
           if (!parsed.settings)
             parsed.settings = defaultProfile.settings || { apiKeys: { rentcast: '' } };
           if (!parsed.settings.apiKeys) parsed.settings.apiKeys = { rentcast: '' };
 
-          // CRITICAL VALIDATION: Ensure people have minimal valid data
           if (Array.isArray(parsed.people) && parsed.people.length > 0) {
             parsed.people = parsed.people.map((p) => ({
               ...p,
@@ -57,67 +62,71 @@ export function PlanProvider({ children }) {
               retirementAge: Number(p.retirementAge) || 65,
             }));
           } else {
-            console.warn('PlanContext: People array corrupted, resetting.');
-            return defaultProfile;
+            return isRaySession ? defaultProfile : blankProfile;
           }
 
-          // MIGRATION: Ensure top-level mortgage exists for Section 7 compatibility
-          if (!parsed.mortgage) {
-            console.log('PlanContext: Restoring Default Top-Level Mortgage ($245k)');
-            parsed.mortgage = defaultProfile.mortgage;
-          }
+          if (!parsed.mortgage) parsed.mortgage = defaultProfile.mortgage;
 
-          // MIGRATION: Sanitize Goals (Remove "Phantom Goals" from previous corrupted versions)
+          // MIGRATION: Sanitize Goals
           if (parsed.goals && Array.isArray(parsed.goals)) {
             parsed.goals = parsed.goals.filter((g) => {
-              // Identify rogue goals by signature: Age 60/Amount 3.5M, Age 75/Amount 6M
               const isRogue60 = g.age === 60 && g.amount === 3500000;
               const isRogue75 = g.age === 75 && g.amount === 6000000;
-              if (isRogue60 || isRogue75) {
-                console.warn('Deleted Phantom Goal:', g);
-                return false;
-              }
-              return true;
+              return !(isRogue60 || isRogue75);
             });
           }
 
-          // MIGRATION: Fix Real Estate (If value is 0/Missing OR Mortgage is 0, restore default $633k/$245k)
-          const primaryRE = parsed.realEstate?.[0];
-          const needsRestore =
-            !parsed.realEstate ||
-            parsed.realEstate.length === 0 ||
-            (primaryRE && primaryRE.currentValue === 0) ||
-            (primaryRE && (!primaryRE.mortgage || primaryRE.mortgage.balance === 0));
+          // MIGRATION: Zero out legacy default expenses (Hotfix for existing sessions)
+          if (parsed.expenses) {
+            const {
+              essentialMonthly,
+              discretionaryMonthly,
+              medicarePre65,
+              medicarePost65,
+              recurring,
+              oneTime,
+            } = parsed.expenses;
 
-          if (needsRestore) {
-            console.log('PlanContext: Restoring Default Real Estate ($633k value, $245k mortgage)');
-            parsed.realEstate = defaultProfile.realEstate;
+            // Check for exact legacy combinations or specific legacy values
+            const isLegacyMonthly = essentialMonthly === 4500 && discretionaryMonthly === 1500;
+
+            if (isLegacyMonthly) {
+              parsed.expenses.essentialMonthly = 0;
+              parsed.expenses.discretionaryMonthly = 0;
+            }
+
+            if (medicarePre65 === 200) parsed.expenses.medicarePre65 = 0;
+            if (medicarePost65 === 200) parsed.expenses.medicarePost65 = 0;
+
+            // Remove legacy default recurring expense "Travel" $40k
+            if (recurring && Array.isArray(recurring)) {
+              parsed.expenses.recurring = recurring.filter(
+                (e) => !(e.name === 'Travel' && e.amount === 40000 && e.startAge === 53)
+              );
+            }
+
+            // Remove legacy default one-time expense "New Car" $60k
+            if (oneTime && Array.isArray(oneTime)) {
+              parsed.expenses.oneTime = oneTime.filter(
+                (e) => !(e.name === 'New Car' && e.amount === 60000 && e.age === 58)
+              );
+            }
           }
-          // MIGRATION: Normalize Real Estate (Ensure top-level array exists and is populated)
-          // If top-level is empty but assets.realEstate exists (Legacy), migrate it.
-          if (
-            (!parsed.realEstate ||
-              !Array.isArray(parsed.realEstate) ||
-              parsed.realEstate.length === 0) &&
-            parsed.assets?.realEstate &&
-            Array.isArray(parsed.assets.realEstate) &&
-            parsed.assets.realEstate.length > 0
-          ) {
-            console.warn('PlanContext: Migrating Legacy Real Estate to Top-Level');
-            parsed.realEstate = [...parsed.assets.realEstate];
+
+          // MIGRATION: Fix Real Estate if corrupted
+          const primaryRE = parsed.realEstate?.[0];
+          if (!parsed.realEstate || (primaryRE && primaryRE.currentValue === 0 && isRaySession)) {
+            if (isRaySession) parsed.realEstate = defaultProfile.realEstate;
           }
 
           return parsed;
         }
       }
 
-      // Default fallback
-      return isRay ? defaultProfile : blankProfile;
+      // Default fallback: Ray profile only if param is present, otherwise blank.
+      return isRaySession ? defaultProfile : blankProfile;
     } catch (e) {
-      console.warn('Failed to load planData from localStorage', e);
-      const ucParsed = new URLSearchParams(window.location.search);
-      const isRaySession =
-        ucParsed.get('profile') === 'ray' || localStorage.getItem('retirecalc_is_ray') === 'true';
+      console.warn('Failed to load planData', e);
       return isRaySession ? defaultProfile : blankProfile;
     }
   });
@@ -164,10 +173,10 @@ export function PlanProvider({ children }) {
   useEffect(() => {
     // Debounce slightly to avoid rapid writes
     const timer = setTimeout(() => {
-      localStorage.setItem('retirement_planData', JSON.stringify(planData));
+      localStorage.setItem(storageKey, JSON.stringify(planData));
     }, 500);
     return () => clearTimeout(timer);
-  }, [planData]);
+  }, [planData, storageKey]);
 
   /**
    * Update plan data

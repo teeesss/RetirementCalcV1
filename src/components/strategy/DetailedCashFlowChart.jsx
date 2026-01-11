@@ -222,23 +222,23 @@ export default function DetailedCashFlowChart({ ledger, darkMode = false }) {
       },
       tooltip: {
         backgroundColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.backgroundColor.dark
-          : defaultProfile.uiTheme.tooltip.backgroundColor.light,
+          ? defaultProfile.uiTheme?.tooltip?.backgroundColor?.dark || 'rgba(17, 24, 39, 0.98)'
+          : defaultProfile.uiTheme?.tooltip?.backgroundColor?.light || 'rgba(255, 255, 255, 0.98)',
         titleColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.titleColor.dark
-          : defaultProfile.uiTheme.tooltip.titleColor.light,
+          ? defaultProfile.uiTheme?.tooltip?.titleColor?.dark || '#f3f4f6'
+          : defaultProfile.uiTheme?.tooltip?.titleColor?.light || '#111827',
         bodyColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.bodyColor.dark
-          : defaultProfile.uiTheme.tooltip.bodyColor.light,
+          ? defaultProfile.uiTheme?.tooltip?.bodyColor?.dark || '#e5e7eb'
+          : defaultProfile.uiTheme?.tooltip?.bodyColor?.light || '#374151',
         borderColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.borderColor.dark
-          : defaultProfile.uiTheme.tooltip.borderColor.light,
-        borderWidth: defaultProfile.uiTheme.tooltip.borderWidth,
-        padding: defaultProfile.uiTheme.tooltip.padding,
-        titleFont: defaultProfile.uiTheme.tooltip.titleFont,
-        bodyFont: defaultProfile.uiTheme.tooltip.bodyFont,
-        displayColors: defaultProfile.uiTheme.tooltip.displayColors,
-        boxPadding: defaultProfile.uiTheme.tooltip.boxPadding,
+          ? defaultProfile.uiTheme?.tooltip?.borderColor?.dark || '#4b5563'
+          : defaultProfile.uiTheme?.tooltip?.borderColor?.light || '#d1d5db',
+        borderWidth: defaultProfile.uiTheme?.tooltip?.borderWidth ?? 2,
+        padding: defaultProfile.uiTheme?.tooltip?.padding ?? 16,
+        titleFont: defaultProfile.uiTheme?.tooltip?.titleFont || { size: 16, weight: 'bold' },
+        bodyFont: defaultProfile.uiTheme?.tooltip?.bodyFont || { size: 13 },
+        displayColors: defaultProfile.uiTheme?.tooltip?.displayColors ?? true,
+        boxPadding: defaultProfile.uiTheme?.tooltip?.boxPadding ?? 4,
         filter: function (tooltipItem) {
           // Only show items with non-zero values
           return Math.abs(tooltipItem.raw) > 0.01;
@@ -255,14 +255,14 @@ export default function DetailedCashFlowChart({ ledger, darkMode = false }) {
           return bVal - aVal;
         },
         callbacks: {
-          title: (ctx) => `Age ${ctx[0].label}`,
+          title: (ctx) => (ctx?.[0] ? `Age ${ctx[0].label}` : ''),
           label: (ctx) => {
             const label = ctx.dataset.label || '';
             const value = ctx.parsed.y;
             return `${label}: ${formatCurrency(value)}`;
           },
           afterBody: function (tooltipItems) {
-            if (!tooltipItems || tooltipItems.length === 0) return [];
+            if (!tooltipItems || !tooltipItems[0]) return [];
 
             // Calculate totals from the tooltip items
             let totalIn = 0;

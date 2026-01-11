@@ -10,6 +10,8 @@ import {
   Legend,
 } from 'chart.js';
 
+import defaultProfile from '../../data/defaultProfile.json';
+
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export default function SourceAndFlowChart({ ledger, darkMode = false }) {
@@ -163,7 +165,21 @@ export default function SourceAndFlowChart({ ledger, darkMode = false }) {
         font: { size: 14 },
       },
       tooltip: {
+        backgroundColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.backgroundColor?.dark || 'rgba(17, 24, 39, 0.98)'
+          : defaultProfile.uiTheme?.tooltip?.backgroundColor?.light || 'rgba(255, 255, 255, 0.98)',
+        titleColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.titleColor?.dark || '#f3f4f6'
+          : defaultProfile.uiTheme?.tooltip?.titleColor?.light || '#111827',
+        bodyColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.bodyColor?.dark || '#e5e7eb'
+          : defaultProfile.uiTheme?.tooltip?.bodyColor?.light || '#374151',
+        borderColor: darkMode
+          ? defaultProfile.uiTheme?.tooltip?.borderColor?.dark || '#4b5563'
+          : defaultProfile.uiTheme?.tooltip?.borderColor?.light || '#d1d5db',
+        borderWidth: defaultProfile.uiTheme?.tooltip?.borderWidth ?? 1,
         callbacks: {
+          title: (ctx) => (ctx?.[0] ? `Age ${ctx[0].label}` : ''),
           label: (context) => {
             let label = context.dataset.label || '';
             if (label) label += ': ';

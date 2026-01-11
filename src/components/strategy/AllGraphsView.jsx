@@ -39,10 +39,7 @@ export default function AllGraphsView({ darkMode }) {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        {/* 1. Net Worth (The big picture) */}
-        <ChartCard title="💰 Net Worth Trajectory" className="xl:col-span-2 min-h-[400px]">
-          <NetWorthChart ledger={ledger} darkMode={darkMode} />
-        </ChartCard>
+        {/* 1. Net Worth Trajectory removed per user request (duplicate) */}
 
         {/* 2. Source + Flow (The unified flow) */}
         <ChartCard title="⛲ Wealth Sources & Flow" className="xl:col-span-2 min-h-[500px]">

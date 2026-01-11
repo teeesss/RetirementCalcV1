@@ -136,22 +136,23 @@ export default function WealthFlowChart({ ledger, darkMode = false }) {
       },
       tooltip: {
         backgroundColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.backgroundColor.dark
-          : defaultProfile.uiTheme.tooltip.backgroundColor.light,
+          ? defaultProfile.uiTheme?.tooltip?.backgroundColor?.dark || 'rgba(17, 24, 39, 0.98)'
+          : defaultProfile.uiTheme?.tooltip?.backgroundColor?.light || 'rgba(255, 255, 255, 0.98)',
         titleColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.titleColor.dark
-          : defaultProfile.uiTheme.tooltip.titleColor.light,
+          ? defaultProfile.uiTheme?.tooltip?.titleColor?.dark || '#f3f4f6'
+          : defaultProfile.uiTheme?.tooltip?.titleColor?.light || '#111827',
         bodyColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.bodyColor.dark
-          : defaultProfile.uiTheme.tooltip.bodyColor.light,
+          ? defaultProfile.uiTheme?.tooltip?.bodyColor?.dark || '#e5e7eb'
+          : defaultProfile.uiTheme?.tooltip?.bodyColor?.light || '#374151',
         borderColor: darkMode
-          ? defaultProfile.uiTheme.tooltip.borderColor.dark
-          : defaultProfile.uiTheme.tooltip.borderColor.light,
-        borderWidth: 1,
+          ? defaultProfile.uiTheme?.tooltip?.borderColor?.dark || '#4b5563'
+          : defaultProfile.uiTheme?.tooltip?.borderColor?.light || '#d1d5db',
+        borderWidth: defaultProfile.uiTheme?.tooltip?.borderWidth ?? 1,
         callbacks: {
+          title: (ctx) => (ctx?.[0]?.label ? `Age ${ctx[0].label}` : ''),
           label: (context) => {
-            const label = context.dataset.label || '';
-            const value = context.parsed.y;
+            const label = context.dataset?.label || '';
+            const value = context.parsed?.y;
             return `${label}: ${formatCurrency(value)}`;
           },
           afterBody: (items) => {
