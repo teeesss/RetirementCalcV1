@@ -1,59 +1,50 @@
-import { STATE_BRACKETS, STATE_DEDUCTIONS } from '../data/stateTaxBrackets';
+import STATE_DATA from '../data/state_tax_2025.json';
 
 /**
- * Calculate State Income Tax
- * Uses data from stateTaxBrackets.js for progressive calculations.
- *
- * @param {Object} params
- * @param {string} params.state - State Code (e.g. 'FL', 'AR', 'CA')
- * @param {number} params.taxableIncome - Federal AGI (Used as proxy for State Taxable Income base)
- * @param {string} params.filingStatus - 'single', 'married', 'head'
- * @returns {number} Estimated state tax liability
+ * State Tax Engine
+ * Calculates progressive state income tax.
  */
-export const calculateStateTaxModel = ({ state, taxableIncome, filingStatus }) => {
-    if (!state) return 0;
-    const code = state.toUpperCase();
-    const stateData = STATE_BRACKETS[code];
 
-    // Unknown state: Return 0 (Caller 'taxEngine.js' falls back to flat rate override if this returns 0?
-    // Actually, taxEngine uses this result if enabled. If 0, it is 0.)
-    if (!stateData) return 0;
+/**
+ * Calculate state tax for a specific state
+ * @param {Object} params
+ * @param {string} params.state - State code (e.g. 'CA', 'NY')
+ * @param {number} params.taxableIncome - Federal AGI (used as proxy for State Taxable)
+ * @param {string} params.filingStatus - 'single' | 'married' | 'head'
+ * @returns {number} Calculated State Tax
+ */
+export function calculateStateTaxModel({ state, taxableIncome, filingStatus }) {
+  if (!state || !STATE_DATA.states[state]) return 0;
 
-    // 1. Flat Tax Logic (TX, FL, WA, etc.)
-    if (Object.prototype.hasOwnProperty.call(stateData, 'flat')) {
-        return Math.max(0, taxableIncome * stateData.flat);
+  const stateConfig = STATE_DATA.states[state];
+
+  // 1. Determine Standard Deduction
+  // Fallback: If 'head' not defined, use 'single' (common simplification)
+  const deduction =
+    stateConfig.standard_deduction[filingStatus] || stateConfig.standard_deduction.single || 0;
+
+  // 2. Adjust Taxable Income
+  // Many states have different AGI definitions, but for MVP we start with Fed AGI minus State Deduction
+  const stateTaxable = Math.max(0, taxableIncome - deduction);
+
+  // 3. Apply Brackets
+  // If no brackets (e.g. FL), return 0
+  const brackets = stateConfig.brackets[filingStatus] || stateConfig.brackets.single;
+  if (!brackets || brackets.length === 0) return 0;
+
+  let tax = 0;
+  let prevLimit = 0;
+
+  for (const { rate, limit } of brackets) {
+    // Current Bracket Range: [prevLimit, limit ?? Infinity]
+    const effectiveLimit = limit === null ? Infinity : limit;
+
+    if (stateTaxable > prevLimit) {
+      const taxableInBracket = Math.min(stateTaxable, effectiveLimit) - prevLimit;
+      tax += taxableInBracket * rate;
+      prevLimit = effectiveLimit;
     }
+  }
 
-    // 2. Progressive Tax Logic
-    // Step A: Apply State Standard Deduction
-    const deductions = STATE_DEDUCTIONS[code];
-    // Simple mapping: 'married'/'joint' -> married, else single. Head of Household usually follows Single or Married depending on state, mapping to Single for MVP safety.
-    const isMarried = filingStatus === 'married' || filingStatus === 'joint';
-    const stdDeduction = deductions ? (isMarried ? deductions.married : deductions.single) : 0;
-
-    const stateTaxable = Math.max(0, taxableIncome - stdDeduction);
-
-    // Step B: Apply Brackets
-    const brackets = isMarried ? stateData.married : stateData.single;
-
-    if (!brackets) return 0;
-
-    let tax = 0;
-    let prevLimit = 0;
-
-    for (const [rate, limit] of brackets) {
-        if (stateTaxable > prevLimit) {
-            const inBracket = Math.min(stateTaxable, limit) - prevLimit;
-            tax += inBracket * rate;
-            prevLimit = limit;
-        }
-    }
-
-    // 3. Specific State Surcharges
-    // California Mental Health Services Act: 1% on income > $1M
-    if (code === 'CA' && stateTaxable > 1000000) {
-        tax += (stateTaxable - 1000000) * 0.01;
-    }
-
-    return tax;
-};
+  return tax;
+}

@@ -3,18 +3,22 @@
 ## Windows PowerShell Setup (5 minutes)
 
 ### 1. Check Node.js
+
 ```powershell
 node --version
 ```
+
 If not installed: Download from https://nodejs.org/ (LTS version)
 
 ### 2. Install Dependencies
+
 ```powershell
 cd "C:\Users\rayjo\OneDrive\Documents\Downloads\!Retirement Calc AI\RP1v1a"
 npm install
 ```
 
 ### 3. Run Development Server
+
 ```powershell
 npm run dev
 ```
@@ -22,6 +26,7 @@ npm run dev
 Browser opens automatically at `http://localhost:3000`
 
 ### 4. Build for Production (Optional)
+
 ```powershell
 npm run build
 npx serve dist
@@ -45,21 +50,24 @@ npx serve dist
 **Goal:** Achieve 0-5% effective tax rate in retirement!
 
 ### Quick Start
+
 1. **Access:** Click "Strategy" tab → "🏆 Tax-Free Engine" subtab
 2. **View KPI Dashboard:** See your lifetime effective tax rate and tax savings vs. traditional strategy
 3. **Check Three Buckets:** Review Pre-Tax, After-Tax, Tax-Free allocation
-4. **Optimize Roth Conversions:** Use  calculator to build "invisible money" bucket
+4. **Optimize Roth Conversions:** Use calculator to build "invisible money" bucket
 5. **Monitor Withdrawals:** Use year-by-year viewer to see tax-free strategy in action
 6. **Harvest Gains:** Check for 0% capital gains harvest opportunities
 7. **Watch MAGI:** Ensure ACA subsidy qualification and avoid IRMAA cliffs
 
 ### The Three-Bucket Strategy
+
 - **Bucket #1 (Traditional IRA):** Withdraw up to Standard Deduction ($30k married) = $0 tax
 - **Bucket #2 (Brokerage):** Realize gains at 0% LTCG rate ($96k married) = $0 tax
 - **Bucket #3 (Roth):** Unlimited "invisible" withdrawals = $0 tax
 - **Total:** $126k+/year completely tax-free!
 
 ### Key Features
+
 ✅ **Real-Time MAGI Tracking** - Avoid losing ACA subsidies or triggering IRMAA surcharges
 ✅ **Tax-Gain Harvesting** - Reset cost basis annually at 0% LTCG
 ✅ **2-Year Lookback** - Plan Medicare premiums 2 years ahead
@@ -67,7 +75,9 @@ npx serve dist
 ✅ **KPI Dashboard** - Track lifetime tax rate, savings, portfolio success
 
 ## 🚀 HNW Alpha Features (Phase 7)
+
 Advanced tools for Net Worth >$2M:
+
 - **TCJA Sunset**: Toggle "Legislative Risk" in Tax Strategy to see 2026 impact.
 - **Tax Torpedo**: View Marginal Rate chart to avoid 50%+ tax spikes (IRMAA + SS).
 - **DAF Bunching**: Toggle Charitable Bunching to front-load deductions.
@@ -79,17 +89,22 @@ Advanced tools for Net Worth >$2M:
 ## v1.4 Features
 
 ### Custom Withdrawal Rules
+
 Define age-based withdrawal sequences:
+
 - Example: "Ages 60-65: Drain brokerage → Roth → Traditional"
 - Location: Strategy → "💰 Spending Plans" → "🎯 Custom Withdrawal Rules"
 
 ### Expense Planning
+
 - **One-time**: "$50k car at age 65"
 - **Recurring**: "$5k/year travel from 60-75" (with inflation toggle)
 - Location: Strategy → "📅 Expense Planning"
 
 ### Spending Phases
+
 Automatic spending reduction by age:
+
 - Go-Go: 100% (until Slow-Go age)
 - Slow-Go: 85% at age 75+
 - No-Go: 75% at age85+
@@ -102,6 +117,7 @@ Switch between Cash Flow, Tax Summary, Net Worth, and Strategy views.
 ## Expected Results
 
 With default profile:
+
 - **Probability of Success**: ~80% ± 5%
 - **Final Balance**: Should be positive
 - **Lifetime Tax**: ~$500k - $800k range
@@ -111,12 +127,24 @@ With default profile:
 **Port in use?** Vite will auto-select next available port.
 
 **Module errors?**
+
 ```powershell
 Remove-Item -Recurse -Force node_modules
 npm install
 ```
 
+**Searching for files?** (PowerShell)
+
+```powershell
+# Find file by name
+Get-ChildItem -Path "src" -Recurse -Filter "*irmaaTiers*"
+
+# Search text inside files
+Get-ChildItem -Path "src" -Recurse -Include *.js,*.jsx,*.ts,*.tsx | Select-String -Pattern "irmaaTiers"
+```
+
 **Build fails?**
+
 ```powershell
 npm run build -- --force
 ```

@@ -374,6 +374,25 @@ export default function Wizard({ onComplete, onClose, initialData }) {
                   </select>
                 </div>
                 <div>
+                  <label className="block text-[10px] uppercase font-black text-gray-400 mb-1">
+                    State of Residence
+                  </label>
+                  <select
+                    value={data.profile.stateOfResidence || 'FL'}
+                    onChange={(e) => handleChange('profile.stateOfResidence', e.target.value)}
+                    className="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none font-bold"
+                  >
+                    <option value="FL">Florida (0%)</option>
+                    <option value="TX">Texas (0%)</option>
+                    <option value="WA">Washington (0%)</option>
+                    <option value="TN">Tennessee (0%)</option>
+                    <option value="NV">Nevada (0%)</option>
+                    <option value="CA">California (Brackets)</option>
+                    <option value="NY">New York (Brackets)</option>
+                    <option value="OTHER">Other</option>
+                  </select>
+                </div>
+                <div>
                   <label className="block text-[10px] uppercase font-bold text-gray-500 mb-1">
                     Current Market Value ($)
                   </label>

@@ -64,7 +64,9 @@ PS C:\Users\rayjo\Documents\GeminiAntigravity\RetirementCalcV1> wsl -d Ubuntu-22
 
 ## 5. Next Steps
 
-- **Fix Remaining ESLint Errors**: 46 errors currently block commits (unused vars, HTML entities)
+- **State-Specific Tax Brackets**: Currently uses flat rate. Need bracket models for CA, NY, etc. ("Phase 7").
+- **Annuity Modeling**: SPIA/DIA product support.
+- **UI Refinement**: Enhance mobile responsiveness for complex charts.
 
 ## 6. Git Workflow
 

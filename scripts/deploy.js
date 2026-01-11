@@ -159,7 +159,7 @@ async function deploy() {
       console.log('   ✅ Upload complete!\n');
 
       console.log('🎉 Deployment successful!');
-      console.log(`   Your app should now be available at: http://${ftp.host}${targetPath}`);
+      console.log(`   Your app should now be available at: http://bmwseals.com/retirecalc`);
     }
   } catch (err) {
     console.error('❌ FTP Error:', err.message);
