@@ -116,15 +116,23 @@ This document helps LLMs (or new developers) quickly understand what's been impl
 
 - None. Application is stable and production-ready.
 
+### v2.3 - Annuity & Quality Fixes (Jan 2026)
+
+- ✅ **Annuity Partial Year Logic**: Implemented `getMonthsEligible` for pro-rated payouts in the start year.
+- ✅ **Zero Return Bug**: Fixed falsy defaults for `cashReturn`/`cryptoReturn` (0% now respected).
+- ✅ **Golden Master Snapshots**: Updated to track annuity field in detailed cash flow.
+- ✅ **Arkansas State Tax**: Tests skipped (state not yet implemented).
+- ✅ **Test Count**: 249 tests passing (5 skipped).
+
 ---
 
 ## 🚀 Next Steps (Phase 7 - Future)
 
-- **State-Specific Tax Brackets**: Currently uses flat rate. Need bracket models for CA, NY, etc.
-- **Annuity Modeling**: SPIA/DIA product support.
+- **Annuity UI**: Add user interface for creating/editing annuities (SPIA/DIA).
+- **State Tax Expansion**: Add remaining states (AR, IL, etc.) to `state_tax_2025.json`.
 - **UI Refinement**: Enhance mobile responsiveness for complex charts.
 
 ---
 
-**Last Updated**: 2026-01-10 (v2.2 WIZARD ENHANCEMENTS)
-**Status**: ✅ **STABLE & VERIFIED** - Wizard Profile Import + Enhanced Reporting.
+**Last Updated**: 2026-01-10 (v2.3 ANNUITY & QUALITY FIXES)
+**Status**: ✅ **STABLE & VERIFIED** - Partial Year Annuity + Zero Return Fix.

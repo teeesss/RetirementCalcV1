@@ -165,3 +165,11 @@
   - [x] NetWorthChart Legend compacted to single line.
   - [x] Tooltips enhanced with expense breakdown sections.
 - [x] **Performance**: Optimized Pre-commit hooks for speed.
+
+## ✨ v2.3 - Annuity & Quality Fixes (Jan 10, 2026)
+
+- [x] **Annuity Partial Year Logic**: Implemented `getMonthsEligible` for accurate first-year payouts.
+- [x] **Zero Return Bug Fix**: Fixed `||` to `??` for `cashReturn` and `cryptoReturn`.
+- [x] **Golden Master Snapshots**: Updated for new `annuity` field in detailed cash flow.
+- [x] **Arkansas State Tax Tests**: Skipped pending state data implementation.
+- [x] **Test Suite**: 249 tests passing (5 skipped).
